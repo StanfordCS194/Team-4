@@ -1,5 +1,5 @@
-# malu+friends
-<img src="https://user-images.githubusercontent.com/30807409/51223286-226b7580-18f6-11e9-99a5-9e4285d86e2a.png" width="200"/>
+# epiphany (malu+friends)
+<img src="/team_photos/logo_1.png" width="400"/>
 
 We are exploring 1) an application for clean and efficient collaborative brainstorming and 2) automated presentation coaching through audio processing.
 # Members
