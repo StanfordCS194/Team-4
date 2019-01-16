@@ -3,19 +3,10 @@
 
 Marilu and her friends
 # Members
-### Marilu Bravo
-<img src="/team_photos/malu.jpg" width="150"/>
-
-
-### Carmelle Millar
-<img src="/team_photos/carmelle.jpg" width="150"/>
-
-### Alejandro Bravo
-<img src="/team_photos/IMG_9190.JPG" width="150"/>
-
-
-### Sean Decker
-<img src="/team_photos/sean.jpg" width="150"/>
+| | | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+Marilu Bravo |  Carmelle Millar |  Alejandro Bravo | Sean Decker
+<img src="/team_photos/malu.jpg" height="170"/> | <img src="/team_photos/carmelle.jpg" height="170"/> | <img src="/team_photos/IMG_9190.JPG" height="170"/> | <img src="/team_photos/sean.jpg" height="170"/> 
 
 
 # Team Skills Matrix:
