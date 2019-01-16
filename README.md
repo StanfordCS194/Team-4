@@ -7,7 +7,6 @@ We are exploring 1) an application for clean and efficient collaborative brainst
 |:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 Marilu Bravo |  Carmelle Millar |  Alejandro Bravo | Sean Decker
 <img src="/team_photos/malu.jpg" height="170"/> | <img src="/team_photos/carmelle.jpg" height="170"/> | <img src="/team_photos/IMG_9190.JPG" height="170"/> | <img src="/team_photos/sean.jpg" height="170"/> 
-# Project Synopsis
 
 # Team Skills Matrix:
 Member | Skills | Personal Traits | Desired Growth | Weaknesses
