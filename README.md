@@ -26,3 +26,5 @@ Sean | I like math | I watch too many youtube videos | github use, communicating
 
 # Team Communication:
 1. Facebook Messenger
+2. Email. Contact us at mkbravo@stanford.edu, carmelle@stanford.edu, abravo16@stanford.edu, seankdecker@stanford.edu
+3. [Google Drive](https://drive.google.com/drive/folders/1q-YAJjqmVNYFgdApi6Wce5_Pbyo2Os3Q?usp=sharing)
