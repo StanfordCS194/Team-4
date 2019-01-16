@@ -1,4 +1,6 @@
 # malu+friends
+<img src="https://user-images.githubusercontent.com/30807409/51223286-226b7580-18f6-11e9-99a5-9e4285d86e2a.png" width="200"/>
+
 Marilu and her friends
 # Members
 ### Marilu Bravo
@@ -9,7 +11,7 @@ Marilu and her friends
 <img src="/team_photos/carmelle.jpg" width="150"/>
 
 ### Alejandro Bravo
-<img src="/team_photos/heno.jpg" width="150"/>
+<img src="/team_photos/IMG_9190.JPG" width="150"/>
 
 
 ### Sean Decker
