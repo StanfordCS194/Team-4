@@ -15,9 +15,9 @@ Realtime paint collaboration using Pusher and React
 - Create a file named `.env`. Update the `.env` file with the content below:
 
 ```
-PUSHER_APP_ID=app-id
-PUSHER_APP_KEY=app-key
-PUSHER_APP_SECRET=app-secret
+PUSHER_APP_ID=705702
+PUSHER_APP_KEY=bf000fa5fdd494f974b0
+PUSHER_APP_SECRET=681bbc3a21a87ea6d81a
 ```
 
 > **Note**: ensure to replace the placeholder values with your pusher `appId`, `key` and `secret`.
