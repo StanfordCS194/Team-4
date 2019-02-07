@@ -40,6 +40,10 @@ class Canvas extends Component {
     }
   }
 
+  onDoubleClick({ nativeEvent }) {
+    console.log('double click!')
+  }
+
   endPaintEvent() {
     if (this.isPainting) {
       this.isPainting = false;
@@ -104,6 +108,7 @@ class Canvas extends Component {
         onMouseLeave={this.endPaintEvent}
         onMouseUp={this.endPaintEvent}
         onMouseMove={this.onMouseMove}
+        onDoubleClick={this.onDoubleClick}
       />
     );
   }
