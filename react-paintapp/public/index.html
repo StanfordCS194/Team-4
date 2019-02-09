@@ -53,8 +53,9 @@
     function onDoubleClick () {
         var group = new Konva.Group({
             draggable: true,
-
+            name: "stickyGroup"
         });
+        layer.add(group);
 
         // add cursor styling
         group.on('mouseover', function() {
@@ -65,7 +66,7 @@
         });
 
         // UNCOMMENT THIS BLOCK to try sticky 'lifting' and 'dropping' animation
-        // TODO is buggy (only works on first sticky, doesn't raise text too, 
+        // TODO is buggy (only works on first sticky, doesn't raise text too,
         // animation not smooth)
         // ------------------------------------------------------
         // Sticky 'raises' when dragged
@@ -93,7 +94,7 @@
             shadowOffsetY: 5,
             shadowColor: 'black'
         });
-
+        group.add(rect);
 
         var textNode = new Konva.Text({
             x: stage.getPointerPosition().x - 125,
@@ -107,6 +108,7 @@
             align: 'center',
             listening: true
         });
+        group.add(textNode);
 
         textNode.on('click', () => {
             var textPosition = textNode.getAbsolutePosition();
@@ -141,9 +143,6 @@
             });
             }
         );
-        group.add(rect);
-        group.add(textNode);
-        layer.add(group);
 
 
         // Tween for drag and drop
@@ -168,7 +167,7 @@
           shadowOffsetY: 5,
         });
 
-        var tr2 = new Konva.Transformer({
+        var tr = new Konva.Transformer({
           node: group,
           keepRatio: true,
           anchorSize: 10,
@@ -176,36 +175,35 @@
           rotationSnaps: [0, 90, 180, 270],
 
         });
-
-        layer.add(tr2);
+        layer.add(tr);
         layer.draw();
 
-        // stage.on('click tap', function (e) {
-        // // if click on empty area - remove all transformers
-        //   if (e.target === stage) {
-        //     stage.find('Transformer').destroy();
-        //     layer.draw();
-        //     return;
-        //   }
-        //   // do nothing if clicked NOT on our rectangles
-        //   if (!e.target.hasName('rect')) {
-        //     return;
-        //   }
-        //   // remove old transformers
-        //   // TODO: we can skip it if current rect is already selected
-        //   stage.find('Transformer').destroy();
+        stage.on('click tap', function (e) {
+         // if click on empty area - remove all transformers
+           if (e.target === stage) {
+             stage.find('Transformer').destroy();
+             layer.draw();
+             return;
+           }
+           // do nothing if clicked NOT on our rectangles
+           if (!e.target.parent.hasName("stickyGroup")) {
+             return;
+           }
 
-        //   // create new transformer
-        //   var tr = new Konva.Transformer();
-        //   layer.add(tr);
-        //   tr.attachTo(e.target);
-        //   layer.draw();
-        // });
+           // remove old transformers
+           // TODO: we can skip it if current rect is already selected
+           stage.find('Transformer').destroy();
+
+           // create new transformer
+           var tr = new Konva.Transformer();
+           tr.attachTo(e.target.parent);
+           layer.add(tr);
+           layer.draw();
+         });
      }
 
      // add the layer to the stage
      stage.add(layer);
-
 
     var scaleBy = 1.05;
     stage.on('wheel', e => {
