@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script src="https://unpkg.com/konva@2.4.2/konva.min.js"></script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
@@ -27,6 +29,45 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <div id="container"></div>
+
+  <script>
+    function writeMessage(message) {
+        text.setText(message);
+        layer.draw();
+    }
+
+    var stage = new Konva.Stage({
+        container: 'container',
+        width: window.innerWidth,
+        height: window.innerHeight,
+        draggable: true,
+        listening: true
+    });
+
+    var layer = new Konva.Layer();
+
+    stage.on('dblclick', onDoubleClick);
+
+    function onDoubleClick () {
+        layer.add( new Konva.Rect({
+            x: stage.getPointerPosition().x - 125,
+            y: stage.getPointerPosition().y - 10,
+            width: 250,
+            height: 250,
+            fill: Konva.Util.getRandomColor(),
+            stroke: 'black',
+            strokeWidth: 2,
+            draggable: true
+            }));
+        layer.draw();
+     }
+
+     // add the layer to the stage
+     stage.add(layer);
+  </script>
+
+
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
