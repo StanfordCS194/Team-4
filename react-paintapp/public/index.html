@@ -52,11 +52,36 @@
 
     function onDoubleClick () {
         var group = new Konva.Group({
-            draggable: true
+            draggable: true,
+
         });
 
+        // add cursor styling
+        group.on('mouseover', function() {
+            document.body.style.cursor = 'pointer';
+        });
+        group.on('mouseout', function() {
+            document.body.style.cursor = 'default';
+        });
 
-        group.add( new Konva.Rect({
+        // UNCOMMENT THIS BLOCK to try sticky 'lifting' and 'dropping' animation
+        // TODO is buggy (only works on first sticky, doesn't raise text too, 
+        // animation not smooth)
+        // ------------------------------------------------------
+        // Sticky 'raises' when dragged
+        // group.on('dragstart', function() {
+        //     group.tweenGrab.play();
+        // });
+
+        // // Sticky comes back down when dropped
+        // group.on('dragend', function() {
+        //     group.tweenDrop.play();
+        // });
+        // ------------------------------------------------------
+
+
+        // group.add( new Konva.Rect({
+          var rect = new Konva.Rect({
             x: stage.getPointerPosition().x - 125,
             y: stage.getPointerPosition().y - 10,
             width: 250,
@@ -64,7 +89,10 @@
             fill: Konva.Util.getRandomColor(),
             stroke: 'gray',
             strokeWidth: 2,
-        }));
+            shadowOffsetX: 5,
+            shadowOffsetY: 5,
+            shadowColor: 'black'
+        });
 
 
         var textNode = new Konva.Text({
@@ -79,6 +107,7 @@
             align: 'center',
             listening: true
         });
+
         textNode.on('click', () => {
             var textPosition = textNode.getAbsolutePosition();
             var stageBox = stage.getContainer().getBoundingClientRect();
@@ -112,8 +141,32 @@
             });
             }
         );
+        group.add(rect);
         group.add(textNode);
         layer.add(group);
+
+
+        // Tween for drag and drop
+        group.tweenGrab = new Konva.Tween({
+          node: rect,
+          shadowOffsetX: 15,
+          shadowOffsetY: 15,
+          duration: 0.5,
+          scaleX: 1.1,
+          scaleY: 1.1,
+          easing: Konva.Easings.ElasticEaseOut,
+
+        });
+
+        group.tweenDrop = new Konva.Tween({
+          node: rect,
+          duration: 1,
+          easing: Konva.Easings.ElasticEaseOut,
+          scaleX: 1,
+          scaleY: 1,
+          shadowOffsetX: 5,
+          shadowOffsetY: 5,
+        });
 
         var tr2 = new Konva.Transformer({
           node: group,
@@ -126,6 +179,28 @@
 
         layer.add(tr2);
         layer.draw();
+
+        // stage.on('click tap', function (e) {
+        // // if click on empty area - remove all transformers
+        //   if (e.target === stage) {
+        //     stage.find('Transformer').destroy();
+        //     layer.draw();
+        //     return;
+        //   }
+        //   // do nothing if clicked NOT on our rectangles
+        //   if (!e.target.hasName('rect')) {
+        //     return;
+        //   }
+        //   // remove old transformers
+        //   // TODO: we can skip it if current rect is already selected
+        //   stage.find('Transformer').destroy();
+
+        //   // create new transformer
+        //   var tr = new Konva.Transformer();
+        //   layer.add(tr);
+        //   tr.attachTo(e.target);
+        //   layer.draw();
+        // });
      }
 
      // add the layer to the stage
