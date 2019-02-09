@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import Canvas from '../canvas/canvas';
+import Canvas from '../canvas/Canvas';
 
 class App extends Component {
   render() {
