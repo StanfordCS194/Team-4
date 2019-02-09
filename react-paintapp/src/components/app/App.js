@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
-import Canvas from './canvas';
+import Canvas from '../canvas/canvas';
 
 class App extends Component {
   render() {
@@ -9,7 +9,7 @@ class App extends Component {
       <Fragment>
         <h3 style={{ textAlign: 'center' }}>epiphany</h3>
         <div className="main">
-  
+
         </div>
       </Fragment>
     );

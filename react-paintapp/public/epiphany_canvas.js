@@ -1,4 +1,5 @@
 
+(function () {
     function writeMessage(message) {
         text.setText(message);
         layer.draw();
@@ -32,7 +33,7 @@
         });
 
         // UNCOMMENT THIS BLOCK to try sticky 'lifting' and 'dropping' animation
-        // TODO is buggy (only works on first sticky, doesn't raise text too, 
+        // TODO is buggy (only works on first sticky, doesn't raise text too,
         // animation not smooth)
         // ------------------------------------------------------
         // Sticky 'raises' when dragged
@@ -199,3 +200,4 @@
         stage.position(newPos);
         stage.batchDraw();
     });
+})();
