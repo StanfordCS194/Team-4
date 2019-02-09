@@ -20,6 +20,7 @@ var epiphany_canvas = () => {
   });
 
   var layer = new Konva.Layer();
+  stage.add(layer);
 
   stage.on('dblclick', onDoubleClick);
 
@@ -86,6 +87,11 @@ var epiphany_canvas = () => {
       group.add(textNode);
 
       textNode.on('click', () => {
+          // Disallow stage and current sticky movement when editing text
+          stage.draggable(false);
+          stage.off('wheel');
+          group.draggable(false);
+
           var textPosition = textNode.getAbsolutePosition();
           var stageBox = stage.getContainer().getBoundingClientRect();
 
@@ -111,13 +117,17 @@ var epiphany_canvas = () => {
           textarea.addEventListener('keydown', function (e) {
               // hide on enter
               if (e.keyCode === 13) {
+                  // Reallow stage and current sticky movement after editing text
+                  stage.draggable(true);
+                  stage.on('wheel', onWheel);
+                  group.draggable(true);
+
                   textNode.text(textarea.value);
                   layer.draw();
                   document.body.removeChild(textarea);
               }
           });
-          }
-      );
+      });
 
       // Tween for drag and drop
       group.tweenGrab = new Konva.Tween({
@@ -176,9 +186,7 @@ var epiphany_canvas = () => {
        });
    }
 
-   // add the layer to the stage
-   stage.add(layer);
-
+// WINDOW RESIZING TO MATCH WIDTH
   function fitStageIntoParentContainer() {
       var container = document.querySelector('#stage-parent');
 
@@ -198,7 +206,9 @@ var epiphany_canvas = () => {
 
 // ZOOMING
   var scaleBy = 1.05;
-  stage.on('wheel', e => {
+  stage.on('wheel', onWheel);
+
+  function onWheel(e) {
       e.evt.preventDefault();
       var oldScale = stage.scaleX();
 
@@ -221,7 +231,7 @@ var epiphany_canvas = () => {
       };
       stage.position(newPos);
       stage.batchDraw();
-  });
+  }
 }
 
 export default epiphany_canvas;
