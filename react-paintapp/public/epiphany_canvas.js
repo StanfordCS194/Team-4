@@ -1,3 +1,5 @@
+    var stageWidth = window.innerWidth;
+    var stageHeight = window.innerHeight;
 
 (function () {
     function writeMessage(message) {
@@ -7,8 +9,8 @@
 
     var stage = new Konva.Stage({
         container: 'container',
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: stageWidth,
+        height: stageHeight,
         draggable: true,
         listening: true
     });
@@ -21,8 +23,9 @@
     function onDoubleClick () {
         var group = new Konva.Group({
             draggable: true,
-
+            name: "stickyGroup"
         });
+        layer.add(group);
 
         // add cursor styling
         group.on('mouseover', function() {
@@ -61,6 +64,7 @@
             shadowOffsetY: 5,
             shadowColor: 'black'
         });
+        group.add(rect);
 
 
         var textNode = new Konva.Text({
@@ -75,6 +79,7 @@
             align: 'center',
             listening: true
         });
+        group.add(textNode);
 
         textNode.on('click', () => {
             var textPosition = textNode.getAbsolutePosition();
@@ -109,10 +114,6 @@
             });
             }
         );
-        group.add(rect);
-        group.add(textNode);
-        layer.add(group);
-
 
         // Tween for drag and drop
         group.tweenGrab = new Konva.Tween({
@@ -144,37 +145,54 @@
           rotationSnaps: [0, 90, 180, 270],
 
         });
-
         layer.add(tr2);
         layer.draw();
 
-        // stage.on('click tap', function (e) {
-        // // if click on empty area - remove all transformers
-        //   if (e.target === stage) {
-        //     stage.find('Transformer').destroy();
-        //     layer.draw();
-        //     return;
-        //   }
-        //   // do nothing if clicked NOT on our rectangles
-        //   if (!e.target.hasName('rect')) {
-        //     return;
-        //   }
-        //   // remove old transformers
-        //   // TODO: we can skip it if current rect is already selected
-        //   stage.find('Transformer').destroy();
+        stage.on('click tap', function (e) {
+         // if click on empty area - remove all transformers
+           if (e.target === stage) {
+             stage.find('Transformer').destroy();
+             layer.draw();
+             return;
+           }
+           // do nothing if clicked NOT on our rectangles
+           if (!e.target.parent.hasName("stickyGroup")) {
+             return;
+           }
 
-        //   // create new transformer
-        //   var tr = new Konva.Transformer();
-        //   layer.add(tr);
-        //   tr.attachTo(e.target);
-        //   layer.draw();
-        // });
+           // remove old transformers
+           // TODO: we can skip it if current rect is already selected
+           stage.find('Transformer').destroy();
+
+           // create new transformer
+           var tr = new Konva.Transformer();
+           tr.attachTo(e.target.parent);
+           layer.add(tr);
+           layer.draw();
+         });
      }
 
      // add the layer to the stage
      stage.add(layer);
 
+    function fitStageIntoParentContainer() {
+        var container = document.querySelector('#stage-parent');
 
+        // now we need to fit stage into parent
+        var containerWidth = container.offsetWidth;
+        // to do this we need to scale the stage
+        var scale = containerWidth / stageWidth;
+
+        stage.width(stageWidth * scale);
+        stage.height(stageHeight * scale);
+        stage.scale({ x: scale, y: scale });
+        stage.draw();
+    }
+    fitStageIntoParentContainer();
+    window.addEventListener('resize', fitStageIntoParentContainer);
+
+
+// ZOOMING
     var scaleBy = 1.05;
     stage.on('wheel', e => {
         e.evt.preventDefault();
