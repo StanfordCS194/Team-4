@@ -10,7 +10,6 @@ class App extends Component {
         <h3 style={{ textAlign: 'center' }}>epiphany</h3>
         <div className="main">
   
-          <Canvas />
         </div>
       </Fragment>
     );
