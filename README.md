@@ -1,4 +1,4 @@
-# epiphany (malu+friends)
+# epiphany
 <img src="/team_photos/logo_1.png" width="400"/>
 
 We are exploring 1) an application for clean and efficient collaborative brainstorming and 2) automated presentation coaching through audio processing.
@@ -14,7 +14,7 @@ Member | Skills | Personal Traits | Desired Growth | Weaknesses
 Marilu | Android, Backend, Python, SQL | Planner, driven, like to document | Rapid prototyping, project management | Early bedtime, often reluctant to take breaks
 Carmelle | Design, Frontend | Independent | Outlining architecture of project, user testing | Stubborn, can't draw, will take on more instead of asking for help
 Alejandro | User centered and clean design, Android, AI/ML | Reliable, responsive, proactive | Experience designing a large application, Programming speed | Avoid working late into the night, less experience solving very abstract problems.
-Sean | I like math | I watch too many youtube videos | github use, communicating what I am doing, dividing work amoung group members | Thinking through a project before acting, procrastinating
+Sean | Python, HTML and CSS, breaking up code | I like taking pictures | github use, communicating what I am doing, dividing work amoung group members | Thinking through a project before acting, downloading packages
 
 # Team Communication:
 1. Facebook Messenger
