@@ -76,7 +76,7 @@ var epiphany_canvas = () => {
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y,
           text: '',
-          fontSize: 18,
+          fontSize: 35,
           fontFamily: 'Calibri',
           fill: '#555',
           width: 250,
