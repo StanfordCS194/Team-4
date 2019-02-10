@@ -62,7 +62,7 @@ var epiphany_canvas = () => {
           y: stage.getPointerPosition().y - 10,
           width: 250,
           height: 250,
-          fill: Konva.Util.getRandomColor(),
+          fill: '#fffdd0',
           stroke: 'gray',
           strokeWidth: 2,
           shadowOffsetX: 5,
@@ -75,7 +75,7 @@ var epiphany_canvas = () => {
       var textNode = new Konva.Text({
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y,
-          text: 'Click to edit. \n Then press enter.',
+          text: '',
           fontSize: 18,
           fontFamily: 'Calibri',
           fill: '#555',
@@ -86,7 +86,7 @@ var epiphany_canvas = () => {
       });
       group.add(textNode);
 
-      textNode.on('click', () => {
+      function editText() {
           // Disallow stage and current sticky movement when editing text
           stage.draggable(false);
           stage.off('wheel');
@@ -107,7 +107,7 @@ var epiphany_canvas = () => {
 
           textarea.value = textNode.text();
           textarea.style.position = 'absolute';
-          textarea.style.top = areaPosition.y + 'px';
+          textarea.style.top = areaPosition.y - 10 + 'px';
           textarea.style.left = areaPosition.x + 'px';
           textarea.style.width = textNode.width();
 
@@ -127,6 +127,11 @@ var epiphany_canvas = () => {
                   document.body.removeChild(textarea);
               }
           });
+      }
+      editText();
+
+      group.on('click', () => {
+          editText();
       });
 
       // Tween for drag and drop
@@ -217,6 +222,13 @@ var epiphany_canvas = () => {
         y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale
       };
 
+      var stageDimensions = {
+        x: window.innerWidth * stage.scaleX(),
+        y: window.innerHeight * stage.scaleX()
+      }
+      console.log(stage.getPointerPosition().x);
+      console.log(stage.getPointerPosition().y);
+
       var newScale =
         e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
       stage.scale({ x: newScale, y: newScale });
@@ -231,6 +243,10 @@ var epiphany_canvas = () => {
       };
       stage.position(newPos);
       stage.batchDraw();
+
+//      console.log(stage.width());
+//      console.log(stage.height());
+
   }
 }
 

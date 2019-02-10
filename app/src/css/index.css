@@ -3,3 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+textarea {
+  width: 250px;
+  height: 250px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #fffdd0 ;
+  border-radius: 1px;
+  background-color:  #fffdd0  ;
+  resize: none;
+  font-family: 'Calibri';
+  font-size: inherit;
+  text-align: center;
+
+}
