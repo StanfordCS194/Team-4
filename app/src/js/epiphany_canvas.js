@@ -167,7 +167,7 @@ var epiphany_canvas = () => {
 
       textarea.focus();
 
-      stickyText.text(textarea.value);
+      stickyText.text("");
       layer.draw();
 
       stage.on('click', () => exitEditText(stickyText, stickyGroup, textarea));
