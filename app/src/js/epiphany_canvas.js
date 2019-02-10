@@ -22,10 +22,13 @@ var epiphany_canvas = () => {
   var layer = new Konva.Layer();
   stage.add(layer);
 
-  stage.on('dblclick', onDoubleClick);
+  stage.on('dblclick', onStageDoubleClick);
 
 
-  function onDoubleClick () {
+  function onStageDoubleClick (e) {
+      if (e.target.nodeType === "Shape") {
+        return;
+      }
       var group = new Konva.Group({
           draggable: true,
           name: "stickyGroup"
@@ -130,7 +133,7 @@ var epiphany_canvas = () => {
       }
       editText();
 
-      group.on('click', () => {
+      group.on('dblclick', (e) => {
           editText();
       });
 
@@ -143,7 +146,6 @@ var epiphany_canvas = () => {
         scaleX: 1.1,
         scaleY: 1.1,
         easing: Konva.Easings.ElasticEaseOut,
-
       });
 
       group.tweenDrop = new Konva.Tween({
@@ -162,7 +164,6 @@ var epiphany_canvas = () => {
         anchorSize: 10,
         borderStroke: 'gray',
         rotationSnaps: [0, 90, 180, 270],
-
       });
       layer.add(tr2);
       layer.draw();
@@ -226,8 +227,6 @@ var epiphany_canvas = () => {
         x: window.innerWidth * stage.scaleX(),
         y: window.innerHeight * stage.scaleX()
       }
-      console.log(stage.getPointerPosition().x);
-      console.log(stage.getPointerPosition().y);
 
       var newScale =
         e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
@@ -243,10 +242,6 @@ var epiphany_canvas = () => {
       };
       stage.position(newPos);
       stage.batchDraw();
-
-//      console.log(stage.width());
-//      console.log(stage.height());
-
   }
 }
 
