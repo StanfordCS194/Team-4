@@ -29,9 +29,9 @@ class App extends Component {
           onSetOpen={this.onSetSidebarOpen}
           styles={{ sidebar: { background: "white" } }}
         >
-          <button onClick={() => this.onSetSidebarOpen(true)}>
-            Open sidebar
-          </button>
+          <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
+          >
+          </div>
         </Sidebar>
         <div className="main">
         </div>

@@ -27,14 +27,10 @@ class Toolbar extends Component {
     tools.push(<Fab id={this.state.tools[0]} color="primary" className={this.state.tools[0]}>
         <UndoIcon /></Fab>);
     tools.push(<Fab id={this.state.tools[1]} color="primary" className={this.state.tools[1]}>
-        <SaveIcon /></Fab>);  
+        <SaveIcon /></Fab>);
     tools.push(<Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
         <DeleteIcon /></Fab>);
-
-    const res = (
-      <div className="tools">{tools}</div>
-    );
-    return res;
+    return tools;
   }
 
   render() {

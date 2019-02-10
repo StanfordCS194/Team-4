@@ -28,3 +28,30 @@ h5 {
   background: #F0C987;
   color: white;
 }
+
+#handle {
+  background-color: #3f51b5;
+  width: 30px;
+  height: 60px;
+  z-index: 1;
+  position: fixed;
+  bottom: 50%;
+  box-shadow: 2px 3px 3px 1px rgba(0,0,0,0.2);
+  border-radius: 1px;
+}
+
+/* #handle button {
+  /* background-color: #4CAF50;
+
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0;
+  cursor: pointer;
+  position: fixed;
+  bottom: 50%;
+} */
