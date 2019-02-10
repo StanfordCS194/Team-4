@@ -1,0 +1,19 @@
+.tools {
+	display: flex;
+	align-content: flex-end;
+	flex-direction: row;
+	justify-content: center;
+}
+
+#delete {
+	margin-left: 10px;
+}
+
+#save {
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+#undo {
+	margin-right: 10px;
+}
