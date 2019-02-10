@@ -66,10 +66,6 @@ var epiphany_canvas = () => {
           width: 250,
           height: 250,
           fill: '#fffdd0',
-          stroke: 'gray',
-          strokeWidth: 2,
-          shadowOffsetX: 5,
-          shadowOffsetY: 5,
           shadowColor: 'black'
       });
       group.add(rect);
@@ -154,8 +150,8 @@ var epiphany_canvas = () => {
         easing: Konva.Easings.ElasticEaseOut,
         scaleX: 1,
         scaleY: 1,
-        shadowOffsetX: 5,
-        shadowOffsetY: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
       });
 
       var tr2 = new Konva.Transformer({
