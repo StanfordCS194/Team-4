@@ -22,24 +22,29 @@ var epiphany_canvas = () => {
   var layer = new Konva.Layer();
   stage.add(layer);
 
-  stage.on('dblclick', onStageDoubleClick);
+  stage.on('dblclick', createStickyGroup);
 
 
-  function onStageDoubleClick (e) {
+  function createStickyGroup (e) {
+  /* Double clicking the stage creates a sticky (stickySquare + stickyText)
+     Immediately put in edit text mode */
+
+      // So that we don't create a sticky when we're trying to edit a sticky
       if (e.target.nodeType === "Shape") {
         return;
       }
-      var group = new Konva.Group({
+
+      var stickyGroup = new Konva.Group({
           draggable: true,
           name: "stickyGroup"
       });
-      layer.add(group);
+      layer.add(stickyGroup);
 
       // add cursor styling
-      group.on('mouseover', function() {
+      stickyGroup.on('mouseover', function() {
           document.body.style.cursor = 'pointer';
       });
-      group.on('mouseout', function() {
+      stickyGroup.on('mouseout', function() {
           document.body.style.cursor = 'default';
       });
 
@@ -48,19 +53,19 @@ var epiphany_canvas = () => {
       // animation not smooth)
       // ------------------------------------------------------
       // Sticky 'raises' when dragged
-      group.on('dragstart', function() {
-          group.tweenGrab.play();
+      stickyGroup.on('dragstart', function() {
+          stickyGroup.tweenGrab.play();
       });
 
       // Sticky comes back down when dropped
-      group.on('dragend', function() {
-          group.tweenDrop.play();
+      stickyGroup.on('dragend', function() {
+          stickyGroup.tweenDrop.play();
       });
       // ------------------------------------------------------
 
 
-      // group.add( new Konva.Rect({
-        var rect = new Konva.Rect({
+      // Create the sticky - stickySquare + stickyText
+      var stickySquare = new Konva.Rect({
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y - 10,
           width: 250,
@@ -68,10 +73,9 @@ var epiphany_canvas = () => {
           fill: '#fffdd0',
           shadowColor: 'black'
       });
-      group.add(rect);
+      stickyGroup.add(stickySquare);
 
-
-      var textNode = new Konva.Text({
+      var stickyText = new Konva.Text({
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y,
           text: '',
@@ -83,59 +87,17 @@ var epiphany_canvas = () => {
           align: 'center',
           listening: true
       });
-      group.add(textNode);
+      stickyGroup.add(stickyText);
 
-      function editText() {
-          // Disallow stage and current sticky movement when editing text
-          stage.draggable(false);
-          stage.off('wheel');
-          group.draggable(false);
+      // Immediately edit text, then dblclick to edit
+      editText(stickyText, stickyGroup);
+      stickyGroup.on('dblclick', () => editText(stickyText, stickyGroup));
 
-          var textPosition = textNode.getAbsolutePosition();
-          var stageBox = stage.getContainer().getBoundingClientRect();
-
-
-          var areaPosition = {
-              x: textPosition.x + stageBox.left,
-              y: textPosition.y + stageBox.top
-          };
-
-          // create textarea and style it
-          var textarea = document.createElement('textarea');
-          document.body.appendChild(textarea);
-
-          textarea.value = textNode.text();
-          textarea.style.position = 'absolute';
-          textarea.style.top = areaPosition.y - 10 + 'px';
-          textarea.style.left = areaPosition.x + 'px';
-          textarea.style.width = textNode.width();
-
-          textarea.focus();
-
-
-          textarea.addEventListener('keydown', function (e) {
-              // hide on enter
-              if (e.keyCode === 13) {
-                  // Reallow stage and current sticky movement after editing text
-                  stage.draggable(true);
-                  stage.on('wheel', onWheel);
-                  group.draggable(true);
-
-                  textNode.text(textarea.value);
-                  layer.draw();
-                  document.body.removeChild(textarea);
-              }
-          });
-      }
-      editText();
-
-      group.on('dblclick', (e) => {
-          editText();
-      });
+      stickyGroup.on('click', () => selectSticky(stickyGroup));
 
       // Tween for drag and drop
-      group.tweenGrab = new Konva.Tween({
-        node: rect,
+      stickyGroup.tweenGrab = new Konva.Tween({
+        node: stickySquare,
         shadowOffsetX: 15,
         shadowOffsetY: 15,
         duration: 0.5,
@@ -144,8 +106,8 @@ var epiphany_canvas = () => {
         easing: Konva.Easings.ElasticEaseOut,
       });
 
-      group.tweenDrop = new Konva.Tween({
-        node: rect,
+      stickyGroup.tweenDrop = new Konva.Tween({
+        node: stickySquare,
         duration: 1,
         easing: Konva.Easings.ElasticEaseOut,
         scaleX: 1,
@@ -155,7 +117,7 @@ var epiphany_canvas = () => {
       });
 
       var tr2 = new Konva.Transformer({
-        node: group,
+        node: stickyGroup,
         keepRatio: true,
         anchorSize: 10,
         borderStroke: 'gray',
@@ -163,30 +125,86 @@ var epiphany_canvas = () => {
       });
       layer.add(tr2);
       layer.draw();
+  }
 
-      stage.on('click tap', function (e) {
-       // if click on empty area - remove all transformers
-         if (e.target === stage) {
-           stage.find('Transformer').destroy();
-           layer.draw();
-           return;
-         }
-         // do nothing if clicked NOT on our rectangles
-         if (!e.target.parent.hasName("stickyGroup")) {
-           return;
-         }
+  function selectSticky(stickyGroup) {
+  // Given a stickyGroup, put a transformer around it
+      stage.find('Transformer').destroy();
 
-         // remove old transformers
-         // TODO: we can skip it if current rect is already selected
-         stage.find('Transformer').destroy();
+      // create new transformer
+      var tr = new Konva.Transformer();
+      tr.attachTo(stickyGroup);
+      layer.add(tr);
+      layer.draw();
+}
 
-         // create new transformer
-         var tr = new Konva.Transformer();
-         tr.attachTo(e.target.parent);
-         layer.add(tr);
-         layer.draw();
-       });
-   }
+  function editText (stickyText, stickyGroup) {
+  // Given a stickyGroup and its stickyText, edit the text using a textarea
+      stage.draggable(false);
+      stage.off('wheel');
+      stickyGroup.draggable(false);
+      stage.off('dblclick');
+
+      var textPosition = stickyText.getAbsolutePosition();
+      var stageBox = stage.getContainer().getBoundingClientRect();
+
+
+      var areaPosition = {
+          x: textPosition.x + stageBox.left,
+          y: textPosition.y + stageBox.top
+      };
+
+      // create textarea and style it
+      var textarea = document.createElement('textarea');
+      document.body.appendChild(textarea);
+
+      textarea.value = stickyText.text();
+      textarea.style.position = 'absolute';
+      textarea.style.top = areaPosition.y - 10 + 'px';
+      textarea.style.left = areaPosition.x + 'px';
+      textarea.style.width = stickyText.width();
+      textarea.id = 'textarea_id';
+
+      textarea.focus();
+
+      stickyText.text("");
+      layer.draw();
+
+      stage.on('click', () => exitEditText(stickyText, stickyGroup, textarea));
+  }
+
+  function exitEditText(stickyText, stickyGroup, textarea) {
+  // Given a stickyGroup, its stickyText, and textarea, close the textarea and update stickyText
+      if (textarea.parentElement) {
+          // Reallow current sticky movement
+          stickyGroup.draggable(true);
+
+          // Update stickyText text
+          stickyText.text(textarea.value);
+
+          layer.draw();
+          document.body.removeChild(textarea);
+
+          // Reallow stage movement
+          stage.draggable(true);
+          stage.on('wheel', onWheel);
+          stage.on('dblclick', createStickyGroup)
+
+      }
+  }
+
+    // Remove transformers and exit edit text
+    stage.on('click', clearTransformers);
+
+    function clearTransformers (e) {
+    // if click on empty area remove all open transformers
+        if (e.target === stage) {
+            stage.find('Transformer').destroy();
+        }
+       layer.draw();
+       return;
+    }
+
 
 // WINDOW RESIZING TO MATCH WIDTH
   function fitStageIntoParentContainer() {
