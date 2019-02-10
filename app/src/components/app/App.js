@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
+import Toolbar from '../toolbar/Toolbar';
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
 
@@ -34,6 +35,7 @@ class App extends Component {
         <div className="main">
 
         </div>
+        <Toolbar />
       </Fragment>
     );
   }
