@@ -1,5 +1,5 @@
 # epiphany
-<img src="/team_photos/logo_1.png" width="400"/>
+<img src="/team_photos/logo_2.png" width="400"/>
 
 Organize your thoughts or find your next big idea with this clean, collaborative mind-mapping tool.
 
