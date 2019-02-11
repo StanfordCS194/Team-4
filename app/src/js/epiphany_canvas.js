@@ -2,6 +2,7 @@ import { Stage, Layer, Rect, Text } from 'react-konva';
 import Konva from 'konva';
 
 var epiphany_canvas = () => {
+  var justOpenedApp = true;
   var stageWidth = window.innerWidth;
   var stageHeight = window.innerHeight;
 
@@ -16,12 +17,29 @@ var epiphany_canvas = () => {
   var layer = new Konva.Layer();
   stage.add(layer);
 
+  var encouragingStartText = new Konva.Text( {
+      x: stageWidth / 2 - 250,
+      y: stageHeight / 2 - 50,
+      text: 'Double click anywhere to start!',
+      fontSize: 30,
+      fontFamily: 'Klee',
+      fill: '#555',
+      width: 500,
+      padding: 20,
+      align: 'center',
+  })
+  layer.add(encouragingStartText);
 
   stage.on('dblclick', addToBoard);
 
   function addToBoard (e) {
   /* Double clicking the stage creates a sticky (stickySquare + stickyText)
      Immediately put in edit text mode */
+      if (justOpenedApp) {
+        stage.find('Text').destroy();
+        layer.draw();
+        justOpenedApp = false;
+      }
 
       // So that we don't create a sticky when we're trying to edit a sticky
       if (e.target.nodeType === "Shape") {
