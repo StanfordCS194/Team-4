@@ -49,7 +49,6 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        <h3 style={{ textAlign: 'center' }}>epiphany</h3>
         <Sidebar
           sidebar={this.makeSideBarContent(this.state.user)}
           open={this.state.sidebarOpen}
