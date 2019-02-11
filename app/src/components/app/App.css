@@ -31,14 +31,16 @@ h5 {
 
 .sidebarContent {
   padding: 20px 0 20px 0;
+  color: white;
 }
 
 #handle {
   background-color: #2EC4B6;
-  width: 30px;
-  height: 60px;
+  color: white;
+  text-align: center;
   z-index: 1;
   position: fixed;
+  padding: 15px 4px 15px 4px;
   bottom: 50%;
   box-shadow: 2px 3px 3px 1px rgba(0,0,0,0.2);
   border-radius: 1px;
@@ -65,4 +67,7 @@ h5 {
     padding: 0 30px 10px 0;
   	position: fixed;
   	z-index: 1;
+}
+
+#ArrowIcon {
 }

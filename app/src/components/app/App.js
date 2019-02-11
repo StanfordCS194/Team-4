@@ -9,8 +9,10 @@ import Sidebar from 'react-sidebar';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
+import Icon from '@material-ui/core/Icon';
 import AddIcon from '@material-ui/icons/Add';
 import AccountIcon from '@material-ui/icons/AccountCircle';
+import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 
 class App extends Component {
   constructor(props) {
@@ -56,7 +58,7 @@ class App extends Component {
           styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6"} }}
         >
           <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
-          >
+            <ArrowIcon id="arrowIcon" />
           </div>
         </Sidebar>
         <div className="main">
