@@ -84,7 +84,7 @@ var epiphany_canvas = () => {
           y: stage.getPointerPosition().y,
           text: '',
           fontSize: 35,
-          fontFamily: 'Calibri',
+          fontFamily: 'Klee',
           fill: '#555',
           width: 250,
           padding: 20,
@@ -170,6 +170,7 @@ var epiphany_canvas = () => {
       textarea.style.left = areaPosition.x + 'px';
       textarea.style.width = stickyText.width();
       textarea.id = 'textarea_id';
+      textarea.style.fontFamily = 'Klee';
 
       textarea.focus();
 
