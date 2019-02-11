@@ -29,6 +29,10 @@ h5 {
   color: white;
 }
 
+.sidebarContent {
+  padding: 20px 0 20px 0;
+}
+
 #handle {
   background-color: #3f51b5;
   width: 30px;
@@ -38,6 +42,19 @@ h5 {
   bottom: 50%;
   box-shadow: 2px 3px 3px 1px rgba(0,0,0,0.2);
   border-radius: 1px;
+}
+
+.sidebarContent a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebarContent a:visited {
+  text-decoration: none;
+}
+
+#accountIcon {
+  margin: 0 5px 5px 0;
 }
 
 /* #handle button {
