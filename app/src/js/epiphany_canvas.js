@@ -162,7 +162,7 @@ var epiphany_canvas = () => {
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y - 60,
           text: '',
-          fontSize: 75,
+          fontSize: 95,
           fontFamily: 'Klee',
           fill: '#555',
           width: 400,
@@ -218,7 +218,7 @@ var epiphany_canvas = () => {
       // Defaults for plainText
       var textareaHeight = 175 + 'px';
       var textareaWidth = 400 + 'px';
-      var textareaFontSize = 75 + 'px';
+      var textareaFontSize = 95 + 'px';
 
       if (stickyGroup) {
           stickyGroup.draggable(false);
