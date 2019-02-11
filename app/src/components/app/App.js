@@ -53,7 +53,7 @@ class App extends Component {
           sidebar={this.makeSideBarContent(this.state.user)}
           open={this.state.sidebarOpen}
           onSetOpen={this.onSetSidebarOpen}
-          styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#3f51b5"} }}
+          styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6"} }}
         >
           <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
           >
