@@ -5,8 +5,10 @@
 	position: fixed;
   bottom: 0;
   width: 100%;
+	position: fixed;
+	z-index: 1;
 }
 
 #delete, #save, #undo {
-	margin: 0 10px 10px 0;
+	margin: 0 10px 50px 0;
 }

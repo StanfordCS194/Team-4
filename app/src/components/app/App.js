@@ -63,6 +63,7 @@ class App extends Component {
         <div className="main">
         </div>
         <Toolbar />
+        <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );
   }

@@ -57,6 +57,16 @@ h5 {
   margin: 0 5px 5px 0;
 }
 
+#logo {
+    width: 150px;
+    height: auto;
+    bottom: 0;
+    right: 0;
+    padding: 0 30px 10px 0;
+  	position: fixed;
+  	z-index: 1;
+}
+
 /* #handle button {
   /* background-color: #4CAF50;
 
