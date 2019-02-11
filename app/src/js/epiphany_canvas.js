@@ -24,6 +24,8 @@ var epiphany_canvas = () => {
 
   stage.on('dblclick', createStickyGroup);
 
+//  var textarea = document.getElementById("textarea");
+
 
   function createStickyGroup (e) {
   /* Double clicking the stage creates a sticky (stickySquare + stickyText)
@@ -63,6 +65,7 @@ var epiphany_canvas = () => {
       });
       // ------------------------------------------------------
 
+      let rotation = Math.floor(Math.random() * (10) - 5); // Random rotation in range [-5, 5]
 
       // Create the sticky - stickySquare + stickyText
       var stickySquare = new Konva.Rect({
@@ -71,7 +74,8 @@ var epiphany_canvas = () => {
           width: 250,
           height: 250,
           fill: '#fffdd0',
-          shadowColor: 'black'
+          shadowColor: 'black',
+          rotation: rotation,
       });
       stickyGroup.add(stickySquare);
 
@@ -85,7 +89,8 @@ var epiphany_canvas = () => {
           width: 250,
           padding: 20,
           align: 'center',
-          listening: true
+          listening: true,
+          rotation: rotation,
       });
       stickyGroup.add(stickyText);
 
@@ -122,6 +127,7 @@ var epiphany_canvas = () => {
         anchorSize: 10,
         borderStroke: 'gray',
         rotationSnaps: [0, 90, 180, 270],
+//        rotation: 5,
       });
       layer.add(tr2);
       layer.draw();
