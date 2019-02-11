@@ -48,26 +48,22 @@ var epiphany_canvas = () => {
           document.body.style.cursor = 'default';
       });
 
-      // UNCOMMENT THIS BLOCK to try sticky 'lifting' and 'dropping' animation
-      // TODO is buggy (only works on first sticky, doesn't raise text too,
-      // animation not smooth)
-      // ------------------------------------------------------
       // Sticky 'raises' when dragged
       stickyGroup.on('dragstart', function(e) {
           e.target.to({
-            shadowColor: 'black',
-            shadowOffset: {
-                X: 15,
-                Y: 15,
-            },
             scaleX: 1.1,
             scaleY: 1.1,
             easing: Konva.Easings.ElasticEaseOut,
-
           });
-          console.log("drag start");
-          stickyGroup.moveToTop();
 
+          // make rect have shadow
+          let rect = e.target.find('Rect')[0];
+          rect.setAttrs({
+            shadowOffsetX: 15,
+            shadowOffsetY: 15,
+          });
+
+          stickyGroup.moveToTop();
       });
 
       // Sticky comes back down when dropped
@@ -77,7 +73,13 @@ var epiphany_canvas = () => {
             scaleY: 1,
             easing: Konva.Easings.ElasticEaseOut,
         });
-        console.log("drag end");
+
+        // remove shadow
+        let rect = e.target.find('Rect')[0];
+          rect.setAttrs({
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+        });
         layer.draw();
       });
       // ------------------------------------------------------
