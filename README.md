@@ -1,7 +1,8 @@
 # epiphany
 <img src="/team_photos/logo_1.png" width="400"/>
 
-We are exploring 1) an application for clean and efficient collaborative brainstorming and 2) automated presentation coaching through audio processing.
+Organize your thoughts or find your next big idea with this clean, collaborative mind-mapping tool.
+
 # Members
 | | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
