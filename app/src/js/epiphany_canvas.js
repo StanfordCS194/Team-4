@@ -264,19 +264,26 @@ var epiphany_canvas = () => {
           textareaHeight = stickyText.height();
           textareaWidth = stickyText.width();
           textareaFontSize = 35 + 'px';
+
+          if (creatingSticky) {
+              var textPosition = {
+                x: stage.getPointerPosition().x - 125,
+                y: stage.getPointerPosition().y,
+              }
+              creatingSticky = false;
+          } else {
+              //editing existing sticky
+              var textPosition = stickyText.getAbsolutePosition();
+          }
+      } else {
+          // creating or editing plain text
+          var textPosition = {
+                 x: stage.getPointerPosition().x  - 200,
+                 y: stage.getPointerPosition().y  - 60,
+          }
       }
 
       stage.off('dblclick');
-
-      if (creatingSticky) {
-          var textPosition = {
-            x: stage.getPointerPosition().x - 125,
-            y: stage.getPointerPosition().y,
-          }
-          creatingSticky = false;
-      } else {
-          var textPosition = stickyText.getAbsolutePosition();
-      }
 
 
       var stageBox = stage.getContainer().getBoundingClientRect();
