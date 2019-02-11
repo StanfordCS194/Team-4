@@ -20,17 +20,16 @@ class Toolbar extends Component {
   }
 
   createToolDivs() {
-    let tools = [];
-    // for (let i = 0; i < this.state.tools.length; i++) {
-    //   tools.push(<Button variant="primary" id={this.state.tools[i]} key={this.state.tools[i]}> {this.state.tools[i]} </Button>);
-    // }
-    tools.push(<Fab id={this.state.tools[0]} color="primary" className={this.state.tools[0]}>
-        <UndoIcon /></Fab>);
-    tools.push(<Fab id={this.state.tools[1]} color="primary" className={this.state.tools[1]}>
-        <SaveIcon /></Fab>);
-    tools.push(<Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
-        <DeleteIcon /></Fab>);
-    return tools;
+    return (
+      <Fragment>
+      <Fab id={this.state.tools[0]} color="primary" className={this.state.tools[0]}>
+          <UndoIcon /></Fab>
+      <Fab id={this.state.tools[1]} color="primary" className={this.state.tools[1]}>
+          <SaveIcon /></Fab>
+      <Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
+          <DeleteIcon /></Fab>
+      </Fragment>
+    );
   }
 
   render() {

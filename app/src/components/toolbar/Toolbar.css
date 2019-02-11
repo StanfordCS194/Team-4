@@ -13,3 +13,7 @@
 	margin: 0 10px 50px 0;
 	background-color: #2EC4B6;
 }
+
+#delete:hover, #save:hover, #undo:hover {
+	background-color: #00BDB2;
+}
