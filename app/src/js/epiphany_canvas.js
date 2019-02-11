@@ -302,19 +302,25 @@ var epiphany_canvas = () => {
           stage.draggable(true);
           stage.on('wheel', onWheel);
           stage.on('dblclick', addToBoard)
+
+          clearTransformers();
       }
   }
 
     // Remove transformers and exit edit text
-    stage.on('click', clearTransformers);
+    stage.on('click', clearView);
 
-    function clearTransformers (e) {
+    function clearView (e) {
     // if click on empty area remove all open transformers
         if (e.target === stage) {
-            stage.find('Transformer').destroy();
+            clearTransformers();
         }
-       layer.draw();
        return;
+    }
+
+    function clearTransformers() {
+        stage.find('Transformer').destroy();
+        layer.draw();
     }
 
 
