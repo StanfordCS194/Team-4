@@ -159,10 +159,10 @@ var epiphany_canvas = () => {
           x: stage.getPointerPosition().x - 125,
           y: stage.getPointerPosition().y - 60,
           text: '',
-          fontSize: 35,
+          fontSize: 75,
           fontFamily: 'Klee',
           fill: '#555',
-          width: 250,
+          width: 400,
           padding: 20,
           align: 'center',
           listening: true,
@@ -173,6 +173,26 @@ var epiphany_canvas = () => {
 
       editText(plainText, null);
       plainText.on('dblclick', () => editText(plainText, null));
+
+      plainText.on('dragstart', function(e) {
+          e.target.to({
+            scaleX: 1.1,
+            scaleY: 1.1,
+            easing: Konva.Easings.ElasticEaseOut,
+          });
+
+          plainText.moveToTop();
+      });
+
+      plainText.on('dragend', function(e) {
+        e.target.to({
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+
+        layer.draw();
+      });
   }
 
   function selectSticky(stickyGroup) {
@@ -192,11 +212,16 @@ var epiphany_canvas = () => {
       stage.draggable(false);
       stage.off('wheel');
 
-      var textareaHeight = 70 + 'px';
+      // Defaults for plainText
+      var textareaHeight = 175 + 'px';
+      var textareaWidth = 400 + 'px';
+      var textareaFontSize = 75 + 'px';
 
       if (stickyGroup) {
           stickyGroup.draggable(false);
           textareaHeight = stickyText.height();
+          textareaWidth = stickyText.width();
+          textareaFontSize = 35 + 'px';
       }
 
       stage.off('dblclick');
@@ -218,10 +243,11 @@ var epiphany_canvas = () => {
       textarea.style.position = 'absolute';
       textarea.style.top = areaPosition.y - 10 + 'px';
       textarea.style.left = areaPosition.x + 'px';
-      textarea.style.width = stickyText.width();
+      textarea.style.width = textareaWidth;
       textarea.style.height = textareaHeight;
       textarea.id = 'textarea_id';
       textarea.style.fontFamily = 'Klee';
+      textarea.style.fontSize = textareaFontSize;
 
       textarea.focus();
 
