@@ -1,15 +1,9 @@
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import Konva from 'konva';
-import {text, layer} from 'konva';
 
 var epiphany_canvas = () => {
   var stageWidth = window.innerWidth;
   var stageHeight = window.innerHeight;
-
-  function writeMessage(message) {
-      text.setText(message);
-      layer.draw();
-  }
 
   var stage = new Konva.Stage({
       container: 'container',
@@ -22,10 +16,10 @@ var epiphany_canvas = () => {
   var layer = new Konva.Layer();
   stage.add(layer);
 
-  stage.on('dblclick', createStickyGroup);
 
+  stage.on('dblclick', addToBoard);
 
-  function createStickyGroup (e) {
+  function addToBoard (e) {
   /* Double clicking the stage creates a sticky (stickySquare + stickyText)
      Immediately put in edit text mode */
 
@@ -34,6 +28,13 @@ var epiphany_canvas = () => {
         return;
       }
 
+      // Add plain text
+      if (window.event.metaKey) {
+            createPlainText(e);
+            return;
+      }
+
+      // Add sticky
       var stickyGroup = new Konva.Group({
           draggable: true,
           name: "stickyGroup",
@@ -151,6 +152,29 @@ var epiphany_canvas = () => {
       layer.draw();
   }
 
+  function createPlainText(e) {
+  // Create plain text on the board. Immediately edit.
+
+        var plainText = new Konva.Text({
+          x: stage.getPointerPosition().x - 125,
+          y: stage.getPointerPosition().y - 60,
+          text: '',
+          fontSize: 35,
+          fontFamily: 'Klee',
+          fill: '#555',
+          width: 250,
+          padding: 20,
+          align: 'center',
+          listening: true,
+          draggable: true
+      });
+      layer.add(plainText);
+      layer.draw();
+
+      editText(plainText, null);
+      plainText.on('dblclick', () => editText(plainText, null));
+  }
+
   function selectSticky(stickyGroup) {
   // Given a stickyGroup, put a transformer around it
       stage.find('Transformer').destroy();
@@ -163,10 +187,18 @@ var epiphany_canvas = () => {
 }
 
   function editText (stickyText, stickyGroup) {
-      // Given a stickyGroup and its stickyText, edit the text using a textarea
+  // Given a stickyGroup and its stickyText, edit the text using a textarea
+  // If stickyGroup is null, just edit plainText
       stage.draggable(false);
       stage.off('wheel');
-      stickyGroup.draggable(false);
+
+      var textareaHeight = 70 + 'px';
+
+      if (stickyGroup) {
+          stickyGroup.draggable(false);
+          textareaHeight = stickyText.height();
+      }
+
       stage.off('dblclick');
 
       var textPosition = stickyText.getAbsolutePosition();
@@ -187,6 +219,7 @@ var epiphany_canvas = () => {
       textarea.style.top = areaPosition.y - 10 + 'px';
       textarea.style.left = areaPosition.x + 'px';
       textarea.style.width = stickyText.width();
+      textarea.style.height = textareaHeight;
       textarea.id = 'textarea_id';
       textarea.style.fontFamily = 'Klee';
 
@@ -195,20 +228,22 @@ var epiphany_canvas = () => {
       stickyText.text("");
       layer.draw();
 
-      stage.on('click', () => exitEditText(stickyText, stickyGroup, textarea));
+      stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
       textarea.onkeypress = (() => {
         let key = window.event.keyCode;
         if (key == 13) {
-            exitEditText(stickyText, stickyGroup, textarea);
+            exitEditText(stickyText, textarea, stickyGroup,);
         }
       });
   }
 
-  function exitEditText(stickyText, stickyGroup, textarea) {
+  function exitEditText(stickyText, textarea, stickyGroup) {
   // Given a stickyGroup, its stickyText, and textarea, close the textarea and update stickyText
       if (textarea.parentElement) {
           // Reallow current sticky movement
+          if (stickyGroup) {
           stickyGroup.draggable(true);
+          }
 
           // Update stickyText text
           stickyText.text(textarea.value);
@@ -219,8 +254,7 @@ var epiphany_canvas = () => {
           // Reallow stage movement
           stage.draggable(true);
           stage.on('wheel', onWheel);
-          stage.on('dblclick', createStickyGroup)
-
+          stage.on('dblclick', addToBoard)
       }
   }
 
