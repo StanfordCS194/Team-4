@@ -38,7 +38,7 @@ var epiphany_canvas = () => {
 
       var stickyGroup = new Konva.Group({
           draggable: true,
-          name: "stickyGroup"
+          name: "stickyGroup",
       });
       layer.add(stickyGroup);
 
@@ -55,13 +55,39 @@ var epiphany_canvas = () => {
       // animation not smooth)
       // ------------------------------------------------------
       // Sticky 'raises' when dragged
-      stickyGroup.on('dragstart', function() {
-          stickyGroup.tweenGrab.play();
+      stickyGroup.on('dragstart', function(e) {
+          e.target.to({
+            shadowColor: 'black',
+            shadowOffset: {
+                X: 15,
+                Y: 15,
+            },
+            scaleX: 1.1,
+            scaleY: 1.1,
+            easing: Konva.Easings.ElasticEaseOut,
+
+          });
+          console.log("drag start");
+//          stickyGroup.draw();
+
+//          stickyGroup.tweenGrab.play();
+//          console.log("drag start");
+//          stickyGroup.moveToTop();
       });
 
       // Sticky comes back down when dropped
-      stickyGroup.on('dragend', function() {
-          stickyGroup.tweenDrop.play();
+      stickyGroup.on('dragend', function(e) {
+        e.target.to({
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+        console.log("drag end");
+        layer.draw();
+
+
+//          stickyGroup.tweenDrop.play();
+
       });
       // ------------------------------------------------------
 
