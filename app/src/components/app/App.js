@@ -32,8 +32,7 @@ class App extends Component {
     return (
       <Fragment>
         <div className="sidebarContent" id="user">
-          <AccountIcon id="accountIcon"/>
-          <a>{user.name}</a>
+          <h3><AccountIcon id="accountIcon"/>{user.name}</h3>
         </div>
         <div className="sidebarContent">
           <a href='#'>My Boards</a>
