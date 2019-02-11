@@ -3,6 +3,7 @@ import Konva from 'konva';
 
 var epiphany_canvas = () => {
   var justOpenedApp = true;
+  var creatingSticky = false;
   var stageWidth = window.innerWidth;
   var stageHeight = window.innerHeight;
 
@@ -36,6 +37,7 @@ var epiphany_canvas = () => {
   /* Double clicking the stage creates a sticky (stickySquare + stickyText)
      Immediately put in edit text mode */
       if (justOpenedApp) {
+      // Hide the encouraging start message
         stage.find('Text').destroy();
         layer.draw();
         justOpenedApp = false;
@@ -56,8 +58,12 @@ var epiphany_canvas = () => {
       var stickyGroup = new Konva.Group({
           draggable: true,
           name: "stickyGroup",
+          scaleX: 1.1,
+          scaleY: 1.1,
       });
       layer.add(stickyGroup);
+      creatingSticky = true;
+      animatedAdd(stickyGroup);
 
       // add cursor styling
       stickyGroup.on('mouseover', function() {
@@ -132,6 +138,8 @@ var epiphany_canvas = () => {
           align: 'center',
           listening: true,
           rotation: rotation,
+          scaleX: 1,
+          scaleY: 1
       });
       stickyGroup.add(stickyText);
 
@@ -162,7 +170,7 @@ var epiphany_canvas = () => {
         shadowOffsetY: 0,
       });
 
-      var tr2 = new Konva.Transformer({
+    var tr2 = new Konva.Transformer({
         node: stickyGroup,
         keepRatio: true,
         anchorSize: 10,
@@ -187,7 +195,8 @@ var epiphany_canvas = () => {
           padding: 20,
           align: 'center',
           listening: true,
-          draggable: true
+          draggable: true,
+
       });
       layer.add(plainText);
       layer.draw();
@@ -214,6 +223,15 @@ var epiphany_canvas = () => {
 
         layer.draw();
       });
+  }
+
+  function animatedAdd(stickyGroup) {
+    stickyGroup.to({
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.ElasticEaseOut,
+    });
+    layer.draw();
   }
 
   function selectSticky(stickyGroup) {
@@ -247,7 +265,17 @@ var epiphany_canvas = () => {
 
       stage.off('dblclick');
 
-      var textPosition = stickyText.getAbsolutePosition();
+      if (creatingSticky) {
+          var textPosition = {
+            x: stage.getPointerPosition().x - 125,
+            y: stage.getPointerPosition().y,
+          }
+          creatingSticky = false;
+      } else {
+          var textPosition = stickyText.getAbsolutePosition();
+      }
+
+
       var stageBox = stage.getContainer().getBoundingClientRect();
 
 
