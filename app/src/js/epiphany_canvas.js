@@ -114,10 +114,12 @@ var epiphany_canvas = () => {
       let color = colors[Math.floor(Math.random() * colors.length)] // Random index between 0 and 3
       console.log("color is " + color);
 
+      var stageScaleX = stage.scaleX();
+
       // Create the sticky - stickySquare + stickyText
       var stickySquare = new Konva.Rect({
-          x: stage.getPointerPosition().x - 125,
-          y: stage.getPointerPosition().y - 10,
+          x: stage.getPointerPosition().x / stageScaleX - stage.x() / stageScaleX - 125,
+          y: stage.getPointerPosition().y / stageScaleX - stage.y() / stageScaleX - 10,
           width: 250,
           height: 250,
           fill: color,
@@ -127,8 +129,8 @@ var epiphany_canvas = () => {
       stickyGroup.add(stickySquare);
 
       var stickyText = new Konva.Text({
-          x: stage.getPointerPosition().x - 125,
-          y: stage.getPointerPosition().y,
+          x: stage.getPointerPosition().x / stageScaleX - stage.x() / stageScaleX - 125,
+          y: stage.getPointerPosition().y / stageScaleX - stage.y() / stageScaleX,
           text: '',
           fontSize: 35,
           fontFamily: 'Klee',
@@ -183,10 +185,11 @@ var epiphany_canvas = () => {
 
   function createPlainText(e) {
   // Create plain text on the board. Immediately edit.
+        var stageScaleX = stage.scaleX();
 
         var plainText = new Konva.Text({
-          x: stage.getPointerPosition().x - 125,
-          y: stage.getPointerPosition().y - 60,
+          x: stage.getPointerPosition().x / stageScaleX - stage.x() / stageScaleX - 200,
+          y: stage.getPointerPosition().y / stageScaleX - stage.y() / stageScaleX - 60,
           text: '',
           fontSize: 95,
           fontFamily: 'Klee',
@@ -375,7 +378,6 @@ var epiphany_canvas = () => {
   stage.on('wheel', onWheel);
 
   function onWheel(e) {
-      e.evt.preventDefault();
       var oldScale = stage.scaleX();
 
       var mousePointTo = {
