@@ -85,7 +85,10 @@ var epiphany_canvas = () => {
       });
       // ------------------------------------------------------
 
-      let rotation = Math.floor(Math.random() * (10) - 5); // Random rotation in range [-5, 5]
+      let rotation = Math.floor(Math.random() * (11) - 5); // Random rotation in range [-5, 5]
+      let colors = ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865']
+      let color = colors[Math.floor(Math.random() * colors.length)] // Random index between 0 and 3
+      console.log("color is " + color);
 
       // Create the sticky - stickySquare + stickyText
       var stickySquare = new Konva.Rect({
@@ -93,7 +96,7 @@ var epiphany_canvas = () => {
           y: stage.getPointerPosition().y - 10,
           width: 250,
           height: 250,
-          fill: '#fffdd0',
+          fill: color,
           shadowColor: 'black',
           rotation: rotation,
       });
