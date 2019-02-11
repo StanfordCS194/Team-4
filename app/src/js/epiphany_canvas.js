@@ -177,6 +177,12 @@ var epiphany_canvas = () => {
       layer.draw();
 
       stage.on('click', () => exitEditText(stickyText, stickyGroup, textarea));
+      textarea.onkeypress = (() => {
+        let key = window.event.keyCode;
+        if (key == 13) {
+            exitEditText(stickyText, stickyGroup, textarea);
+        }
+      });
   }
 
   function exitEditText(stickyText, stickyGroup, textarea) {
