@@ -10,13 +10,13 @@ import makeStickySquare  from './utils/makeStickySquare'
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_DELETE_1 = 46;
 const KEY_CODE_DELETE_2 = 8;
-const ID_CONST = '#'
 var stickyArray = []
 var activeSticky = null;
 
 var epiphany_canvas = () => {
   var justOpenedApp = true;
   var creatingSticky = false;
+  var editingStickyText = false;
   var stageWidth = window.innerWidth;
   var stageHeight = window.innerHeight;
   var id = 0;
@@ -105,7 +105,6 @@ var epiphany_canvas = () => {
       rect.setAttrs({
         shadowOffsetX: 15,
         shadowOffsetY: 15,
-        id: ID_CONST.concat(id.toString())
       });
 
       stickyGroup.moveToTop();
@@ -132,7 +131,7 @@ var epiphany_canvas = () => {
     let rotation = Math.floor(Math.random() * (11) - 5); // Random rotation in range [-5, 5]
     let colors = ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865']
     let color = colors[Math.floor(Math.random() * colors.length)] // Random index between 0 and 3
-    console.log("id " + ID_CONST.concat(id.toString()));
+    console.log("id " + id.toString());
 
     var stageScaleX = stage.scaleX();
 
@@ -269,7 +268,7 @@ var epiphany_canvas = () => {
     layer.draw();
 
     if (window.addEventListener('keydown', (e) => {
-        if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2 && activeSticky === stickyGroup) {
+        if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2 && activeSticky === stickyGroup && !editingStickyText) {
           deleteSticky(stickyGroup)
         }
     }));
@@ -305,6 +304,7 @@ var epiphany_canvas = () => {
   }
 
   function editText(stickyText, stickyGroup) {
+    editingStickyText = true;
     // Given a stickyGroup and its stickyText, edit the text using a textarea
     // If stickyGroup is null, just edit plainText
     stage.draggable(false);
@@ -341,9 +341,7 @@ var epiphany_canvas = () => {
 
     stage.off('dblclick');
 
-
     var stageBox = stage.getContainer().getBoundingClientRect();
-
 
     var areaPosition = {
       x: textPosition.x + stageBox.left,
@@ -401,6 +399,7 @@ var epiphany_canvas = () => {
       stage.on('dblclick', addToBoard)
 
       clearTransformers();
+      editingStickyText = false;
     }
   }
 
