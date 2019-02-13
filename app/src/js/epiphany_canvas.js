@@ -5,11 +5,14 @@ import {
   Text
 } from 'react-konva';
 import Konva from 'konva';
+import makeStickySquare  from './utils/makeStickySquare'
 
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_DELETE_1 = 46;
 const KEY_CODE_DELETE_2 = 8;
 const ID_CONST = '#'
+var stickyArray = []
+var activeSticky = null;
 
 var epiphany_canvas = () => {
   var justOpenedApp = true;
@@ -73,9 +76,11 @@ var epiphany_canvas = () => {
       name: "stickyGroup",
       scaleX: 1.1,
       scaleY: 1.1,
-      id: ID_CONST.concat(id.toString())
+      id: id.toString()
     });
     layer.add(stickyGroup);
+    stickyArray[id.toString()] = stickyGroup;
+
     creatingSticky = true;
     animatedAdd(stickyGroup);
 
@@ -253,6 +258,7 @@ var epiphany_canvas = () => {
   }
 
   function selectSticky(stickyGroup) {
+    activeSticky = stickyGroup;
     // Given a stickyGroup, put a transformer around it
     clearTransformers();
 
@@ -263,13 +269,14 @@ var epiphany_canvas = () => {
     layer.draw();
 
     if (window.addEventListener('keydown', (e) => {
-        if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2) {
+        if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2 && activeSticky === stickyGroup) {
           deleteSticky(stickyGroup)
         }
-      }));
+    }));
   }
 
   function deleteSticky(stickyGroup) {
+    /* CODE THAT ATTEMPTS TO ISOLATE GROUP BY ID */
     // var shapes = layer.find('Group');
     // console.log(shapes)
     // console.log('stickyGroup = ', stickyGroup.attrs.id)
@@ -278,9 +285,23 @@ var epiphany_canvas = () => {
     // })
     // activeStickyGroup[0].destroy();
     // console.log('activeStickyGroup: ', activeStickyGroup)
-    stickyGroup.destroy();
+    // stickyGroup.destroy();     // destroy()  is way too greedy and deletes multiple stickies, for unknown reasons
+
+    /* ------------------------------ */
+    console.log('stickyGroup: ',  stickyGroup)
+    //stickyGroup.add(makeStickySquare(stage, stickyGroup.x, stickyGroup.y, 'white'))
+    // var stickyClone = stickyGroup.clone({
+    //   fill: '#F0F0F0'
+    // });
+    //stickyGroup.add(stickyClone);
+    //stickyGroup.children[0].attrs.fill = '#F0F0F0';
+    activeSticky = stickyArray[stickyGroup.attrs.id];
+    console.log('activeSticky: ', activeSticky)
+    activeSticky.destroy();
     clearTransformers();
     layer.draw();
+    activeSticky = null;
+    stickyGroup = null;
   }
 
   function editText(stickyText, stickyGroup) {
