@@ -271,13 +271,6 @@ var epiphany_canvas = () => {
         }
       }));
       //console.log(stickyGroup.attrs.id)
-      // var groups = stage.find('Group');
-      // var sticky = groups.find(function(element) {
-      //   console.log(element)
-      //   return (element.nodeType === 'stickyGroup' && element.attrs.id === stickyGroup.attrs.id);
-      // });
-      // console.log(sticky)
-      //console.log(groups.findIndex(hasId()))
 }
 
   function editText (stickyText, stickyGroup) {
@@ -348,6 +341,9 @@ var epiphany_canvas = () => {
       stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
       textarea.onkeypress = (() => {
         let key = window.event.keyCode;
+        if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
+          window.event.stopImmediatePropagation();
+        }
         if (key == KEY_CODE_ENTER) {
             exitEditText(stickyText, textarea, stickyGroup,);
         }
