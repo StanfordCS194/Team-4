@@ -1,11 +1,17 @@
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import Konva from 'konva';
 
+const KEY_CODE_ENTER = 13;
+const KEY_CODE_DELETE_1 = 46;
+const KEY_CODE_DELETE_2 = 8;
+const ID_CONST = '#'
+
 var epiphany_canvas = () => {
   var justOpenedApp = true;
   var creatingSticky = false;
   var stageWidth = window.innerWidth;
   var stageHeight = window.innerHeight;
+  var id = 0;
 
   var stage = new Konva.Stage({
       container: 'container',
@@ -54,12 +60,16 @@ var epiphany_canvas = () => {
             return;
       }
 
+      // 
+      id += 1;
+
       // Add sticky
       var stickyGroup = new Konva.Group({
           draggable: true,
           name: "stickyGroup",
           scaleX: 1.1,
           scaleY: 1.1,
+          id: ID_CONST.concat(id.toString()) 
       });
       layer.add(stickyGroup);
       creatingSticky = true;
@@ -237,6 +247,12 @@ var epiphany_canvas = () => {
     layer.draw();
   }
 
+  function hasId(element) {
+    console.log('element: ', element)
+    return true;
+    //return element.attrs.id === '#1'
+  }
+
   function selectSticky(stickyGroup) {
   // Given a stickyGroup, put a transformer around it
       stage.find('Transformer').destroy();
@@ -246,6 +262,22 @@ var epiphany_canvas = () => {
       tr.attachTo(stickyGroup);
       layer.add(tr);
       layer.draw();
+      
+      if (window.addEventListener('keydown', (e) => {
+        if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2) {
+          stage.find('Transformer').destroy();
+          stickyGroup.destroy();
+          layer.draw();
+        }
+      }));
+      //console.log(stickyGroup.attrs.id)
+      // var groups = stage.find('Group');
+      // var sticky = groups.find(function(element) {
+      //   console.log(element)
+      //   return (element.nodeType === 'stickyGroup' && element.attrs.id === stickyGroup.attrs.id);
+      // });
+      // console.log(sticky)
+      //console.log(groups.findIndex(hasId()))
 }
 
   function editText (stickyText, stickyGroup) {
@@ -316,7 +348,7 @@ var epiphany_canvas = () => {
       stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
       textarea.onkeypress = (() => {
         let key = window.event.keyCode;
-        if (key == 13) {
+        if (key == KEY_CODE_ENTER) {
             exitEditText(stickyText, textarea, stickyGroup,);
         }
       });
