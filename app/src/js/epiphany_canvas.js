@@ -5,7 +5,6 @@ import {
   Text
 } from 'react-konva';
 import Konva from 'konva';
-import makeStickySquare  from './utils/makeStickySquare'
 
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_DELETE_1 = 46;
@@ -131,7 +130,6 @@ var epiphany_canvas = () => {
     let rotation = Math.floor(Math.random() * (11) - 5); // Random rotation in range [-5, 5]
     let colors = ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865']
     let color = colors[Math.floor(Math.random() * colors.length)] // Random index between 0 and 3
-    console.log("id " + id.toString());
 
     var stageScaleX = stage.scaleX();
 
@@ -269,42 +267,22 @@ var epiphany_canvas = () => {
 
     if (window.addEventListener('keydown', (e) => {
         if (e.keyCode === KEY_CODE_DELETE_1 || e.keyCode === KEY_CODE_DELETE_2 && activeSticky === stickyGroup && !editingStickyText) {
-          deleteSticky(stickyGroup)
+          deleteSticky(stickyGroup);
         }
     }));
   }
 
   function deleteSticky(stickyGroup) {
-    /* CODE THAT ATTEMPTS TO ISOLATE GROUP BY ID */
-    // var shapes = layer.find('Group');
-    // console.log(shapes)
-    // console.log('stickyGroup = ', stickyGroup.attrs.id)
-    // var activeStickyGroup = shapes.find(function(element) {
-    //   return element.attrs.id === stickyGroup.attrs.id
-    // })
-    // activeStickyGroup[0].destroy();
-    // console.log('activeStickyGroup: ', activeStickyGroup)
-    // stickyGroup.destroy();     // destroy()  is way too greedy and deletes multiple stickies, for unknown reasons
-
-    /* ------------------------------ */
-    console.log('stickyGroup: ',  stickyGroup)
-    //stickyGroup.add(makeStickySquare(stage, stickyGroup.x, stickyGroup.y, 'white'))
-    // var stickyClone = stickyGroup.clone({
-    //   fill: '#F0F0F0'
-    // });
-    //stickyGroup.add(stickyClone);
-    //stickyGroup.children[0].attrs.fill = '#F0F0F0';
-    activeSticky = stickyArray[stickyGroup.attrs.id];
-    console.log('activeSticky: ', activeSticky)
-    activeSticky.destroy();
+    activeSticky = stickyArray[stickyGroup.attrs.id]; // get just one sticky from our local array
+    activeSticky.destroy(); // call konva's built in destroy function which destroys all children
     clearTransformers();
     layer.draw();
-    activeSticky = null;
+    activeSticky = null; 
     stickyGroup = null;
   }
 
   function editText(stickyText, stickyGroup) {
-    editingStickyText = true;
+    editingStickyText = true; // so delete here won't delete the sticky
     // Given a stickyGroup and its stickyText, edit the text using a textarea
     // If stickyGroup is null, just edit plainText
     stage.draggable(false);
