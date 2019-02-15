@@ -5,6 +5,7 @@ import Toolbar from '../toolbar/Toolbar';
 import Canvas from '../canvas/Canvas';
 import FloatingToolbar from '../floatingToolbar/FloatingToolbar'
 import Sidebar from 'react-sidebar';
+import ColorPicker from '../colorpicker/ColorPicker'
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -62,6 +63,7 @@ class App extends Component {
         </Sidebar>
         <div className="main">
         </div>
+        {/* <ColorPicker /> */}
         <Toolbar />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>

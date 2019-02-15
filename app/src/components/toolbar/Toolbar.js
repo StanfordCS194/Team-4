@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { ButtonToolbar } from 'react-bootstrap';
 import './Toolbar.css';
-import { Button } from 'react-native'
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,6 +12,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
 import ColorIcon from '@material-ui/icons/FormatColorFill';
 
+import ColorPicker from '../colorpicker/ColorPicker'
 
 class Toolbar extends Component {
   constructor(props) {
@@ -25,6 +25,7 @@ class Toolbar extends Component {
   createToolDivs() {
     return (
       <Fragment>
+      <ColorPicker />
       <Fab 
         id={this.state.tools[0]} 
         color="primary" 
@@ -32,11 +33,25 @@ class Toolbar extends Component {
         onClick={() => console.log('Undo')}
         >
           <UndoIcon /></Fab>
-      <Fab id={this.state.tools[1]} color="primary" className={this.state.tools[1]}>
+      <Fab 
+        id={this.state.tools[1]} 
+        color="primary" 
+        className={this.state.tools[1]}
+        >
           <SaveIcon /></Fab>
-        <Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
-          <ColorIcon /></Fab>
-      <Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
+        <Fab 
+          id={this.state.tools[2]} 
+          color="primary" 
+          className={this.state.tools[2]}
+          onClick={() => console.log('FillColor')}
+        >
+          <ColorIcon />
+          </Fab>
+      <Fab 
+        id={this.state.tools[2]} 
+        color="primary" 
+        className={this.state.tools[2]}
+      >
           <DeleteIcon /></Fab>
       </Fragment>
     );
