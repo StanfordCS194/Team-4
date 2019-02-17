@@ -1,117 +1,82 @@
 import React, { Component } from 'react';
-import { v4 } from 'uuid';
-import Pusher from 'pusher-js';
+import { render } from 'react-dom';
+import { Stage, Layer, Rect, Text } from 'react-konva';
+import Konva from 'konva';
 
-class Canvas extends Component {
+class Canvas extends React.Component {
   constructor(props) {
     super(props);
-
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.endPaintEvent = this.endPaintEvent.bind(this);
-
-    this.pusher = new Pusher('PUSHER_KEY', {
-      cluster: 'eu',
-    });
-  }
-  isPainting = false;
-  userStrokeStyle = '#EE92C2';
-  guestStrokeStyle = '#F0C987';
-  line = [];
-  userId = v4();
-  prevPos = { offsetX: 0, offsetY: 0 };
-
-  onMouseDown({ nativeEvent }) {
-    const { offsetX, offsetY } = nativeEvent;
-    this.isPainting = true;
-    this.prevPos = { offsetX, offsetY };
-  }
-
-  onMouseMove({ nativeEvent }) {
-    if (this.isPainting) {
-      const { offsetX, offsetY } = nativeEvent;
-      const offSetData = { offsetX, offsetY };
-      this.position = {
-        start: { ...this.prevPos },
-        stop: { ...offSetData },
-      };
-      this.line = this.line.concat(this.position);
-      this.paint(this.prevPos, offSetData, this.userStrokeStyle);
-    }
-  }
-
-  onDoubleClick({ nativeEvent }) {
-    console.log('double click!')
-  }
-
-  endPaintEvent() {
-    if (this.isPainting) {
-      this.isPainting = false;
-      this.sendPaintData();
-    }
-  }
-
-  paint(prevPos, currPos, strokeStyle) {
-    const { offsetX, offsetY } = currPos;
-    const { offsetX: x, offsetY: y } = prevPos;
-
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = strokeStyle;
-    this.ctx.moveTo(x, y);
-    this.ctx.lineTo(offsetX, offsetY);
-    this.ctx.stroke();
-    this.prevPos = { offsetX, offsetY };
-  }
-
-  async sendPaintData() {
-    const body = {
-      line: this.line,
-      userId: this.userId,
+    this.state = {
+      justOpenedApp: true,
+      creatingSticky: false,
+      editingStickyText: false,
+      stageWidth: window.innerWidth,
+      stageHeight: window.innerHeight,
+      id: 0,
     };
-
-    const req = await fetch('http://localhost:4000/paint', {
-      method: 'post',
-      body: JSON.stringify(body),
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    const res = await req.json();
-    this.line = [];
   }
-
-  componentDidMount() {
-    this.canvas.width = 1200;
-    this.canvas.height = 600;
-    this.ctx = this.canvas.getContext('2d');
-    this.ctx.lineJoin = 'round';
-    this.ctx.lineCap = 'round';
-    this.ctx.lineWidth = 5;
-
-    const channel = this.pusher.subscribe('painting');
-    channel.bind('draw', (data) => {
-      const { userId, line } = data;
-      if (userId !== this.userId) {
-        line.forEach((position) => {
-          this.paint(position.start, position.stop, this.guestStrokeStyle);
-        });
-      }
-    });
-  }
-
+//   handleClick = () => {
+//     this.setState({
+//       color: Konva.Util.getRandomColor()
+//     });
+//   };
   render() {
+    console.log(this.state)
     return (
-      <canvas
-        ref={(ref) => (this.canvas = ref)}
-        style={{ background: 'white' }}
-        onMouseDown={this.onMouseDown}
-        onMouseLeave={this.endPaintEvent}
-        onMouseUp={this.endPaintEvent}
-        onMouseMove={this.onMouseMove}
-        onDoubleClick={this.onDoubleClick}
-      />
+      <Stage
+        container={'container'}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        draggable={true}
+        listening={true}
+        >
+        <Layer>
+        {this.state.justOpenedApp?
+        <Text
+          x={window.innerWidth / 2 - 250}
+          y={window.innerHeight / 2 - 50}
+          text={'Double click anywhere to start!'}
+          fontSize={30}
+          fontFamily={'Klee'}
+          fill={'#555'}
+          width={500}
+          padding={20}
+          align={'center'}
+          >
+        </Text>: <div />}
+        </Layer>
+      </Stage>
     );
   }
 }
+//
+// import React, { Component } from 'react';
+// import { render } from 'react-dom';
+// import { Stage, Layer, Rect, Text } from 'react-konva';
+// import Konva from 'konva';
+//
+// class ColoredRect extends React.Component {
+//   state = {
+//     color: 'green'
+//   };
+//   handleClick = () => {
+//     this.setState({
+//       color: Konva.Util.getRandomColor()
+//     });
+//   };
+//   render() {
+//     return (
+//       <Rect
+//         x={20}
+//         y={20}
+//         width={50}
+//         height={50}
+//         fill={this.state.color}
+//         shadowBlur={5}
+//         onClick={this.handleClick}
+//       />
+//     );
+//   }
+// }
 
 export default Canvas;

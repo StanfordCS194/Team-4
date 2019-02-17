@@ -23,7 +23,6 @@ class Toolbar extends Component {
       openColorPicker: false,
       icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
     };
-    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   createToolIcons() {

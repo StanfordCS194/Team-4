@@ -64,9 +64,7 @@ class App extends Component {
             <ArrowIcon id="arrowIcon" />
           </div>
         </Sidebar>
-        <div className="main">
-
-        </div>
+        <Canvas />
         <Toolbar />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
