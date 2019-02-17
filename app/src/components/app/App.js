@@ -43,7 +43,10 @@ class App extends Component {
     return (
       <Fragment>
         <div className="sidebarContent" id="user">
-          <h3><AccountIcon id="accountIcon"/>{user.name}</h3>
+          <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
+        </div>
+        <div className="sidebarContent">
+          <a href='#'>Save Board to PDF</a>
         </div>
         <div className="sidebarContent">
           <a href='#'>My Boards</a>
@@ -52,7 +55,7 @@ class App extends Component {
           <a href='#'>Account Settings</a>
         </div>
         <div className="sidebarContent">
-          <a href='#'>Logout</a>
+          <a href='#'>Log Out</a>
         </div>
       </Fragment>
     );

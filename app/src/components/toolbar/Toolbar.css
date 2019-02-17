@@ -9,8 +9,9 @@
 	z-index: 1;
 }
 
-#delete, #save, #undo, #color {
-	margin: 0 10px 50px 0;
+
+#delete, #save, #undo {
+	margin: 0 30px 50px 0;
 	background-color: #2EC4B6;
 }
 
