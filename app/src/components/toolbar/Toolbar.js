@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import './Toolbar.css';
 
+import ColorPicker from '../colorpicker/ColorPicker';
+
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
@@ -12,35 +14,49 @@ import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
 import ColorFillIcon from '@material-ui/icons/FormatColorFill';
 
-const icons = [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
 
 class Toolbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tools: ['undo', 'save', 'delete', 'color'],
+      openColorPicker: false,
+      icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
     };
+    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   createToolIcons() {
-    return (icons.map((icon, i) => { 
-      return <Fab 
-                  id={this.state.tools[i]} 
-                  key={this.state.tools[i]} 
-                  color="primary" 
-                  className="tools" 
-                  onClick={() => this.props.handleButtonClick(this.state.tools[i])}> 
-                  {icon}
+    const icons = [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
+    return (icons.map((icon, i) => {
+      return <Fab
+                  id={this.state.tools[i]}
+                  key={this.state.tools[i]}
+                  color="primary"
+                  className="tools"
+                  onClick={() => this.handleButtonClick(this.state.tools[i])}
+                  >
+                  {this.state.icons[i]}
               </Fab>
-    }))   
+    }))
   }
 
   createToolDivs() {
     return (
       <Fragment>
           {this.createToolIcons()}
+          <ColorPicker
+            openColorPicker={this.state.openColorPicker}
+          />
       </Fragment>
     );
+  }
+
+  handleButtonClick(id) {
+    console.log(id)
+    if (id === 'color') {
+      this.setState({ openColorPicker: !this.state.openColorPicker })
+    }
   }
 
   render() {

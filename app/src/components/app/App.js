@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import Toolbar from '../toolbar/Toolbar';
-import ColorPicker from '../colorpicker/ColorPicker';
 
 import Canvas from '../canvas/Canvas';
 import FloatingToolbar from '../floatingToolbar/FloatingToolbar'
@@ -21,22 +20,9 @@ class App extends Component {
     super(props);
     this.state = {
       sidebarOpen: true,
-      openColorPicker: false,
       user: {name: 'Marilu Bravo', img: '/anon.png'}
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
-    this.handleButtonClick = this.handleButtonClick.bind(this);
-  }
-
-  handleButtonClick(id) {
-    console.log(id)
-    if (id === 'color') {
-      this.setState({ openColorPicker: !this.state.openColorPicker })
-    }
-  }
-
-  onSetSidebarOpen(open) {
-    this.setState({ sidebarOpen: open });
   }
 
   makeSideBarContent(user) {
@@ -61,6 +47,10 @@ class App extends Component {
     );
   }
 
+  onSetSidebarOpen(open) {
+    this.setState({ sidebarOpen: open });
+  }
+
   render() {
     return (
       <Fragment>
@@ -77,14 +67,7 @@ class App extends Component {
         <div className="main">
 
         </div>
-        <Toolbar 
-          handleButtonClick = {this.handleButtonClick}> 
-        </Toolbar>
-        <div className="logo">
-          <ColorPicker 
-              openColorPicker={this.state.openColorPicker}
-            />
-        </div>
+        <Toolbar />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );

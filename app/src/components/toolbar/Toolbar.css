@@ -10,11 +10,11 @@
 }
 
 
-#delete, #save, #undo {
+#delete, #save, #undo, #color {
 	margin: 0 30px 50px 0;
 	background-color: #2EC4B6;
 }
 
-#delete:hover, #save:hover, #undo:hover {
+#delete:hover, #save:hover, #undo:hover, #color:hover {
 	background-color: #00BDB2;
 }
