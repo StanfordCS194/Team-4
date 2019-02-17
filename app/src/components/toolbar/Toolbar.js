@@ -10,24 +10,35 @@ import Icon from '@material-ui/core/Icon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
+import ColorFillIcon from '@material-ui/icons/FormatColorFill';
+
+const icons = [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
 
 class Toolbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tools: ['undo', 'save', 'delete'],
+      tools: ['undo', 'save', 'delete', 'color'],
     };
+  }
+
+  createToolIcons() {
+    return (icons.map((icon, i) => { 
+      return <Fab 
+                  id={this.state.tools[i]} 
+                  key={this.state.tools[i]} 
+                  color="primary" 
+                  className="tools" 
+                  onClick={() => this.props.handleButtonClick(this.state.tools[i])}> 
+                  {icon}
+              </Fab>
+    }))   
   }
 
   createToolDivs() {
     return (
       <Fragment>
-      <Fab id={this.state.tools[0]} color="primary" className={this.state.tools[0]}>
-          <UndoIcon /></Fab>
-      <Fab id={this.state.tools[1]} color="primary" className={this.state.tools[1]}>
-          <SaveIcon /></Fab>
-      <Fab id={this.state.tools[2]} color="primary" className={this.state.tools[2]}>
-          <DeleteIcon /></Fab>
+          {this.createToolIcons()}
       </Fragment>
     );
   }

@@ -11,7 +11,7 @@ class Toolbar extends Component {
   createToolDivs() {
     let tools = [];
     for (let i = 0; i < this.state.tools.length; i++) {
-      tools.push(<div key={this.state.tools[i]}> {this.state.tools[i]} </div>));
+      tools.push(<div key={this.state.tools[i]}> {this.state.tools[i]} </div>);
     }
     const res = (
       <div className="tools">{matchingStates}</div>
