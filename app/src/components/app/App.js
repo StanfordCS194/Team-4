@@ -21,10 +21,18 @@ class App extends Component {
     super(props);
     this.state = {
       sidebarOpen: true,
-      openColorPicker: true,
+      openColorPicker: false,
       user: {name: 'Marilu Bravo', img: '/anon.png'}
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+  }
+
+  handleButtonClick(id) {
+    console.log(id)
+    if (id === 'color') {
+      this.setState({ openColorPicker: !this.state.openColorPicker })
+    }
   }
 
   onSetSidebarOpen(open) {
@@ -64,11 +72,16 @@ class App extends Component {
           </div>
         </Sidebar>
         <div className="main">
+
         </div>
-        <ColorPicker 
-          openColorPicker={this.state.openColorPicker}
-        />
-        <Toolbar />
+        <Toolbar 
+          handleButtonClick = {this.handleButtonClick}> 
+        </Toolbar>
+        <div className="logo">
+          <ColorPicker 
+              openColorPicker={this.state.openColorPicker}
+            />
+        </div>
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );

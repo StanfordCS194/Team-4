@@ -22,13 +22,14 @@ class Toolbar extends Component {
     };
   }
 
-  handleButtonClick(id) {
-    console.log(id)
-  }
-
   createToolIcons() {
     return (icons.map((icon, i) => { 
-      return <Fab id={this.state.tools[i]} color="primary" className="tools" onClick={() => this.handleButtonClick(this.state.tools[i])}> 
+      return <Fab 
+                  id={this.state.tools[i]} 
+                  key={this.state.tools[i]} 
+                  color="primary" 
+                  className="tools" 
+                  onClick={() => this.props.handleButtonClick(this.state.tools[i])}> 
                   {icon}
               </Fab>
     }))   
@@ -41,8 +42,6 @@ class Toolbar extends Component {
       </Fragment>
     );
   }
-
-
 
   render() {
     return (
