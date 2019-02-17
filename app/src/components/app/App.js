@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import Toolbar from '../toolbar/Toolbar';
+import ColorPicker from '../colorpicker/ColorPicker';
+
 import Canvas from '../canvas/Canvas';
 import FloatingToolbar from '../floatingToolbar/FloatingToolbar'
 import Sidebar from 'react-sidebar';
@@ -19,6 +21,7 @@ class App extends Component {
     super(props);
     this.state = {
       sidebarOpen: true,
+      openColorPicker: true,
       user: {name: 'Marilu Bravo', img: '/anon.png'}
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -62,6 +65,9 @@ class App extends Component {
         </Sidebar>
         <div className="main">
         </div>
+        <ColorPicker 
+          openColorPicker={this.state.openColorPicker}
+        />
         <Toolbar />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
