@@ -149,7 +149,7 @@ var epiphany_canvas = () => {
       x: stage.getPointerPosition().x / stageScaleX - stage.x() / stageScaleX - 125,
       y: stage.getPointerPosition().y / stageScaleX - stage.y() / stageScaleX,
       text: '',
-      fontSize: 35,
+      fontSize: 50,
       fontFamily: 'Klee',
       fill: '#555',
       width: 250,
@@ -167,27 +167,6 @@ var epiphany_canvas = () => {
     stickyGroup.on('dblclick', () => editText(stickyText, stickyGroup));
 
     stickyGroup.on('click', () => selectSticky(stickyGroup));
-
-    // Tween for drag and drop
-    stickyGroup.tweenGrab = new Konva.Tween({
-      node: stickySquare,
-      shadowOffsetX: 15,
-      shadowOffsetY: 15,
-      duration: 0.5,
-      scaleX: 1.1,
-      scaleY: 1.1,
-      easing: Konva.Easings.ElasticEaseOut,
-    });
-
-    stickyGroup.tweenDrop = new Konva.Tween({
-      node: stickySquare,
-      duration: 1,
-      easing: Konva.Easings.ElasticEaseOut,
-      scaleX: 1,
-      scaleY: 1,
-      shadowOffsetX: 0,
-      shadowOffsetY: 0,
-    });
 
     var tr2 = new Konva.Transformer({
       node: stickyGroup,
@@ -297,7 +276,7 @@ var epiphany_canvas = () => {
       stickyGroup.draggable(false);
       textareaHeight = stickyText.height();
       textareaWidth = stickyText.width();
-      textareaFontSize = 35 + 'px';
+      textareaFontSize = 50 + 'px';
 
       if (creatingSticky) {
         var textPosition = {
