@@ -26,8 +26,7 @@ class Toolbar extends Component {
   }
 
   createToolIcons() {
-    const icons = [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
-    return (icons.map((icon, i) => {
+    return (this.state.icons.map((icon, i) => {
       return <Fab
                   id={this.state.tools[i]}
                   key={this.state.tools[i]}
@@ -52,7 +51,6 @@ class Toolbar extends Component {
   }
 
   handleButtonClick(id) {
-    console.log(id)
     if (id === 'color') {
       this.setState({ openColorPicker: !this.state.openColorPicker })
     }

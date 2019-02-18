@@ -56,7 +56,6 @@ var epiphany_canvas = () => {
       justOpenedApp = false;
     }
 
-    // So that we don't create a sticky when we're trying to edit a sticky
     if (e.target.nodeType === "Shape") {
       return;
     }
@@ -158,7 +157,7 @@ var epiphany_canvas = () => {
       listening: true,
       rotation: rotation,
       scaleX: 1,
-      scaleY: 1
+      scaleY: 1,
     });
     stickyGroup.add(stickyText);
 
@@ -277,7 +276,7 @@ var epiphany_canvas = () => {
     activeSticky.destroy(); // call konva's built in destroy function which destroys all children
     clearTransformers();
     layer.draw();
-    activeSticky = null; 
+    activeSticky = null;
     stickyGroup = null;
   }
 
