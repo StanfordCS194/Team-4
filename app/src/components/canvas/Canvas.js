@@ -82,9 +82,19 @@ class Sticky extends React.Component {
 
   }
 
-
-
   render() {
+    return (
+      <Rect
+      x={this.props.x}
+      y={this.props.y}
+      width={250}
+      height={250}
+      fill={this.state.colors[Math.floor(Math.random() * this.state.colors.length)]}
+      />
+    );
+  }
+
+  real_render() {
     return (
       <Transformer
         keepRatio={true}
@@ -166,7 +176,12 @@ class Canvas extends React.Component {
       KEY_CODE_ENTER: 13,
       KEY_CODE_DELETE_1: 46,
       KEY_CODE_DELETE_2: 8,
-      stickyArray: [],
+      stickyArray: [
+        <Rect x={0}
+        y={0}
+        width={250}
+        height={250}
+        backgroundColor={'red'}/>],
       activeSticky: null,
     };
   }
@@ -187,18 +202,20 @@ class Canvas extends React.Component {
       this.createPlainText(e);
       return;
     }
-
-    this.state.id += 1;
-    this.setState({ stickyArray: this.state.stickyArray + [
+    this.setState({id: this.state.id + 1});
+    console.log('event', e.evt);
+    let newSticky = (
       <Sticky
         id={this.state.id}
         scaleX={this.state.scaleX}
-        x={e.clientX}
-        y={e.clientY}
+        x={e.evt.clientX}
+        y={e.evt.clientY}
         stageX={this.state.stageX}
         stageY={this.state.stageY}
-        /> ]});
-
+        />
+      );
+    this.setState({stickyArray: this.state.stickyArray.concat([newSticky])});
+    console.log(this.state.stickyArray);
   }
 
   createPlainText(e) {
@@ -206,7 +223,7 @@ class Canvas extends React.Component {
   }
 
   render() {
-    console.log(this.state)
+    console.log('RENDER', this.state);
     return (
       <Stage
         container={'container'}
