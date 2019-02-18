@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 
+import Sticky from '../sticky/Sticky';
+
 class OpeningGreeting extends React.Component {
   constructor(props) {
     super(props);
@@ -26,137 +28,6 @@ class OpeningGreeting extends React.Component {
       );
     }
     return null;
-  }
-}
-
-class Sticky extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      colors: ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865'],
-    }
-  }
-
-  // Sticky 'raises' when dragged
-  dragStart(e) {
-    // e.target.to({
-    //   scaleX: 1.1,
-    //   scaleY: 1.1,
-    //   easing: Konva.Easings.ElasticEaseOut,
-    // });
-    //
-    // // make rect have shadow
-    // let rect = e.target.find('Rect')[0];
-    // rect.setAttrs({
-    //   shadowOffsetX: 15,
-    //   shadowOffsetY: 15,
-    // });
-    //
-    // stickyGroup.moveToTop();
-  }
-
-  // Sticky comes back down when dropped
-  dragEnd(e) {
-    // stickyGroup.on('dragend', function (e) {
-    //   e.target.to({
-    //     scaleX: 1,
-    //     scaleY: 1,
-    //     easing: Konva.Easings.ElasticEaseOut,
-    //   });
-    //
-    //   // remove shadow
-    //   let rect = e.target.find('Rect')[0];
-    //   rect.setAttrs({
-    //     shadowOffsetX: 0,
-    //     shadowOffsetY: 0,
-    //   });
-    //   layer.draw();
-    // });
-  }
-
-  selectSticky(e) {
-
-  }
-
-  editText(e) {
-
-  }
-
-  render() {
-    return (
-      <Rect
-      x={this.props.x}
-      y={this.props.y}
-      width={250}
-      height={250}
-      fill={this.state.colors[Math.floor(Math.random() * this.state.colors.length)]}
-      />
-    );
-  }
-
-  real_render() {
-    return (
-      <Transformer
-        keepRatio={true}
-        anchorSize={10}
-        borderStroke={'gray'}
-        rotationSnaps={[0, 90, 180, 270]}
-        >
-        <Group
-          draggable={true}
-          name={"stickyGroup"}
-          scaleX={1.1}
-          scaleY={1.1}
-          id={this.props.id.toString()}
-          dragStart={(e) => this.dragStart(e)}
-          dragEnd={(e) => this.dragEnd(e)}
-          onClick={(e) => this.selectSticky(e)}
-          onDblClick={(e) => this.editText(e)}
-          >
-          <Rect
-            x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
-            y={this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10}
-            width={250}
-            height={250}
-            fill={this.state.colors[Math.floor(Math.random() * this.state.colors.length)]}
-            shadowColor={'black'}
-            rotation={Math.floor(Math.random() * (11) - 5)}
-            >
-            <Tween
-              shadowOffsetX={15}
-              shadowOffsetY={15}
-              duration={0.5}
-              scaleX={1.1}
-              scaleY={1.1}
-              easing={Konva.Easings.ElasticEaseOut}
-              />
-              <Tween
-                duration={1}
-                easing={Konva.Easings.ElasticEaseOut}
-                scaleX={1}
-                scaleY={1}
-                shadowOffsetX={0}
-                shadowOffsetY={0}
-                />
-            </Rect>
-          <Text
-            x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
-            y={this.props.y / this.props.scaleX - this.props.scaleY / this.props.scaleX}
-            text={''}
-            fontSize={35}
-            fontFamily={'Klee'}
-            fill={'#555'}
-            width={250}
-            padding={20}
-            align={'center'}
-            listening={true}
-            rotation={Math.floor(Math.random() * (11) - 5)}
-            scaleX={1}
-            scaleY={1}
-            />
-        </Group>
-      </Transformer>
-    );
   }
 }
 

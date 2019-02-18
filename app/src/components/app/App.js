@@ -4,7 +4,6 @@ import './App.css';
 import Toolbar from '../toolbar/Toolbar';
 
 import Canvas from '../canvas/Canvas';
-import FloatingToolbar from '../floatingToolbar/FloatingToolbar'
 import Sidebar from 'react-sidebar';
 
 import PropTypes from 'prop-types';
