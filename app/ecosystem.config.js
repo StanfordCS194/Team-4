@@ -10,7 +10,7 @@ module.exports = {
       key: '~/.ssh/EpiphanyKeyPair.pem',
       ref: 'origin/mb_backend',
       repo: 'git@github.com:StanfordCS194/epiphany.git',
-      path: '/home/ubuntu/epiphany',
+      path: '/home/ubuntu/epiphany/app',
       'post-deploy': 'npm install && pm2 startOrRestart app/ecosystem.config.js'
     }
   }
