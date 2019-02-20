@@ -45,6 +45,8 @@ class Canvas extends React.Component {
       stageX: 0,
       stageY: 0,
       scaleX: 1,
+      scaleY: 1,
+      scaleBy: 1.05,
       stickyArray: [],
       activeSticky: null,
     };
@@ -86,12 +88,36 @@ class Canvas extends React.Component {
       );
     }
     this.setState({stickyArray: this.state.stickyArray.concat([newComponent])});
-    // console.log(this.state.stickyArray);
     this.setState({id: this.state.id + 1});
   }
 
-  createPlainText(e) {
+  handleOnWheel(e) {
+    let oldScale = this.state.scaleX;
 
+    let mousePointTo = {
+      x: this.state.stageX / oldScale - this.state.stageX / oldScale,
+      y: this.state.stageY / oldScale - this.state.stageY / oldScale,
+    };
+
+    let stageDimensions = {
+      x: window.innerWidth * this.state.scaleX,
+      y: window.innerHeight * this.state.scaleX,
+    }
+
+    let newScale =
+      e.evt.deltaY > 0 ?
+      oldScale * this.state.scaleBy : oldScale / this.state.scaleBy;
+
+    this.setState({
+      scaleX: newScale,
+      scaleY: newScale,
+      stageX:
+        -(mousePointTo.x - e.evt.x / newScale) *
+        newScale,
+      stageY:
+        -(mousePointTo.y - e.evt.y / newScale) *
+        newScale
+    });
   }
 
   render() {
@@ -104,10 +130,12 @@ class Canvas extends React.Component {
         draggable={true}
         listening={true}
         scaleX={this.state.scaleX}
+        scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
         onClick={(e) => this.handleButtonClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
+        onWheel={(e) => this.handleOnWheel(e)}
         >
         <Layer>
           <OpeningGreeting
@@ -119,34 +147,5 @@ class Canvas extends React.Component {
     );
   }
 }
-//
-// import React, { Component } from 'react';
-// import { render } from 'react-dom';
-// import { Stage, Layer, Rect, Text } from 'react-konva';
-// import Konva from 'konva';
-//
-// class ColoredRect extends React.Component {
-//   state = {
-//     color: 'green'
-//   };
-//   handleClick = () => {
-//     this.setState({
-//       color: Konva.Util.getRandomColor()
-//     });
-//   };
-//   render() {
-//     return (
-//       <Rect
-//         x={20}
-//         y={20}
-//         width={50}
-//         height={50}
-//         fill={this.state.color}
-//         shadowBlur={5}
-//         onClick={this.handleClick}
-//       />
-//     );
-//   }
-// }
 
 export default Canvas;
