@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'epiphany',
-    script: './index.js'
+    script: './app/index.js'
   }],
   deploy: {
     production: {
@@ -10,7 +10,7 @@ module.exports = {
       key: '~/.ssh/EpiphanyKeyPair.pem',
       ref: 'origin/mb_backend',
       repo: 'git@github.com:StanfordCS194/epiphany.git',
-      path: '/home/ubuntu/epiphany/app',
+      path: '/home/ubuntu/epiphany',
       'post-deploy': 'npm install && pm2 startOrRestart app/ecosystem.config.js'
     }
   }
