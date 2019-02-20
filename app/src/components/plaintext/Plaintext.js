@@ -34,7 +34,7 @@ class Plaintext extends React.Component {
 
   handleTextEdit(e) {
     this.setState({
-      textValue: e.target.value
+      textValue: e.target.value,
     });
   }
 
@@ -42,7 +42,8 @@ class Plaintext extends React.Component {
     const KEY_CODE_ENTER = 13;
     if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
-        textEditVisible: false
+        textEditVisible: false,
+        dragable: true,
       });
     }
   }
@@ -51,8 +52,9 @@ class Plaintext extends React.Component {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
       textEditVisible: true,
+      dragable: false,
       textX: absPos.x,
-      textY: absPos.y
+      textY: absPos.y,
     });
     let textarea = document.getElementById(this.props.id.toString());
     textarea.focus();

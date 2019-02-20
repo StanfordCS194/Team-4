@@ -133,19 +133,6 @@ class Sticky extends React.Component {
     // });
   }
 
-  edit(e) {
-    // if (this.state.editingStickyText === false) { return; }
-    // let key = e.keyCode;
-    // const KEY_CODE_DELETE_1 = 46;
-    // const KEY_CODE_DELETE_2 = 8;
-    // if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
-    //   window.event.stopImmediatePropagation();
-    // }
-    // if (key == KEY_CODE_ENTER) {
-    //   this.setState({editingStickyText : false });
-    // }
-  }
-
   handleTextEdit(e) {
     this.setState({
       textValue: e.target.value
@@ -156,7 +143,8 @@ class Sticky extends React.Component {
     const KEY_CODE_ENTER = 13;
     if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
-        textEditVisible: false
+        textEditVisible: false,
+        dragable: true,
       });
     }
   }
@@ -165,8 +153,9 @@ class Sticky extends React.Component {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
       textEditVisible: true,
+      dragable: false,
       textX: absPos.x,
-      textY: absPos.y
+      textY: absPos.y,
     });
     let textarea = document.getElementById(this.props.id.toString());
     textarea.focus();
@@ -209,17 +198,17 @@ class Sticky extends React.Component {
           />
         <Portal>
           <textarea
-          value={this.state.textValue}
-          id={this.props.id.toString()}
-          style={{
-            display: this.state.textEditVisible ? 'block' : 'none',
-            position: 'absolute',
-            top: this.state.textY + 'px',
-            left: this.state.textX + 'px'
-          }}
-          onChange={(e) => this.handleTextEdit(e)}
-          onKeyDown={(e) => this.handleTextareaKeyDown(e)}
-        />
+            value={this.state.textValue}
+            id={this.props.id.toString()}
+            style={{
+              display: this.state.textEditVisible ? 'block' : 'none',
+              position: 'absolute',
+              top: this.state.textY + 'px',
+              left: this.state.textX + 'px'
+            }}
+            onChange={(e) => this.handleTextEdit(e)}
+            onKeyDown={(e) => this.handleTextareaKeyDown(e)}
+            />
         </Portal>
       </Group>
     );

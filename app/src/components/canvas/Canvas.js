@@ -38,7 +38,7 @@ class Canvas extends React.Component {
     this.state = {
       justOpenedApp: true,
       creatingSticky: false,
-      editingStickyText: false,
+      editingShape: false,
       stageWidth: window.innerWidth,
       stageHeight: window.innerHeight,
       id: 0,
@@ -52,7 +52,7 @@ class Canvas extends React.Component {
     };
   }
 
-  handleButtonClick(e) {
+  handleClick(e) {
     console.log(e);
   }
 
@@ -133,7 +133,7 @@ class Canvas extends React.Component {
         scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
-        onClick={(e) => this.handleButtonClick(e)}
+        onClick={(e) => this.handleClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
         >
