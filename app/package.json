@@ -8,7 +8,7 @@
     "body-parser": "^1.18.3",
     "bootstrap": "^4.2.1",
     "dotenv": "^5.0.1",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "konva": "^2.5.1",
     "pusher": "^2.0.0",
     "pusher-js": "^4.2.2",
@@ -25,5 +25,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "Realtime paint collaboration using Pusher and React",
+  "main": "index.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
 }
