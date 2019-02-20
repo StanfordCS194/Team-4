@@ -11,7 +11,7 @@ module.exports = {
       ref: 'origin/mb_backend',
       repo: 'git@github.com:StanfordCS194/epiphany.git',
       path: '/home/ubuntu/epiphany',
-      'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js'
+      'post-deploy': 'npm install && pm2 startOrRestart app/ecosystem.config.js'
     }
   }
 }
