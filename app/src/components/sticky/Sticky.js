@@ -12,7 +12,7 @@ class Sticky extends React.Component {
       color: colors[Math.floor(Math.random() * colors.length)],
       editingStickyText: false,
       dragable: true,
-      stickyTextHeight: 0,
+      stickyTextHeight: 250,
       stickyTextWidth: 250,
       position: {
         x: this.props.x - 125,
@@ -62,21 +62,6 @@ class Sticky extends React.Component {
     //   layer.draw();
     // });
   }
-
-  handleTextEdit(e) {
-    this.setState({
-      textValue: e.target.value
-    });
-  };
-
-  handleTextareaKeyDown(e) {
-    const KEY_CODE_ENTER = 13;
-    if (e.keyCode === KEY_CODE_ENTER) {
-      this.setState({
-        textEditVisible: false
-      });
-    }
-  };
 
   selectSticky(e) {
 
@@ -161,19 +146,20 @@ class Sticky extends React.Component {
     // }
   }
 
-  handleTextEdit = e => {
+  handleTextEdit(e) {
     this.setState({
       textValue: e.target.value
     });
-  };
+  }
 
-  handleTextareaKeyDown = e => {
-    if (e.keyCode === 13) {
+  handleTextareaKeyDown(e) {
+    const KEY_CODE_ENTER = 13;
+    if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
         textEditVisible: false
       });
     }
-  };
+  }
 
   handleTextDblClick(e) {
     const absPos = e.target.getAbsolutePosition();
@@ -182,13 +168,16 @@ class Sticky extends React.Component {
       textX: absPos.x,
       textY: absPos.y
     });
-  };
+    let textarea = document.getElementById(this.props.id.toString());
+    textarea.focus();
+  }
 
   render() {
     return (
       <Group
         draggable={this.state.dragable}
         name={"stickyGroup"}
+        id={this.props.id.toString()}
         scaleX={1}
         scaleY={1}
         x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
@@ -208,7 +197,6 @@ class Sticky extends React.Component {
         <Text
           text={this.state.textValue}
           fontSize={35}
-          id={this.props.id.toString()}
           fontFamily={'Klee'}
           fill={'#555'}
           width={this.state.stickyTextWidth}
@@ -222,15 +210,16 @@ class Sticky extends React.Component {
         <Portal>
           <textarea
           value={this.state.textValue}
+          id={this.props.id.toString()}
           style={{
             display: this.state.textEditVisible ? 'block' : 'none',
             position: 'absolute',
             top: this.state.textY + 'px',
             left: this.state.textX + 'px'
           }}
-          onChange={this.handleTextEdit}
-          onKeyDown={this.handleTextareaKeyDown}
-          />
+          onChange={(e) => this.handleTextEdit(e)}
+          onKeyDown={(e) => this.handleTextareaKeyDown(e)}
+        />
         </Portal>
       </Group>
     );

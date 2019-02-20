@@ -4,6 +4,7 @@ import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva
 import Konva from 'konva';
 
 import Sticky from '../sticky/Sticky';
+import Plaintext from '../plaintext/Plaintext';
 
 class OpeningGreeting extends React.Component {
   constructor(props) {
@@ -44,15 +45,7 @@ class Canvas extends React.Component {
       stageX: 0,
       stageY: 0,
       scaleX: 1,
-      KEY_CODE_ENTER: 13,
-      KEY_CODE_DELETE_1: 46,
-      KEY_CODE_DELETE_2: 8,
-      stickyArray: [
-        <Rect x={0}
-        y={0}
-        width={250}
-        height={250}
-        backgroundColor={'red'}/>],
+      stickyArray: [],
       activeSticky: null,
     };
   }
@@ -67,15 +60,21 @@ class Canvas extends React.Component {
     if (e.target.nodeType === "Shape") {
       return;
     }
-
+    let newComponent = null;
     // Add plain text
     if (window.event.metaKey) {
-      this.createPlainText(e);
-      return;
-    }
-    this.setState({id: this.state.id + 1});
-    console.log('event', e.evt);
-    let newSticky = (
+      newComponent = (
+      <Plaintext
+        id={this.state.id}
+        scaleX={this.state.scaleX}
+        x={e.evt.clientX}
+        y={e.evt.clientY}
+        stageX={this.state.stageX}
+        stageY={this.state.stageY}
+        />
+      );
+    } else {
+      newComponent = (
       <Sticky
         id={this.state.id}
         scaleX={this.state.scaleX}
@@ -85,8 +84,10 @@ class Canvas extends React.Component {
         stageY={this.state.stageY}
         />
       );
-    this.setState({stickyArray: this.state.stickyArray.concat([newSticky])});
-    console.log(this.state.stickyArray);
+    }
+    this.setState({stickyArray: this.state.stickyArray.concat([newComponent])});
+    // console.log(this.state.stickyArray);
+    this.setState({id: this.state.id + 1});
   }
 
   createPlainText(e) {
