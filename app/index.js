@@ -7,10 +7,10 @@
 // import bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
 
-const ReactDom require('react-dom');
-const registerServiceWorker require ('./js/registerServiceWorker');
-const epiphany_canvas require ('./js/epiphany_canvas')
-const App require ('./components/app/App')
+const ReactDom = require('react-dom');
+const registerServiceWorker = require ('./js/registerServiceWorker');
+const epiphany_canvas = require ('./js/epiphany_canvas')
+const App = require ('./components/app/App')
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
