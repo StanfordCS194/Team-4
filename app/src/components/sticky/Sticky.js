@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import Portal from './Portal';
 import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 
 class Sticky extends React.Component {
   constructor(props) {
     super(props);
+    const colors = ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865'];
     this.state = {
-      colors: ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865'],
+      color: colors[Math.floor(Math.random() * colors.length)],
       editingStickyText: false,
       dragable: true,
       stickyTextHeight: 0,
@@ -15,7 +17,12 @@ class Sticky extends React.Component {
       position: {
         x: this.props.x - 125,
         y: this.props.y,
-      }
+      },
+      rotation: Math.floor(Math.random() * (11) - 5),
+      textValue: 'hi there',
+      textEditVisible: false,
+      textX: 0,
+      textY: 0,
     }
   }
 
@@ -56,6 +63,21 @@ class Sticky extends React.Component {
     // });
   }
 
+  handleTextEdit(e) {
+    this.setState({
+      textValue: e.target.value
+    });
+  };
+
+  handleTextareaKeyDown(e) {
+    const KEY_CODE_ENTER = 13;
+    if (e.keyCode === KEY_CODE_ENTER) {
+      this.setState({
+        textEditVisible: false
+      });
+    }
+  };
+
   selectSticky(e) {
 
   }
@@ -66,12 +88,13 @@ class Sticky extends React.Component {
     // If stickyGroup is null, just edit plainText
     // stage.draggable(false);
     // stage.off('wheel');
+    console.log('editing sticky');
 
     // get state properties
     this.setState({dragable: false});
-    textareaHeight = this.state.stickyTextHeight;
-    textareaWidth = this.state.stickyTextWidth;
-    textareaFontSize = 35 + 'px';
+    let textareaHeight = this.state.stickyTextHeight;
+    let textareaWidth = this.state.stickyTextWidth;
+    let textareaFontSize = 35 + 'px';
 
     if (this.props.creatingSticky) {
       var textPosition = {
@@ -84,48 +107,84 @@ class Sticky extends React.Component {
       var textPosition = this.state.position;
     }
 
-    stage.off('dblclick');
-
-    var stageBox = stage.getContainer().getBoundingClientRect();
-
-    var areaPosition = {
-      x: textPosition.x + stageBox.left,
-      y: textPosition.y + stageBox.top
-    };
-
-    // create textarea and style it
-    var textarea = document.createElement('textarea');
-    document.body.appendChild(textarea);
-
-    textarea.value = stickyText.text();
-    textarea.style.position = 'absolute';
-    textarea.style.top = areaPosition.y - 10 + 'px';
-    textarea.style.left = areaPosition.x + 'px';
-    textarea.style.width = textareaWidth;
-    textarea.style.height = textareaHeight;
-    textarea.id = 'textarea_id';
-    textarea.style.fontFamily = 'Klee';
-    textarea.style.fontSize = textareaFontSize;
-
+    let textarea = document.getElementById(this.props.id);
     textarea.focus();
 
-    stickyText.text("");
-    layer.draw();
+    // stage.off('dblclick');
 
-    stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
-    textarea.onkeypress = (() => {
-      let key = window.event.keyCode;
-      if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
-        window.event.stopImmediatePropagation();
-      }
-      if (key == KEY_CODE_ENTER) {
-        exitEditText(stickyText, textarea, stickyGroup, );
-      }
-    });
+    // var stageBox = stage.getContainer().getBoundingClientRect();
+    //
+    // var areaPosition = {
+    //   x: textPosition.x + stageBox.left,
+    //   y: textPosition.y + stageBox.top
+    // };
+
+    // create textarea and style it
+
+    // textarea.value = stickyText.text();
+    // textarea.style.position = 'absolute';
+    // textarea.style.top = areaPosition.y - 10 + 'px';
+    // textarea.style.left = areaPosition.x + 'px';
+    // textarea.style.width = textareaWidth;
+    // textarea.style.height = textareaHeight;
+    // textarea.id = 'textarea_id';
+    // textarea.style.fontFamily = 'Klee';
+    // textarea.style.fontSize = textareaFontSize;
+    //
+    // textarea.focus();
+    //
+    // stickyText.text("");
+    // layer.draw();
+    //
+    // stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
+    // textarea.onkeypress = (() => {
+    //   let key = window.event.keyCode;
+    //   if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
+    //     window.event.stopImmediatePropagation();
+    //   }
+    //   if (key == KEY_CODE_ENTER) {
+    //     exitEditText(stickyText, textarea, stickyGroup, );
+    //   }
+    // });
   }
 
+  edit(e) {
+    // if (this.state.editingStickyText === false) { return; }
+    // let key = e.keyCode;
+    // const KEY_CODE_DELETE_1 = 46;
+    // const KEY_CODE_DELETE_2 = 8;
+    // if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
+    //   window.event.stopImmediatePropagation();
+    // }
+    // if (key == KEY_CODE_ENTER) {
+    //   this.setState({editingStickyText : false });
+    // }
+  }
+
+  handleTextEdit = e => {
+    this.setState({
+      textValue: e.target.value
+    });
+  };
+
+  handleTextareaKeyDown = e => {
+    if (e.keyCode === 13) {
+      this.setState({
+        textEditVisible: false
+      });
+    }
+  };
+
+  handleTextDblClick(e) {
+    const absPos = e.target.getAbsolutePosition();
+    this.setState({
+      textEditVisible: true,
+      textX: absPos.x,
+      textY: absPos.y
+    });
+  };
+
   render() {
-    let rotation = Math.floor(Math.random() * (11) - 5);
     return (
       <Group
         draggable={this.state.dragable}
@@ -134,21 +193,22 @@ class Sticky extends React.Component {
         scaleY={1}
         x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
         y={this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10}
-        id={this.props.id.toString()}
-        rotation={rotation}
+        rotation={this.state.rotation}
         dragStart={(e) => this.dragStart(e)}
         dragEnd={(e) => this.dragEnd(e)}
         onClick={(e) => this.selectSticky(e)}
-        onDblClick={(e) => this.editText(e)}
+        onDblClick={(e) => this.handleTextDblClick(e)}
+        onKeyPress={(e) => this.edit(e)}
         >
         <Rect
           width={250}
           height={250}
-          fill={this.state.colors[Math.floor(Math.random() * this.state.colors.length)]}
+          fill={this.state.color}
           />
         <Text
-          text={'hi there'}
+          text={this.state.textValue}
           fontSize={35}
+          id={this.props.id.toString()}
           fontFamily={'Klee'}
           fill={'#555'}
           width={this.state.stickyTextWidth}
@@ -159,7 +219,20 @@ class Sticky extends React.Component {
           scaleX={1}
           scaleY={1}
           />
-        </Group>
+        <Portal>
+          <textarea
+          value={this.state.textValue}
+          style={{
+            display: this.state.textEditVisible ? 'block' : 'none',
+            position: 'absolute',
+            top: this.state.textY + 'px',
+            left: this.state.textX + 'px'
+          }}
+          onChange={this.handleTextEdit}
+          onKeyDown={this.handleTextareaKeyDown}
+          />
+        </Portal>
+      </Group>
     );
   }
 
