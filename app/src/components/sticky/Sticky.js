@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Portal from './Portal';
+import Portal from '../portal/Portal';
 import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 
@@ -15,8 +15,8 @@ class Sticky extends React.Component {
       stickyTextHeight: 250,
       stickyTextWidth: 250,
       position: {
-        x: this.props.x - 125,
-        y: this.props.y,
+        x: this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125,
+        y: this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
       },
       rotation: Math.floor(Math.random() * (11) - 5),
       textValue: 'hi there',
@@ -27,6 +27,8 @@ class Sticky extends React.Component {
   }
 
   // Sticky 'raises' when dragged
+  // Todo: be implemented
+  // The following is directly pasted from epiphany_canvas.js
   dragStart(e) {
     // e.target.to({
     //   scaleX: 1.1,
@@ -45,6 +47,8 @@ class Sticky extends React.Component {
   }
 
   // Sticky comes back down when dropped
+  // Todo: be implemented
+  // The following is directly pasted from epiphany_canvas.js
   dragEnd(e) {
     // stickyGroup.on('dragend', function (e) {
     //   e.target.to({
@@ -63,75 +67,6 @@ class Sticky extends React.Component {
     // });
   }
 
-  selectSticky(e) {
-
-  }
-
-  editText(e) {
-    this.setState({editingStickyText: true}); // so delete here won't delete the sticky
-    // Given a stickyGroup and its stickyText, edit the text using a textarea
-    // If stickyGroup is null, just edit plainText
-    // stage.draggable(false);
-    // stage.off('wheel');
-    console.log('editing sticky');
-
-    // get state properties
-    this.setState({dragable: false});
-    let textareaHeight = this.state.stickyTextHeight;
-    let textareaWidth = this.state.stickyTextWidth;
-    let textareaFontSize = 35 + 'px';
-
-    if (this.props.creatingSticky) {
-      var textPosition = {
-        x: this.props.x - 125,
-        y: this.props.y,
-      }
-      this.props.creatingSticky = false;
-    } else {
-      //editing existing sticky
-      var textPosition = this.state.position;
-    }
-
-    let textarea = document.getElementById(this.props.id);
-    textarea.focus();
-
-    // stage.off('dblclick');
-
-    // var stageBox = stage.getContainer().getBoundingClientRect();
-    //
-    // var areaPosition = {
-    //   x: textPosition.x + stageBox.left,
-    //   y: textPosition.y + stageBox.top
-    // };
-
-    // create textarea and style it
-
-    // textarea.value = stickyText.text();
-    // textarea.style.position = 'absolute';
-    // textarea.style.top = areaPosition.y - 10 + 'px';
-    // textarea.style.left = areaPosition.x + 'px';
-    // textarea.style.width = textareaWidth;
-    // textarea.style.height = textareaHeight;
-    // textarea.id = 'textarea_id';
-    // textarea.style.fontFamily = 'Klee';
-    // textarea.style.fontSize = textareaFontSize;
-    //
-    // textarea.focus();
-    //
-    // stickyText.text("");
-    // layer.draw();
-    //
-    // stage.on('click', () => exitEditText(stickyText, textarea, stickyGroup));
-    // textarea.onkeypress = (() => {
-    //   let key = window.event.keyCode;
-    //   if (key === KEY_CODE_DELETE_1 || key === KEY_CODE_DELETE_2) {
-    //     window.event.stopImmediatePropagation();
-    //   }
-    //   if (key == KEY_CODE_ENTER) {
-    //     exitEditText(stickyText, textarea, stickyGroup, );
-    //   }
-    // });
-  }
 
   handleTextEdit(e) {
     this.setState({
@@ -139,6 +74,7 @@ class Sticky extends React.Component {
     });
   }
 
+  // on pressing enter, exit text edit
   handleTextareaKeyDown(e) {
     const KEY_CODE_ENTER = 13;
     if (e.keyCode === KEY_CODE_ENTER) {
@@ -149,6 +85,7 @@ class Sticky extends React.Component {
     }
   }
 
+  // On dbl click, set make text editor visible and focus on textedit
   handleTextDblClick(e) {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
@@ -161,6 +98,30 @@ class Sticky extends React.Component {
     textarea.focus();
   }
 
+  // On focus out/ blur of text area, leave editing mode
+  handleBlur() {
+    this.setState({
+      textEditVisible: false,
+      dragable: true,
+    });
+  }
+
+  // focus on sticky text after mounting
+  componentDidMount() {
+    // need to put code within a setTimeout because
+    // getElementById must happen after render
+    setTimeout( () => {
+      this.setState({
+        textEditVisible: true,
+        dragable: false,
+        textX: this.state.position.x,
+        textY: this.state.position.y,
+      });
+      let textarea = document.getElementById(this.props.id.toString());
+      textarea.focus();
+    });
+  }
+
   render() {
     return (
       <Group
@@ -169,12 +130,11 @@ class Sticky extends React.Component {
         id={this.props.id.toString()}
         scaleX={1}
         scaleY={1}
-        x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
-        y={this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10}
+        x={this.state.position.x}
+        y={this.state.position.y}
         rotation={this.state.rotation}
         dragStart={(e) => this.dragStart(e)}
         dragEnd={(e) => this.dragEnd(e)}
-        onClick={(e) => this.selectSticky(e)}
         onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
         >
@@ -182,6 +142,7 @@ class Sticky extends React.Component {
           width={250}
           height={250}
           fill={this.state.color}
+          shadowColor={'black'}
           />
         <Text
           text={this.state.textValue}
@@ -208,6 +169,7 @@ class Sticky extends React.Component {
             }}
             onChange={(e) => this.handleTextEdit(e)}
             onKeyDown={(e) => this.handleTextareaKeyDown(e)}
+            onBlur={() => this.handleBlur()}
             />
         </Portal>
       </Group>

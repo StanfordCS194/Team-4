@@ -5,6 +5,10 @@ import ReactDOM from 'react-dom';
 // Portal allows the rendering of DOM elements inside
 // of a Konva stage
 // Used for adding the edit text feature in Sticky.js
+
+// This code is taken from the React Konva site:
+// https://konvajs.github.io/docs/react/DOM_Portal.html
+
 export default class Portal extends React.Component {
   componentDidMount() {
     this.renderPortal();
