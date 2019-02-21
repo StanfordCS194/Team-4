@@ -121,7 +121,6 @@ class Canvas extends React.Component {
   }
 
   render() {
-    console.log('RENDER', this.state);
     return (
       <Stage
         container={'container'}

@@ -11,6 +11,7 @@ class Sticky extends React.Component {
     this.state = {
       color: colors[Math.floor(Math.random() * colors.length)],
       editingStickyText: false,
+      transformer: true,
       dragable: true,
       stickyTextHeight: 250,
       stickyTextWidth: 250,
@@ -103,7 +104,28 @@ class Sticky extends React.Component {
     this.setState({
       textEditVisible: false,
       dragable: true,
+      transformer: false,
     });
+  }
+
+  handleTransform(e) {
+    console.log("transformed", e);
+    // we can read attrs here and send them to store
+  }
+
+  handleClick(e) {
+    this.setState({ transformer: true });
+  }
+
+  buildTransformer() {
+    if (this.state.transformer) {
+      return (
+        <Transformer
+          ref={node => { this.transformer = node; }}
+          />
+        );
+    }
+    return null;
   }
 
   // focus on sticky text after mounting
@@ -111,6 +133,7 @@ class Sticky extends React.Component {
     // need to put code within a setTimeout because
     // getElementById must happen after render
     setTimeout( () => {
+      console.log('TIMEOUT');
       this.setState({
         textEditVisible: true,
         dragable: false,
@@ -119,6 +142,24 @@ class Sticky extends React.Component {
       });
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
+      if (this.state.transformer) {
+        const stage = this.transformer.getStage();
+        const rectangle = stage.findOne('.' + this.props.id.toString());
+        this.transformer.attachTo(rectangle);
+        this.transformer.getLayer().batchDraw();
+      }
+    });
+  }
+
+  componentDidUpdate() {
+    setTimeout( () => {
+      console.log('TIMEOUT');
+      if (this.state.transformer) {
+        const stage = this.transformer.getStage();
+        const rectangle = stage.findOne('.' + this.props.id.toString());
+        this.transformer.attachTo(rectangle);
+        this.transformer.getLayer().batchDraw();
+      }
     });
   }
 
@@ -126,7 +167,7 @@ class Sticky extends React.Component {
     return (
       <Group
         draggable={this.state.dragable}
-        name={"stickyGroup"}
+        name={this.props.id.toString()}
         id={this.props.id.toString()}
         scaleX={1}
         scaleY={1}
@@ -137,8 +178,11 @@ class Sticky extends React.Component {
         dragEnd={(e) => this.dragEnd(e)}
         onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
+        onClick={(e) => this.handleClick(e)}
+        onTransform={(e) => this.handleTransform(e)}
         >
         <Rect
+          name={this.props.id.toString()}
           width={250}
           height={250}
           fill={this.state.color}
@@ -157,6 +201,7 @@ class Sticky extends React.Component {
           scaleX={1}
           scaleY={1}
           />
+        {this.buildTransformer()}
         <Portal>
           <textarea
             value={this.state.textValue}
@@ -173,71 +218,6 @@ class Sticky extends React.Component {
             />
         </Portal>
       </Group>
-    );
-  }
-
-  real_render() {
-    return (
-      <Transformer
-        keepRatio={true}
-        anchorSize={10}
-        borderStroke={'gray'}
-        rotationSnaps={[0, 90, 180, 270]}
-        >
-        <Group
-          draggable={true}
-          name={"stickyGroup"}
-          scaleX={1.1}
-          scaleY={1.1}
-          id={this.props.id.toString()}
-          dragStart={(e) => this.dragStart(e)}
-          dragEnd={(e) => this.dragEnd(e)}
-          onClick={(e) => this.selectSticky(e)}
-          onDblClick={(e) => this.editText(e)}
-          >
-          <Rect
-            x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
-            y={this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10}
-            width={250}
-            height={250}
-            fill={this.state.colors[Math.floor(Math.random() * this.state.colors.length)]}
-            shadowColor={'black'}
-            rotation={Math.floor(Math.random() * (11) - 5)}
-            >
-            <Tween
-              shadowOffsetX={15}
-              shadowOffsetY={15}
-              duration={0.5}
-              scaleX={1.1}
-              scaleY={1.1}
-              easing={Konva.Easings.ElasticEaseOut}
-              />
-              <Tween
-                duration={1}
-                easing={Konva.Easings.ElasticEaseOut}
-                scaleX={1}
-                scaleY={1}
-                shadowOffsetX={0}
-                shadowOffsetY={0}
-                />
-            </Rect>
-          <Text
-            x={this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125}
-            y={this.props.y / this.props.scaleX - this.props.scaleY / this.props.scaleX}
-            text={''}
-            fontSize={35}
-            fontFamily={'Klee'}
-            fill={'#555'}
-            width={250}
-            padding={20}
-            align={'center'}
-            listening={true}
-            rotation={Math.floor(Math.random() * (11) - 5)}
-            scaleX={1}
-            scaleY={1}
-            />
-        </Group>
-      </Transformer>
     );
   }
 }
