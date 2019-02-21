@@ -1,115 +1,149 @@
 import React, { Component } from 'react';
-import { v4 } from 'uuid';
-import Pusher from 'pusher-js';
+import { render } from 'react-dom';
+import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
+import Konva from 'konva';
 
-class Canvas extends Component {
+import Sticky from '../sticky/Sticky';
+import Plaintext from '../plaintext/Plaintext';
+
+class OpeningGreeting extends React.Component {
   constructor(props) {
     super(props);
-
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.endPaintEvent = this.endPaintEvent.bind(this);
-
-    this.pusher = new Pusher('PUSHER_KEY', {
-      cluster: 'eu',
-    });
-  }
-  isPainting = false;
-  userStrokeStyle = '#EE92C2';
-  guestStrokeStyle = '#F0C987';
-  line = [];
-  userId = v4();
-  prevPos = { offsetX: 0, offsetY: 0 };
-
-  onMouseDown({ nativeEvent }) {
-    const { offsetX, offsetY } = nativeEvent;
-    this.isPainting = true;
-    this.prevPos = { offsetX, offsetY };
   }
 
-  onMouseMove({ nativeEvent }) {
-    if (this.isPainting) {
-      const { offsetX, offsetY } = nativeEvent;
-      const offSetData = { offsetX, offsetY };
-      this.position = {
-        start: { ...this.prevPos },
-        stop: { ...offSetData },
-      };
-      this.line = this.line.concat(this.position);
-      this.paint(this.prevPos, offSetData, this.userStrokeStyle);
+  render() {
+    if (this.props.justOpenedApp) {
+      return (
+        <Text
+          x={window.innerWidth / 2 - 250}
+          y={window.innerHeight / 2 - 50}
+          text={'Double click anywhere to start!'}
+          fontSize={30}
+          fontFamily={'Klee'}
+          fill={'#555'}
+          width={500}
+          padding={20}
+          align={'center'}
+          >
+        </Text>
+      );
     }
+    return null;
+  }
+}
+
+class Canvas extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      justOpenedApp: true,
+      creatingSticky: false,
+      editingShape: false,
+      stageWidth: window.innerWidth,
+      stageHeight: window.innerHeight,
+      id: 0,
+      stageX: 0,
+      stageY: 0,
+      scaleX: 1,
+      scaleY: 1,
+      scaleBy: 1.05,
+      stickyArray: [],
+      activeSticky: null,
+    };
   }
 
-  onDoubleClick({ nativeEvent }) {
-    console.log('double click!')
+  handleClick(e) {
+    console.log(e);
   }
 
-  endPaintEvent() {
-    if (this.isPainting) {
-      this.isPainting = false;
-      this.sendPaintData();
+  handleDblClick(e) {
+    this.setState({ justOpenedApp: false });
+    // So that we don't create a sticky when we're trying to edit a sticky
+    if (e.target.nodeType === "Shape") {
+      return;
     }
+    let newComponent = null;
+    // Add plain text
+    if (window.event.metaKey) {
+      newComponent = (
+      <Plaintext
+        id={this.state.id}
+        scaleX={this.state.scaleX}
+        x={e.evt.clientX}
+        y={e.evt.clientY}
+        stageX={this.state.stageX}
+        stageY={this.state.stageY}
+        />
+      );
+    } else {
+      newComponent = (
+      <Sticky
+        id={this.state.id}
+        scaleX={this.state.scaleX}
+        x={e.evt.clientX}
+        y={e.evt.clientY}
+        stageX={this.state.stageX}
+        stageY={this.state.stageY}
+        />
+      );
+    }
+    this.setState({stickyArray: this.state.stickyArray.concat([newComponent])});
+    this.setState({id: this.state.id + 1});
   }
 
-  paint(prevPos, currPos, strokeStyle) {
-    const { offsetX, offsetY } = currPos;
-    const { offsetX: x, offsetY: y } = prevPos;
+  handleOnWheel(e) {
+    let oldScale = this.state.scaleX;
 
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = strokeStyle;
-    this.ctx.moveTo(x, y);
-    this.ctx.lineTo(offsetX, offsetY);
-    this.ctx.stroke();
-    this.prevPos = { offsetX, offsetY };
-  }
-
-  async sendPaintData() {
-    const body = {
-      line: this.line,
-      userId: this.userId,
+    let mousePointTo = {
+      x: this.state.stageX / oldScale - this.state.stageX / oldScale,
+      y: this.state.stageY / oldScale - this.state.stageY / oldScale,
     };
 
-    const req = await fetch('http://localhost:4000/paint', {
-      method: 'post',
-      body: JSON.stringify(body),
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    const res = await req.json();
-    this.line = [];
-  }
+    let stageDimensions = {
+      x: window.innerWidth * this.state.scaleX,
+      y: window.innerHeight * this.state.scaleX,
+    }
 
-  componentDidMount() {
-    this.canvas.width = 1200;
-    this.canvas.height = 600;
-    this.ctx = this.canvas.getContext('2d');
-    this.ctx.lineJoin = 'round';
-    this.ctx.lineCap = 'round';
-    this.ctx.lineWidth = 5;
+    let newScale =
+      e.evt.deltaY > 0 ?
+      oldScale * this.state.scaleBy : oldScale / this.state.scaleBy;
 
-    const channel = this.pusher.subscribe('painting');
-    channel.bind('draw', (data) => {
-      const { userId, line } = data;
-      if (userId !== this.userId) {
-        line.forEach((position) => {
-          this.paint(position.start, position.stop, this.guestStrokeStyle);
-        });
-      }
+    this.setState({
+      scaleX: newScale,
+      scaleY: newScale,
+      stageX:
+        -(mousePointTo.x - e.evt.x / newScale) *
+        newScale,
+      stageY:
+        -(mousePointTo.y - e.evt.y / newScale) *
+        newScale
     });
   }
 
   render() {
+    console.log('RENDER', this.state);
     return (
-      <canvas
-        ref={(ref) => (this.canvas = ref)}
-        style={{ background: 'white' }}
-        onMouseDown={this.onMouseDown}
-        onMouseLeave={this.endPaintEvent}
-        onMouseUp={this.endPaintEvent}
-        onMouseMove={this.onMouseMove}
-        onDoubleClick={this.onDoubleClick}
-      />
+      <Stage
+        container={'container'}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        draggable={true}
+        listening={true}
+        scaleX={this.state.scaleX}
+        scaleY={this.state.scaleY}
+        x={this.state.stageX}
+        y={this.state.stageY}
+        onClick={(e) => this.handleClick(e)}
+        onDblClick={(e) => this.handleDblClick(e)}
+        onWheel={(e) => this.handleOnWheel(e)}
+        >
+        <Layer>
+          <OpeningGreeting
+            justOpenedApp={this.state.justOpenedApp}
+          />
+          {this.state.stickyArray}
+        </Layer>
+      </Stage>
     );
   }
 }

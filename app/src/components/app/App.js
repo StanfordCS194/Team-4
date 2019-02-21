@@ -4,7 +4,6 @@ import './App.css';
 import Toolbar from '../toolbar/Toolbar';
 
 import Canvas from '../canvas/Canvas';
-import FloatingToolbar from '../floatingToolbar/FloatingToolbar'
 import Sidebar from 'react-sidebar';
 
 import PropTypes from 'prop-types';
@@ -64,9 +63,7 @@ class App extends Component {
             <ArrowIcon id="arrowIcon" />
           </div>
         </Sidebar>
-        <div className="main">
-
-        </div>
+        <Canvas />
         <Toolbar />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>

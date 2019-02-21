@@ -6,26 +6,13 @@ import './ColorPicker.css';
 class ColorPicker extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props)
   }
 
-
   render() {
-    const isPickingColor = this.props.openColorPicker;
-    let colorPicker;
-
-    if (isPickingColor) {
-      colorPicker = <CirclePicker className="colorPicker"/>
-    } else {
-      colorPicker = null;
+    if (this.props.openColorPicker) {
+      return <CirclePicker className="colorPicker"/>;
     }
-    
-
-    return (
-      <Fragment>
-          {colorPicker}
-      </Fragment>
-    );
+    return null;
   }
 }
 
