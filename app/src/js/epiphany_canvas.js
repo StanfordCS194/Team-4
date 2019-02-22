@@ -1,7 +1,7 @@
-import { Stage, Layer, Rect, Text } from 'react-konva';
-import Konva from 'konva';
+//import { Stage, Layer, Rect, Text } from 'react-konva';
+//import Konva from 'konva';
 
-var epiphany_canvas = () => {
+exports.epiphany_canvas = function() {
   var justOpenedApp = true;
   var creatingSticky = false;
   var stageWidth = window.innerWidth;
@@ -414,4 +414,4 @@ var epiphany_canvas = () => {
   }
 }
 
-export default epiphany_canvas;
+//export default epiphany_canvas;
