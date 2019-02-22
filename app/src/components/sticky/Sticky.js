@@ -27,48 +27,6 @@ class Sticky extends React.Component {
     }
   }
 
-  // Sticky 'raises' when dragged
-  // Todo: be implemented
-  // The following is directly pasted from epiphany_canvas.js
-  dragStart(e) {
-    // e.target.to({
-    //   scaleX: 1.1,
-    //   scaleY: 1.1,
-    //   easing: Konva.Easings.ElasticEaseOut,
-    // });
-    //
-    // // make rect have shadow
-    // let rect = e.target.find('Rect')[0];
-    // rect.setAttrs({
-    //   shadowOffsetX: 15,
-    //   shadowOffsetY: 15,
-    // });
-    //
-    // stickyGroup.moveToTop();
-  }
-
-  // Sticky comes back down when dropped
-  // Todo: be implemented
-  // The following is directly pasted from epiphany_canvas.js
-  dragEnd(e) {
-    // stickyGroup.on('dragend', function (e) {
-    //   e.target.to({
-    //     scaleX: 1,
-    //     scaleY: 1,
-    //     easing: Konva.Easings.ElasticEaseOut,
-    //   });
-    //
-    //   // remove shadow
-    //   let rect = e.target.find('Rect')[0];
-    //   rect.setAttrs({
-    //     shadowOffsetX: 0,
-    //     shadowOffsetY: 0,
-    //   });
-    //   layer.draw();
-    // });
-  }
-
-
   handleTextEdit(e) {
     this.setState({
       textValue: e.target.value
@@ -145,6 +103,13 @@ class Sticky extends React.Component {
       if (this.state.transformer) {
         const stage = this.transformer.getStage();
         const rectangle = stage.findOne('.' + this.props.id.toString());
+
+        rectangle.to( {
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+
         this.transformer.attachTo(rectangle);
         this.transformer.getLayer().batchDraw();
       }
@@ -231,6 +196,8 @@ class Sticky extends React.Component {
           height={250}
           fill={this.state.color}
           shadowColor={'black'}
+          scaleX={1.1}
+          scaleY={1.1}
           />
         <Text
           text={this.state.textValue}
