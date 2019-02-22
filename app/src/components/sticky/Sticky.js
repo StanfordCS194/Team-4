@@ -12,7 +12,7 @@ class Sticky extends React.Component {
       color: colors[Math.floor(Math.random() * colors.length)],
       editingStickyText: false,
       transformer: true,
-      dragable: true,
+      draggable: true,
       stickyTextHeight: 250,
       stickyTextWidth: 250,
       position: {
@@ -20,7 +20,7 @@ class Sticky extends React.Component {
         y: this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
       },
       rotation: Math.floor(Math.random() * (11) - 5),
-      textValue: 'hi there',
+      textValue: '',
       textEditVisible: false,
       textX: 0,
       textY: 0,
@@ -81,7 +81,7 @@ class Sticky extends React.Component {
     if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
         textEditVisible: false,
-        dragable: true,
+        draggable: true,
       });
     }
   }
@@ -91,7 +91,7 @@ class Sticky extends React.Component {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
       textEditVisible: true,
-      dragable: false,
+      draggable: false,
       textX: absPos.x,
       textY: absPos.y,
     });
@@ -103,7 +103,7 @@ class Sticky extends React.Component {
   handleBlur() {
     this.setState({
       textEditVisible: false,
-      dragable: true,
+      draggable: true,
       transformer: false,
     });
   }
@@ -136,7 +136,7 @@ class Sticky extends React.Component {
       console.log('TIMEOUT');
       this.setState({
         textEditVisible: true,
-        dragable: false,
+        draggable: false,
         textX: this.state.position.x,
         textY: this.state.position.y,
       });
@@ -163,10 +163,50 @@ class Sticky extends React.Component {
     });
   }
 
+  // Add cursor styling
+  onMouseOver() {
+    document.body.style.cursor = 'pointer';
+  }
+  onMouseOut() {
+    document.body.style.cursor = 'default';
+  }
+
+  // Raising and lowering animations
+  onDragStart(e) {
+    e.target.to({
+        scaleX: 1.1,
+        scaleY: 1.1,
+        easing: Konva.Easings.ElasticEaseOut,
+    });
+
+    // make rect have shadow
+    let rect = e.target.find('Rect')[0];
+    rect.setAttrs({
+        shadowOffsetX: 15,
+        shadowOffsetY: 15,
+    });
+    e.target.moveToTop();
+  }
+
+  onDragEnd(e) {
+      e.target.to({
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.ElasticEaseOut,
+      });
+
+      // remove shadow
+      let rect = e.target.find('Rect')[0];
+      rect.setAttrs({
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      });
+  };
+
   render() {
     return (
       <Group
-        draggable={this.state.dragable}
+        draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
         scaleX={1}
@@ -180,6 +220,10 @@ class Sticky extends React.Component {
         onKeyPress={(e) => this.edit(e)}
         onClick={(e) => this.handleClick(e)}
         onTransform={(e) => this.handleTransform(e)}
+        onMouseOver={(e) => this.onMouseOver(e)}
+        onMouseOut={(e) => this.onMouseOut(e)}
+        onDragStart={(e) => this.onDragStart(e)}
+        onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Rect
           name={this.props.id.toString()}
