@@ -32,6 +32,8 @@ class OpeningGreeting extends React.Component {
   }
 }
 
+
+
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
@@ -57,6 +59,7 @@ class Canvas extends React.Component {
   }
 
   handleDblClick(e) {
+    console.log(this.state.scaleX);
     this.setState({ justOpenedApp: false });
     // So that we don't create a sticky when we're trying to edit a sticky
     if (e.target.nodeType === "Shape") {
@@ -94,9 +97,11 @@ class Canvas extends React.Component {
   handleOnWheel(e) {
     let oldScale = this.state.scaleX;
 
+    const stage = e.target.getStage();
+
     let mousePointTo = {
-      x: this.state.stageX / oldScale - this.state.stageX / oldScale,
-      y: this.state.stageY / oldScale - this.state.stageY / oldScale,
+      x: stage.getPointerPosition().x / oldScale - this.state.stageX / oldScale,
+      y: stage.getPointerPosition().y / oldScale - this.state.stageY / oldScale,
     };
 
     let stageDimensions = {
