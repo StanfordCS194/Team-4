@@ -20,7 +20,8 @@ class Sticky extends React.Component {
         y: this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
       },
       rotation: Math.floor(Math.random() * (11) - 5),
-      textValue: '',
+      textAreaValue: '',
+      finalTextValue: '',
       textEditVisible: false,
       textX: 0,
       textY: 0,
@@ -29,7 +30,7 @@ class Sticky extends React.Component {
 
   handleTextEdit(e) {
     this.setState({
-      textValue: e.target.value
+      textAreaValue: e.target.value
     });
   }
 
@@ -38,6 +39,8 @@ class Sticky extends React.Component {
     const KEY_CODE_ENTER = 13;
     if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
+//        textValue: e.target.value,
+        finalTextValue: e.target.value,
         textEditVisible: false,
         draggable: true,
       });
@@ -200,7 +203,7 @@ class Sticky extends React.Component {
           scaleY={1.1}
           />
         <Text
-          text={this.state.textValue}
+          text={this.state.finalTextValue}
           fontSize={35}
           fontFamily={'Klee'}
           fill={'#555'}
@@ -215,7 +218,7 @@ class Sticky extends React.Component {
         {this.buildTransformer()}
         <Portal>
           <textarea
-            value={this.state.textValue}
+            value={this.state.textAreaValue}
             id={this.props.id.toString()}
             style={{
               display: this.state.textEditVisible ? 'block' : 'none',

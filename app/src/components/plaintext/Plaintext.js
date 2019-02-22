@@ -9,14 +9,15 @@ class Plaintext extends React.Component {
     super(props);
     this.state = {
       editingStickyText: true,
-      dragable: true,
+      draggable: true,
       stickyTextHeight: 100,
       stickyTextWidth: 250,
       position: {
         x: this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125,
         y: this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
       },
-      textValue: 'hi there',
+      textAreaValue: '',
+      finalTextValue: '',
       textEditVisible: false,
       textX: 0,
       textY: 0,
@@ -25,16 +26,24 @@ class Plaintext extends React.Component {
 
   // Sticky 'raises' when dragged
   dragStart(e) {
-
+    e.target.to({
+        scaleX: 1.1,
+        scaleY: 1.1,
+        easing: Konva.Easings.ElasticEaseOut,
+    });
   }
 
   dragEnd(e) {
-
+    e.target.to({
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.ElasticEaseOut,
+    });
   }
 
   handleTextEdit(e) {
     this.setState({
-      textValue: e.target.value,
+      textAreaValue: e.target.value,
     });
   }
 
@@ -43,8 +52,9 @@ class Plaintext extends React.Component {
     const KEY_CODE_ENTER = 13;
     if (e.keyCode === KEY_CODE_ENTER) {
       this.setState({
+        finalTextValue: e.target.value,
         textEditVisible: false,
-        dragable: true,
+        draggable: true,
       });
     }
   }
@@ -54,7 +64,7 @@ class Plaintext extends React.Component {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
       textEditVisible: true,
-      dragable: false,
+      draggable: false,
       textX: absPos.x,
       textY: absPos.y,
     });
@@ -66,7 +76,7 @@ class Plaintext extends React.Component {
   handleBlur() {
     this.setState({
       textEditVisible: false,
-      dragable: true,
+      draggable: true,
     });
   }
 
@@ -77,7 +87,7 @@ class Plaintext extends React.Component {
     setTimeout( () => {
       this.setState({
         textEditVisible: true,
-        dragable: false,
+        draggable: false,
         textX: this.state.position.x,
         textY: this.state.position.y,
       });
@@ -89,7 +99,7 @@ class Plaintext extends React.Component {
   render() {
     return (
       <Group
-        draggable={this.state.dragable}
+        draggable={this.state.draggable}
         name={"plaintextGroup"}
         id={this.props.id.toString()}
         scaleX={1}
@@ -101,10 +111,12 @@ class Plaintext extends React.Component {
         dragEnd={(e) => this.dragEnd(e)}
         onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
+        onDragStart={(e) => this.dragStart(e)}
+        onDragEnd={(e) => this.dragEnd(e)}
         >
         <Text
-          text={this.state.textValue}
-          fontSize={35}
+          text={this.state.finalTextValue}
+          fontSize={95}
           fontFamily={'Klee'}
           fill={'#555'}
           width={this.state.stickyTextWidth}
@@ -114,16 +126,17 @@ class Plaintext extends React.Component {
           listening={true}
           scaleX={1}
           scaleY={1}
-          />
+         />
         <Portal>
           <textarea
           id={this.props.id.toString()}
-          value={this.state.textValue}
+          value={this.state.textAreaValue}
           style={{
             display: this.state.textEditVisible ? 'block' : 'none',
             position: 'absolute',
             top: this.state.textY + 'px',
-            left: this.state.textX + 'px'
+            left: this.state.textX + 'px',
+            fontSize: 95,
           }}
           onChange={(e) => this.handleTextEdit(e)}
           onKeyDown={(e) => this.handleTextareaKeyDown(e)}
