@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 
+import './Canvas.css';
+
 import Sticky from '../sticky/Sticky';
 import Plaintext from '../plaintext/Plaintext';
 

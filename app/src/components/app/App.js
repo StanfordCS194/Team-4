@@ -63,17 +63,18 @@ class App extends Component {
           sidebar={this.makeSideBarContent(this.state.user)}
           open={this.state.sidebarOpen}
           onSetOpen={this.onSetSidebarOpen}
-          styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6"} }}
-        >
+          styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6", zIndex: "2"} }}
+          >
           <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
             <ArrowIcon id="arrowIcon" />
           </div>
         </Sidebar>
-        <Canvas
-            nextColor={this.state.nextColor} />
         <Toolbar
-            onColorChange={this.onColorChange}
-        />
+          onColorChange={this.onColorChange}
+          />
+        <Canvas
+          nextColor={this.state.nextColor}
+          />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );
