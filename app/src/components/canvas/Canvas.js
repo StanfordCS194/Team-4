@@ -60,6 +60,8 @@ class Canvas extends React.Component {
 
   handleDblClick(e) {
     console.log(this.state.scaleX);
+    console.log(e.evt.clientX);
+    console.log(this.state.stageX);
     this.setState({ justOpenedApp: false });
     // So that we don't create a sticky when we're trying to edit a sticky
     if (e.target.nodeType === "Shape") {
@@ -96,6 +98,7 @@ class Canvas extends React.Component {
   }
 
   handleOnWheel(e) {
+  // Handle zooming by mouse point and scrolling
     let oldScale = this.state.scaleX;
 
     const stage = e.target.getStage();

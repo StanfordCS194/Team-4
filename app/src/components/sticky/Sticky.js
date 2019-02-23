@@ -97,12 +97,17 @@ class Sticky extends React.Component {
     // getElementById must happen after render
     setTimeout( () => {
       console.log('TIMEOUT');
+      console.log('sticky', this.state.position.x)
+
       this.setState({
         textEditVisible: true,
         draggable: false,
-        textX: this.state.position.x,
-        textY: this.state.position.y,
+        textX: this.props.x - 125,
+        textY: this.props.y,
       });
+      console.log('stage', this.props.stageX)
+
+      console.log('text', this.state.textX)
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
       if (this.state.transformer) {
@@ -224,7 +229,7 @@ class Sticky extends React.Component {
               display: this.state.textEditVisible ? 'block' : 'none',
               position: 'absolute',
               top: this.state.textY + 'px',
-              left: this.state.textX + 'px'
+              left: this.state.textX + 'px',
             }}
             onChange={(e) => this.handleTextEdit(e)}
             onKeyDown={(e) => this.handleTextareaKeyDown(e)}
