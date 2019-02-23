@@ -61,11 +61,13 @@ class Canvas extends React.Component {
   }
 
   handleDblClick(e) {
-    this.setState({ justOpenedApp: false });
     // So that we don't create a sticky when we're trying to edit a sticky
-    if (e.target.nodeType === "Shape") {
-      return;
+    // Removes greeting text when justOpenedApp
+    if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
+        return;
     }
+    this.setState({ justOpenedApp: false });
+
     let newComponent = null;
     // Add plain text
     if (window.event.metaKey) {
@@ -156,6 +158,8 @@ class Canvas extends React.Component {
         <Layer>
           <OpeningGreeting
             justOpenedApp={this.state.justOpenedApp}
+            // onDblClick={(e) => this.handleDblClick}
+
           />
           {this.state.stickyArray}
         </Layer>
