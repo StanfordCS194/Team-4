@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import Portal from '../portal/Portal';
-import {Text, Group} from 'react-konva';
+import {Text, Group, Transformer} from 'react-konva';
 import Konva from 'konva';
 
 class Plaintext extends React.Component {
@@ -9,7 +9,8 @@ class Plaintext extends React.Component {
     super(props);
     this.state = {
       editingStickyText: true,
-      draggable: true,
+      dragable: true,
+      transformer: true,
       stickyTextHeight: 100,
       stickyTextWidth: 250,
       position: {
@@ -26,25 +27,16 @@ class Plaintext extends React.Component {
 
   // Sticky 'raises' when dragged
   dragStart(e) {
-    e.target.to({
-        scaleX: 1.1,
-        scaleY: 1.1,
-        easing: Konva.Easings.ElasticEaseOut,
-    });
-    e.target.moveToTop();
+
   }
 
   dragEnd(e) {
-    e.target.to({
-        scaleX: 1,
-        scaleY: 1,
-        easing: Konva.Easings.ElasticEaseOut,
-    });
+
   }
 
   handleTextEdit(e) {
     this.setState({
-      textAreaValue: e.target.value,
+      textValue: e.target.value,
     });
   }
 
@@ -65,7 +57,7 @@ class Plaintext extends React.Component {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
       textEditVisible: true,
-      draggable: false,
+      dragable: false,
       textX: absPos.x,
       textY: absPos.y,
     });
@@ -75,9 +67,12 @@ class Plaintext extends React.Component {
 
   // On focus out/ blur of text area, leave editing mode
   handleBlur() {
+    let textarea = document.getElementById(this.props.id.toString());
     this.setState({
+      finalTextValue: textarea.value,
       textEditVisible: false,
       draggable: true,
+      transformer: false,
     });
   }
 
@@ -86,21 +81,107 @@ class Plaintext extends React.Component {
     // need to put code within a setTimeout because
     // getElementById must happen after render
     setTimeout( () => {
+      console.log('TIMEOUT');
       this.setState({
         textEditVisible: true,
         draggable: false,
-        textX: this.state.position.x,
-        textY: this.state.position.y,
+        textX: this.props.x - 125,
+        textY: this.props.y,
       });
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
+      if (this.state.transformer) {
+        const stage = this.transformer.getStage();
+        const rectangle = stage.findOne('.' + this.props.id.toString());
+
+        // rectangle.to( {
+        //     scaleX: 1,
+        //     scaleY: 1,
+        //     easing: Konva.Easings.ElasticEaseOut,
+        // });
+
+        this.transformer.attachTo(rectangle);
+        this.transformer.getLayer().batchDraw();
+      }
     });
   }
+
+  componentDidUpdate() {
+    setTimeout( () => {
+      console.log('TIMEOUT');
+      if (this.state.transformer) {
+        const stage = this.transformer.getStage();
+        const rectangle = stage.findOne('.' + this.props.id.toString());
+        this.transformer.attachTo(rectangle);
+        this.transformer.getLayer().batchDraw();
+      }
+    });
+  }
+
+  handleTransform(e) {
+    console.log("transformed", e);
+    // we can read attrs here and send them to store
+  }
+
+  handleClick(e) {
+    this.setState({ transformer: true });
+  }
+
+  buildTransformer() {
+    if (this.state.transformer) {
+      return (
+        <Transformer
+          ref={node => { this.transformer = node; }}
+          />
+        );
+    }
+    return null;
+  }
+
+  // Add cursor styling
+  onMouseOver() {
+    document.body.style.cursor = 'pointer';
+  }
+  onMouseOut() {
+    document.body.style.cursor = 'default';
+  }
+
+  // Raising and lowering animations
+  onDragStart(e) {
+    e.target.to({
+        scaleX: 1.1,
+        scaleY: 1.1,
+        easing: Konva.Easings.ElasticEaseOut,
+    });
+
+    // make rect have shadow
+    let rect = e.target.find('Rect')[0];
+    rect.setAttrs({
+        shadowOffsetX: 15,
+        shadowOffsetY: 15,
+    });
+    e.target.moveToTop();
+  }
+
+  onDragEnd(e) {
+      e.target.to({
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.ElasticEaseOut,
+      });
+
+      // remove shadow
+      let rect = e.target.find('Rect')[0];
+      rect.setAttrs({
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      });
+  };
 
   render() {
     return (
       <Group
-        draggable={this.state.draggable}
+        draggable={this.state.dragable}
         name={"plaintextGroup"}
         id={this.props.id.toString()}
         scaleX={1}
@@ -108,16 +189,18 @@ class Plaintext extends React.Component {
         x={this.state.position.x}
         y={this.state.position.y}
         rotation={this.state.rotation}
-        dragStart={(e) => this.dragStart(e)}
-        dragEnd={(e) => this.dragEnd(e)}
         onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
-        onDragStart={(e) => this.dragStart(e)}
-        onDragEnd={(e) => this.dragEnd(e)}
+        onClick={(e) => this.handleClick(e)}
+        onTransform={(e) => this.handleTransform(e)}
+        onMouseOver={(e) => this.onMouseOver(e)}
+        onMouseOut={(e) => this.onMouseOut(e)}
+        onDragStart={(e) => this.onDragStart(e)}
+        onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Text
-          text={this.state.finalTextValue}
-          fontSize={95}
+          text={this.state.textValue}
+          fontSize={35}
           fontFamily={'Klee'}
           fill={'#555'}
           width={this.state.stickyTextWidth}
@@ -127,22 +210,22 @@ class Plaintext extends React.Component {
           listening={true}
           scaleX={1}
           scaleY={1}
-         />
+          />
+        {this.buildTransformer()}
         <Portal>
-          <textarea
-          id={this.props.id.toString()}
+        <textarea
           value={this.state.textAreaValue}
+          id={this.props.id.toString()}
           style={{
             display: this.state.textEditVisible ? 'block' : 'none',
             position: 'absolute',
             top: this.state.textY + 'px',
             left: this.state.textX + 'px',
-            fontSize: 95,
           }}
           onChange={(e) => this.handleTextEdit(e)}
           onKeyDown={(e) => this.handleTextareaKeyDown(e)}
           onBlur={() => this.handleBlur()}
-        />
+          />
         </Portal>
       </Group>
     );
