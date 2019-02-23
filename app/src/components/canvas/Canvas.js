@@ -127,6 +127,7 @@ class Canvas extends React.Component {
   }
 
   onDragEnd(e) {
+    if (e.target.nodeType != "Stage") { return; }
     this.setState({
         stageX: e.target.x(),
         stageY: e.target.y()
