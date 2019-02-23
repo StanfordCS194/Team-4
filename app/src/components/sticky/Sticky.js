@@ -53,6 +53,7 @@ class Sticky extends React.Component {
   handleTextDblClick(e) {
     const absPos = e.target.getAbsolutePosition();
     this.setState({
+      finalTextValue: '', //hide the current sticky text
       textEditVisible: true,
       draggable: false,
       textX: absPos.x,
@@ -64,7 +65,9 @@ class Sticky extends React.Component {
 
   // On focus out/ blur of text area, leave editing mode
   handleBlur() {
+    let textarea = document.getElementById(this.props.id.toString());
     this.setState({
+      finalTextValue: textarea.value,
       textEditVisible: false,
       draggable: true,
       transformer: false,
