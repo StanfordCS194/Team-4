@@ -1,6 +1,6 @@
 .colorPicker {
     position: absolute;
     z-index: 1;
-    bottom: 100%;
-    left: 64%;
+    bottom: 5.5px;
+    left: 80px;
 }

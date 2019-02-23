@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
 import ColorFillIcon from '@material-ui/icons/FormatColorFill';
+import ReactDOM from 'react-dom';
 
 
 class Toolbar extends Component {
@@ -21,9 +22,14 @@ class Toolbar extends Component {
     this.state = {
       tools: ['undo', 'save', 'delete', 'color'],
       openColorPicker: false,
-      icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon />, <ColorFillIcon />]
+      icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon />, null]
     };
   }
+    // Todo: probably not the best way to make picker go away
+    componentWillMount() {
+        // add event listener for clicks
+        document.addEventListener('click', this.handleClick, false);
+    }
 
   createToolIcons() {
     return (this.state.icons.map((icon, i) => {
@@ -32,10 +38,19 @@ class Toolbar extends Component {
                   key={this.state.tools[i]}
                   color="primary"
                   className="tools"
-                  onClick={() => this.handleButtonClick(this.state.tools[i])}
+                  onClick={(e) => this.handleButtonClick(this.state.tools[i], e)}
                   >
                   {this.state.icons[i]}
+                  {this.state.tools[i] === 'color' &&
+                    <ColorPicker
+                        openColorPicker={this.state.openColorPicker}
+                        onColorChange={this.props.onColorChange}
+                    />
+                  }
+                  {this.state.tools[i] === 'color' &&
+                  <span className="dot" style={{backgroundColor: this.props.nextColor}}/>}
               </Fab>
+
     }))
   }
 
@@ -43,19 +58,22 @@ class Toolbar extends Component {
     return (
       <Fragment>
           {this.createToolIcons()}
-          <ColorPicker
-            openColorPicker={this.state.openColorPicker}
-            onColorChange={this.props.onColorChange}
-          />
       </Fragment>
     );
   }
 
-  handleButtonClick(id) {
+  handleButtonClick(id, e) {
     if (id === 'color') {
-      this.setState({ openColorPicker: !this.state.openColorPicker })
+      this.setState({ openColorPicker: !this.state.openColorPicker });
     }
   }
+
+  handleClick = e => {
+      // Todo: doesn't go away when clicking other toolbar buttons
+      if (!ReactDOM.findDOMNode(this).contains(e.target)) {
+          this.setState({ openColorPicker: false });
+      }
+  };
 
   render() {
     return (
