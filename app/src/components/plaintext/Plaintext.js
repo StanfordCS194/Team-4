@@ -31,6 +31,7 @@ class Plaintext extends React.Component {
         scaleY: 1.1,
         easing: Konva.Easings.ElasticEaseOut,
     });
+    e.target.moveToTop();
   }
 
   dragEnd(e) {

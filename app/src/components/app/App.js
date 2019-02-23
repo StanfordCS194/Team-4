@@ -19,9 +19,15 @@ class App extends Component {
     super(props);
     this.state = {
       sidebarOpen: true,
-      user: {name: 'Marilu Bravo', img: '/anon.png'}
+      user: {name: 'Marilu Bravo', img: '/anon.png'},
+      nextColor: '#fffdd0'
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+    this.onColorChange = this.onColorChange.bind(this);
+  }
+
+  onColorChange(color) {
+    this.setState({nextColor: color.hex})
   }
 
   makeSideBarContent(user) {
@@ -63,8 +69,11 @@ class App extends Component {
             <ArrowIcon id="arrowIcon" />
           </div>
         </Sidebar>
-        <Canvas />
-        <Toolbar />
+        <Canvas
+            nextColor={this.state.nextColor} />
+        <Toolbar
+            onColorChange={this.onColorChange}
+        />
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );

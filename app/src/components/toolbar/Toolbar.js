@@ -45,6 +45,7 @@ class Toolbar extends Component {
           {this.createToolIcons()}
           <ColorPicker
             openColorPicker={this.state.openColorPicker}
+            onColorChange={this.props.onColorChange}
           />
       </Fragment>
     );

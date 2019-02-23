@@ -87,6 +87,7 @@ class Canvas extends React.Component {
         y={e.evt.clientY}
         stageX={this.state.stageX}
         stageY={this.state.stageY}
+        nextColor={this.props.nextColor}
         />
       );
     }

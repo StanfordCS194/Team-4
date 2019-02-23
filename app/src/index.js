@@ -8,4 +8,4 @@ import epiphany_canvas from './js/epiphany_canvas';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
-epiphany_canvas();
+//epiphany_canvas();
