@@ -20,7 +20,7 @@ class App extends Component {
     this.state = {
       sidebarOpen: true,
       user: {name: 'Marilu Bravo', img: '/anon.png'},
-      nextColor: '#fffdd0'
+      nextColor: '#fffdd0',
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
@@ -70,11 +70,12 @@ class App extends Component {
           </div>
         </Sidebar>
         <Toolbar
-          onColorChange={this.onColorChange}
-          />
+            onColorChange={this.onColorChange}
+            nextColor={this.state.nextColor}
+        />
         <Canvas
-          nextColor={this.state.nextColor}
-          />
+            nextColor={this.state.nextColor} />
+
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>
     );

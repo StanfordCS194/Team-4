@@ -10,6 +10,12 @@
 	justify-content: center;
 }
 
+.dot {
+	height: 42px;
+	width: 42px;
+	border-radius: 50%;
+}
+
 #delete, #save, #undo, #color {
 	position: relative;
 	margin: 0 30px 50px 0;
