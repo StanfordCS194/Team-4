@@ -126,6 +126,13 @@ class Canvas extends React.Component {
     });
   }
 
+  onDragEnd(e) {
+    this.setState({
+        stageX: e.target.x(),
+        stageY: e.target.y()
+    })
+  }
+
   render() {
     return (
       <Stage
@@ -141,6 +148,7 @@ class Canvas extends React.Component {
         onClick={(e) => this.handleClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
+        onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Layer>
           <OpeningGreeting
