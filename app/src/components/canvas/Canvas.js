@@ -5,7 +5,7 @@ import Konva from 'konva';
 
 import './Canvas.css';
 
-import Sticky from './canvas_objects/sticky/Sticky';
+import Sticky from './canvas_objects/sticky/NewSticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 
 class OpeningGreeting extends React.Component {
