@@ -112,6 +112,13 @@ class Sticky extends React.Component {
       textarea.focus();
       if (this.state.transformer) {
         this.addTransformerToComponent();
+        const stage = this.transformer.getStage();
+        const rectangle = stage.findOne('.' + this.props.id.toString());
+        rectangle.to( {
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+          });
       }
     });
   }
