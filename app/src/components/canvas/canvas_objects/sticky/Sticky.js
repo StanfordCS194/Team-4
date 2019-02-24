@@ -14,8 +14,7 @@ class Sticky extends React.Component {
 //      color: colors[Math.floor(Math.random() * colors.length)],
       color: this.props.nextColor,
       editingStickyText: false,
-      transformer: true,
-      draggable: false,
+      draggable: true,
       stickyTextHeight: 250,
       stickyTextWidth: 250,
       position: {
@@ -28,6 +27,8 @@ class Sticky extends React.Component {
       textEditVisible: true,
       textX: this.props.x - 125,
       textY: this.props.y,
+      scaleX: this.props.scaleX,
+      scaleY: this.props.scaleY
     }
   }
 
@@ -70,28 +71,15 @@ class Sticky extends React.Component {
       finalTextValue: textarea.value,
       textEditVisible: false,
       draggable: true,
-      transformer: false,
     });
   }
 
   handleTransform(e) {
-    console.log("transformed", e);
-    // we can read attrs here and send them to store
-  }
-
-  handleClick(e) {
-    this.setState({ transformer: true });
-  }
-
-  buildTransformer() {
-    if (this.state.transformer) {
-      return (
-        <Transformer
-          ref={node => { this.transformer = node; }}
-          />
-        );
-    }
-    return null;
+    // Update the scaleX and scaleY of sticky after transforming
+    this.setState({
+      scaleX: e.currentTarget.attrs.scaleX,
+      scaleY: e.currentTarget.attrs.scaleY
+    })
   }
 
   addTransformerToComponent() {
@@ -106,30 +94,15 @@ class Sticky extends React.Component {
     // need to put code within a setTimeout because
     // getElementById must happen after render
     setTimeout( () => {
-      console.log('TIMEOUT');
-      // focus on text after creation
+      // console.log('TIMEOUT');
+      this.setState({
+        textEditVisible: true,
+        draggable: false,
+        textX: this.props.x - 125,
+        textY: this.props.y,
+      });
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
-      if (this.state.transformer) {
-        this.addTransformerToComponent();
-        const stage = this.transformer.getStage();
-        const rectangle = stage.findOne('.' + this.props.id.toString());
-        rectangle.to( {
-            scaleX: 1,
-            scaleY: 1,
-            easing: Konva.Easings.ElasticEaseOut,
-          });
-      }
-    });
-  }
-
-  // On update, have to check if new transformer created
-  componentDidUpdate() {
-    setTimeout( () => {
-      console.log('TIMEOUT');
-      if (this.state.transformer) {
-        this.addTransformerToComponent();
-      }
     });
   }
 
@@ -144,8 +117,8 @@ class Sticky extends React.Component {
   // Raising and lowering animations
   onDragStart(e) {
     e.target.to({
-        scaleX: 1.1,
-        scaleY: 1.1,
+        scaleX: 1.1 * e.target.attrs.scaleX,
+        scaleY: 1.1 * e.target.attrs.scaleY,
         easing: Konva.Easings.ElasticEaseOut,
     });
 
@@ -156,12 +129,13 @@ class Sticky extends React.Component {
         shadowOffsetY: 15,
     });
     e.target.moveToTop();
+    e.target.getStage().findOne('Transformer').moveToTop();
   }
 
   onDragEnd(e) {
       e.target.to({
-        scaleX: 1,
-        scaleY: 1,
+        scaleX: e.target.attrs.scaleX,
+        scaleY: e.target.attrs.scaleY,
         easing: Konva.Easings.ElasticEaseOut,
       });
 
@@ -179,14 +153,13 @@ class Sticky extends React.Component {
         draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
-        scaleX={1}
-        scaleY={1}
+        scaleX={this.state.scaleX}
+        scaleY={this.state.scaleY}
         x={this.state.position.x}
         y={this.state.position.y}
         rotation={this.state.rotation}
         onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
-        onClick={(e) => this.handleClick(e)}
         onTransform={(e) => this.handleTransform(e)}
         onMouseOver={(e) => this.onMouseOver(e)}
         onMouseOut={(e) => this.onMouseOut(e)}
@@ -194,7 +167,6 @@ class Sticky extends React.Component {
         onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Rect
-          name={this.props.id.toString()}
           width={250}
           height={250}
           fill={this.state.color}
@@ -215,7 +187,6 @@ class Sticky extends React.Component {
           scaleX={1}
           scaleY={1}
           />
-        {this.buildTransformer()}
         <Portal>
           <textarea
             value={this.state.textAreaValue}

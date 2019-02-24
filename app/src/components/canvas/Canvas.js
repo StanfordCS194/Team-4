@@ -7,6 +7,7 @@ import './Canvas.css';
 
 import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
+import TransformerComponent from './canvas_objects/transformercomponent/TransformerComponent';
 
 class OpeningGreeting extends React.Component {
   constructor(props) {
@@ -34,8 +35,6 @@ class OpeningGreeting extends React.Component {
   }
 }
 
-
-
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
@@ -53,11 +52,37 @@ class Canvas extends React.Component {
       scaleBy: 1.05,
       objectArray: [],
       activeSticky: null,
+      selectedCanvasObjectId: ''
     };
   }
 
-  handleClick(e) {
-    console.log(e);
+  handleMouseDown(e) {
+    // clicked on stage - clear selection
+    if (e.target === e.target.getStage()) {
+      this.setState({
+        selectedCanvasObjectId: ''
+      });
+      return;
+    }
+    // clicked on transformer - do nothing
+    const clickedOnTransformer =
+        e.target.getParent().className === 'Transformer';
+    if (clickedOnTransformer) {
+      return;
+    }
+
+    // find clicked sticky (group) by its id
+    const id = e.target.parent.attrs.id;
+    const sticky = this.state.stickyArray.find(sticky => sticky.props.id.toString() === id);
+    if (sticky) {
+      this.setState({
+        selectedCanvasObjectId: id
+      });
+    } else {
+      this.setState({
+        selectedCanvasObjectId: ''
+      });
+    }
   }
 
   handleDblClick(e) {
@@ -84,12 +109,13 @@ class Canvas extends React.Component {
       <Sticky
         id={this.state.id}
         scaleX={this.state.scaleX}
+        scaleY={this.state.scaleY}
         x={e.evt.clientX}
         y={e.evt.clientY}
         stageX={this.state.stageX}
         stageY={this.state.stageY}
         nextColor={this.props.nextColor}
-        />
+      />
       );
     }
     this.setState({
@@ -173,7 +199,7 @@ class Canvas extends React.Component {
         scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
-        onClick={(e) => this.handleClick(e)}
+        onMouseDown={(e) => this.handleMouseDown(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
@@ -182,6 +208,9 @@ class Canvas extends React.Component {
         <Layer>
           <OpeningGreeting
             justOpenedApp={this.state.justOpenedApp}
+          />
+          <TransformerComponent
+              selectedCanvasObjectId={this.state.selectedCanvasObjectId}
           />
           {this.state.objectArray.slice(0,this.state.id)}
         </Layer>
