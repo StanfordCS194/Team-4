@@ -5,7 +5,7 @@ import Konva from 'konva';
 
 import './Canvas.css';
 
-import Sticky from './canvas_objects/sticky/NewSticky';
+import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 
 class OpeningGreeting extends React.Component {
@@ -61,13 +61,11 @@ class Canvas extends React.Component {
   }
 
   handleDblClick(e) {
-    // So that we don't create a sticky when we're trying to edit a sticky
-    // Removes greeting text when justOpenedApp
-    if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
-        return;
-    }
     this.setState({ justOpenedApp: false });
-
+    // So that we don't create a sticky when we're trying to edit a sticky
+    if (e.target.nodeType === "Shape") {
+      return;
+    }
     let newComponent = null;
     // Add plain text
     if (window.event.metaKey) {
@@ -158,8 +156,6 @@ class Canvas extends React.Component {
         <Layer>
           <OpeningGreeting
             justOpenedApp={this.state.justOpenedApp}
-            // onDblClick={(e) => this.handleDblClick}
-
           />
           {this.state.stickyArray}
         </Layer>
