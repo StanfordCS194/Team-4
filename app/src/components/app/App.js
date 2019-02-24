@@ -17,6 +17,7 @@ import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.canvas = React.createRef();
     this.state = {
       sidebarOpen: true,
       user: {name: 'Marilu Bravo', img: '/anon.png'},
@@ -32,7 +33,8 @@ class App extends Component {
   }
 
   onUndo() {
-    
+    console.log('UNDO in app.js')
+    this.canvas.current.undo();
   }
 
   makeSideBarContent(user) {
@@ -77,9 +79,10 @@ class App extends Component {
         <Toolbar
           onColorChange={this.onColorChange}
           nextColor={this.state.nextColor}
-          onUndo={this.state.onUndo}
+          undo={this.onUndo}
           />
         <Canvas
+          ref={this.canvas}
           nextColor={this.state.nextColor}
           />
 

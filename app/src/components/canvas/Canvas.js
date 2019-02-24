@@ -138,14 +138,18 @@ class Canvas extends React.Component {
     });
   }
 
+  undo() {
+    if (this.state.id <= 0) { return; }
+    this.setState({
+      id: this.state.id - 1,
+    });
+  }
+
   // handle keypresses
   handleKeyPress = (e) => {
     // if command-z, undo previously added object
     if (e.metaKey && e.keyCode === 90) {
-      if (this.state.id <= 0) { return; }
-      this.setState({
-        id: this.state.id - 1,
-      });
+      this.undo();
     }
   }
 

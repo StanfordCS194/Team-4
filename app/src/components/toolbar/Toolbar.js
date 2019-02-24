@@ -18,6 +18,7 @@ import ReactDOM from 'react-dom';
 
 class Toolbar extends Component {
   constructor(props) {
+    console.log(props);
     super(props);
     this.state = {
       tools: ['undo', 'save', 'delete', 'color'],
@@ -54,9 +55,11 @@ class Toolbar extends Component {
     }))
   }
 
-  handleButtonClick(id, e) {
+  handleButtonClick = (id, e) => {
     if (id === 'color') {
       this.setState({ openColorPicker: !this.state.openColorPicker });
+    } else if (id === 'undo') {
+      this.props.undo();
     }
   }
 
