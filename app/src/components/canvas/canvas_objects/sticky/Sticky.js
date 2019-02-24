@@ -15,7 +15,7 @@ class Sticky extends React.Component {
       color: this.props.nextColor,
       editingStickyText: false,
       transformer: true,
-      draggable: true,
+      draggable: false,
       stickyTextHeight: 250,
       stickyTextWidth: 250,
       position: {
@@ -25,9 +25,9 @@ class Sticky extends React.Component {
       rotation: Math.floor(Math.random() * (11) - 5),
       textAreaValue: '',
       finalTextValue: '',
-      textEditVisible: false,
-      textX: 0,
-      textY: 0,
+      textEditVisible: true,
+      textX: this.props.x - 125,
+      textY: this.props.y,
     }
   }
 
@@ -94,44 +94,34 @@ class Sticky extends React.Component {
     return null;
   }
 
+  addTransformerToComponent() {
+    const stage = this.transformer.getStage();
+    const rectangle = stage.findOne('.' + this.props.id.toString());
+    this.transformer.attachTo(rectangle);
+    this.transformer.getLayer().batchDraw();
+  }
+
   // focus on sticky text after mounting
   componentDidMount() {
     // need to put code within a setTimeout because
     // getElementById must happen after render
     setTimeout( () => {
       console.log('TIMEOUT');
-      this.setState({
-        textEditVisible: true,
-        draggable: false,
-        textX: this.props.x - 125,
-        textY: this.props.y,
-      });
+      // focus on text after creation
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
       if (this.state.transformer) {
-        const stage = this.transformer.getStage();
-        const rectangle = stage.findOne('.' + this.props.id.toString());
-
-        rectangle.to( {
-            scaleX: 1,
-            scaleY: 1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-
-        this.transformer.attachTo(rectangle);
-        this.transformer.getLayer().batchDraw();
+        this.addTransformerToComponent();
       }
     });
   }
 
+  // On update, have to check if new transformer created
   componentDidUpdate() {
     setTimeout( () => {
       console.log('TIMEOUT');
       if (this.state.transformer) {
-        const stage = this.transformer.getStage();
-        const rectangle = stage.findOne('.' + this.props.id.toString());
-        this.transformer.attachTo(rectangle);
-        this.transformer.getLayer().batchDraw();
+        this.addTransformerToComponent();
       }
     });
   }

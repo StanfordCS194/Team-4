@@ -54,14 +54,6 @@ class Toolbar extends Component {
     }))
   }
 
-  createToolDivs() {
-    return (
-      <Fragment>
-          {this.createToolIcons()}
-      </Fragment>
-    );
-  }
-
   handleButtonClick(id, e) {
     if (id === 'color') {
       this.setState({ openColorPicker: !this.state.openColorPicker });
@@ -78,7 +70,7 @@ class Toolbar extends Component {
   render() {
     return (
       <ButtonToolbar className="toolbar">
-        {this.createToolDivs()}
+        {this.createToolIcons()}
       </ButtonToolbar>
     );
   }
