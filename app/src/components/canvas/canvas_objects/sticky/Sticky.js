@@ -30,6 +30,7 @@ class Sticky extends React.Component {
       scaleX: this.props.scaleX,
       scaleY: this.props.scaleY
     }
+    this.sticky = React.createRef();
   }
 
   handleTextEdit(e) {
@@ -94,15 +95,14 @@ class Sticky extends React.Component {
     // need to put code within a setTimeout because
     // getElementById must happen after render
     setTimeout( () => {
-      // console.log('TIMEOUT');
-      this.setState({
-        textEditVisible: true,
-        draggable: false,
-        textX: this.props.x - 125,
-        textY: this.props.y,
-      });
       let textarea = document.getElementById(this.props.id.toString());
       textarea.focus();
+      console.log(this.sticky);
+      this.sticky.current.to({
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.ElasticEaseOut,
+      });
     });
   }
 
@@ -150,6 +150,7 @@ class Sticky extends React.Component {
   render() {
     return (
       <Group
+
         draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
@@ -167,6 +168,7 @@ class Sticky extends React.Component {
         onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Rect
+            ref={this.sticky}
           width={250}
           height={250}
           fill={this.state.color}
