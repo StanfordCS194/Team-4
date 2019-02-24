@@ -134,8 +134,8 @@ class Sticky extends React.Component {
 
   onDragEnd(e) {
       e.target.to({
-        scaleX: e.target.attrs.scaleX,
-        scaleY: e.target.attrs.scaleY,
+        scaleX: e.target.attrs.scaleX / 1.1,
+        scaleY: e.target.attrs.scaleY / 1.1,
         easing: Konva.Easings.ElasticEaseOut,
       });
 
