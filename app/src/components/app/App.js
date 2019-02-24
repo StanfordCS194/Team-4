@@ -24,10 +24,15 @@ class App extends Component {
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
+    this.onUndo = this.onUndo.bind(this);
   }
 
   onColorChange(color) {
     this.setState({nextColor: color.hex})
+  }
+
+  onUndo() {
+    
   }
 
   makeSideBarContent(user) {
@@ -70,11 +75,13 @@ class App extends Component {
           </div>
         </Sidebar>
         <Toolbar
-            onColorChange={this.onColorChange}
-            nextColor={this.state.nextColor}
-        />
+          onColorChange={this.onColorChange}
+          nextColor={this.state.nextColor}
+          onUndo={this.state.onUndo}
+          />
         <Canvas
-            nextColor={this.state.nextColor} />
+          nextColor={this.state.nextColor}
+          />
 
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>
       </Fragment>

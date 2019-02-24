@@ -51,7 +51,7 @@ class Canvas extends React.Component {
       scaleX: 1,
       scaleY: 1,
       scaleBy: 1.05,
-      stickyArray: [],
+      objectArray: [],
       activeSticky: null,
     };
   }
@@ -61,7 +61,7 @@ class Canvas extends React.Component {
   }
 
   handleDblClick(e) {
-    this.setState({ justOpenedApp: false });
+    this.state.justOpenedApp = false;
     // So that we don't create a sticky when we're trying to edit a sticky
     if (e.target.nodeType === "Shape") {
       return;
@@ -92,8 +92,10 @@ class Canvas extends React.Component {
         />
       );
     }
-    this.setState({stickyArray: this.state.stickyArray.concat([newComponent])});
-    this.setState({id: this.state.id + 1});
+    this.setState({
+      objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
+      id: this.state.id + 1,
+    });
   }
 
   handleOnWheel(e) {
@@ -133,7 +135,26 @@ class Canvas extends React.Component {
     this.setState({
         stageX: e.target.x(),
         stageY: e.target.y()
-    })
+    });
+  }
+
+  // handle keypresses
+  handleKeyPress = (e) => {
+    // if command-z, undo previously added object
+    if (e.metaKey && e.keyCode === 90) {
+      if (this.state.id <= 0) { return; }
+      this.setState({
+        id: this.state.id - 1,
+      });
+    }
+  }
+
+  // add document level keydown listeners
+  componentDidMount(){
+    document.addEventListener("keydown", this.handleKeyPress, false);
+  }
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.handleKeyPress, false);
   }
 
   render() {
@@ -152,12 +173,13 @@ class Canvas extends React.Component {
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
+        onKeyDown={(e) => this.handleKeyPress(e)}
         >
         <Layer>
           <OpeningGreeting
             justOpenedApp={this.state.justOpenedApp}
           />
-          {this.state.stickyArray}
+          {this.state.objectArray.slice(0,this.state.id)}
         </Layer>
       </Stage>
     );
