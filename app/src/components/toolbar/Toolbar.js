@@ -54,22 +54,15 @@ class Toolbar extends Component {
     }))
   }
 
-<<<<<<< HEAD
-  handleButtonClick = (id, e) => {
-    if (id === 'color') {
-      this.setState({ openColorPicker: !this.state.openColorPicker });
-    } else if (id === 'undo') {
-      this.props.undo();
-    }
-  }
-
-=======
->>>>>>> dd45ebf261fd6df8dc436f7e19999a5e6ce4401f
   handleClick = e => {
       if (e.target.id !== 'color' && e.target.id !== 'colorDot') {
           this.setState({ openColorPicker: false });
       } else {
           this.setState({ openColorPicker: !this.state.openColorPicker });
+      }
+
+      if (e.target.id === 'undo') {
+        this.props.undo();
       }
   };
 

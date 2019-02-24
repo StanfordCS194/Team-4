@@ -33,7 +33,6 @@ class App extends Component {
   }
 
   onUndo() {
-    console.log('UNDO in app.js')
     this.canvas.current.undo();
   }
 
