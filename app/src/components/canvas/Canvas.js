@@ -38,24 +38,49 @@ class OpeningGreeting extends React.Component {
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      justOpenedApp: true,
-      creatingSticky: false,
-      editingShape: false,
-      stageWidth: window.innerWidth,
-      stageHeight: window.innerHeight,
-      id: 0,
-      stageX: 0,
-      stageY: 0,
-      scaleX: 1,
-      scaleY: 1,
-      scaleBy: 1.05,
-      objectArray: [],
-      activeSticky: null,
-      selectedCanvasObjectId: ''
+      this.stage = React.createRef();
+      this.state = {
+          justOpenedApp: true,
+          creatingSticky: false,
+          editingShape: false,
+          stageWidth: window.innerWidth,
+          stageHeight: window.innerHeight,
+          id: 0,
+          stageX: 0,
+          stageY: 0,
+          scaleX: 1,
+          scaleY: 1,
+          scaleBy: 1.05,
+          objectArray: [],
+          activeSticky: null,
+          selectedCanvasObjectId: ''
     };
+      this.handleClick = this.handleClick.bind(this);
+      this.downloadURI = this.downloadURI.bind(this);
   }
 
+    componentWillMount() {
+        // add event listener for clicks
+        document.addEventListener('click', this.handleClick, false);
+    }
+
+    downloadURI(uri, name) {
+        let link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+  handleClick(e) {
+      console.log(e);
+      if (e.target.id === "saveToImageBtn") {
+          let dataURL = this.stage.current.getStage().toDataURL({pixelRatio: 3}); // Todo: Dynamically change this number based on stage scale for optimal image quality
+          console.log(dataURL);
+          this.downloadURI(dataURL, 'stage.png'); // Todo: Dynamically name this image, maybe {Name of board} + {Date/Time printed}
+      }
+  }
   handleMouseDown(e) {
     // clicked on stage - clear selection
     if (e.target === e.target.getStage()) {
@@ -138,7 +163,7 @@ class Canvas extends React.Component {
     let stageDimensions = {
       x: window.innerWidth * this.state.scaleX,
       y: window.innerHeight * this.state.scaleX,
-    }
+    };
 
     let newScale =
       e.evt.deltaY > 0 ?
@@ -190,6 +215,7 @@ class Canvas extends React.Component {
   render() {
     return (
       <Stage
+          ref={this.stage}
         container={'container'}
         width={window.innerWidth}
         height={window.innerHeight}

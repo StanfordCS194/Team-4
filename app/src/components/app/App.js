@@ -43,7 +43,7 @@ class App extends Component {
           <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
         </div>
         <div className="sidebarContent">
-          <a href='#'>Save Board to PDF</a>
+          <a href='#' id="saveToImageBtn">Save Board to Image</a>
         </div>
         <div className="sidebarContent">
           <a href='#'>My Boards</a>
