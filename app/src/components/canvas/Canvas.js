@@ -146,6 +146,9 @@ class Canvas extends React.Component {
         y={e.evt.clientY}
         stageX={this.state.stageX}
         stageY={this.state.stageY}
+        height={200}
+        width={800}
+        fontSize={80}
         />
       );
     } else {
@@ -158,6 +161,9 @@ class Canvas extends React.Component {
         stageX={this.state.stageX}
         stageY={this.state.stageY}
         nextColor={this.props.nextColor}
+        height={250}
+        width={250}
+        fontSize={35}
       />
       );
     }

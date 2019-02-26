@@ -15,17 +15,15 @@ class Sticky extends React.Component {
       color: this.props.nextColor,
       editingStickyText: false,
       draggable: true,
-      stickyTextHeight: 250,
-      stickyTextWidth: 250,
       position: {
-        x: this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - 125,
+        x: this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - this.props.width / 2,
         y: this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
       },
       rotation: Math.floor(Math.random() * (11) - 5),
       textAreaValue: '',
       finalTextValue: '',
       textEditVisible: true,
-      textX: this.props.x - 125,
+      textX: this.props.x - this.props.width / 2,
       textY: this.props.y,
     }
     this.sticky = React.createRef();
@@ -164,9 +162,9 @@ class Sticky extends React.Component {
         onDragEnd={(e) => this.onDragEnd(e)}
         >
         <Rect
-            ref={this.sticky}
-          width={250}
-          height={250}
+          ref={this.sticky}
+          width={this.props.width}
+          height={this.props.height}
           fill={this.state.color}
           shadowColor={'black'}
           scaleX={1.1}
@@ -174,11 +172,11 @@ class Sticky extends React.Component {
           />
         <Text
           text={this.state.finalTextValue}
-          fontSize={35}
+          fontSize={this.props.fontSize}
           fontFamily={'Klee'}
           fill={'#555'}
-          width={this.state.stickyTextWidth}
-          height={this.state.stickyTextHeight}
+          width={this.props.width}
+          height={this.props.height}
           padding={20}
           align={'center'}
           listening={true}
@@ -194,6 +192,9 @@ class Sticky extends React.Component {
               position: 'absolute',
               top: this.state.textY + 'px',
               left: this.state.textX + 'px',
+              width: this.props.width,
+              height: this.props.height,
+              fontSize: this.props.fontSize,
             }}
             onChange={(e) => this.handleTextEdit(e)}
             onKeyDown={(e) => this.handleTextareaKeyDown(e)}
