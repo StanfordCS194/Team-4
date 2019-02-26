@@ -27,8 +27,8 @@ class Sticky extends React.Component {
       textEditVisible: true,
       textX: this.props.x - 125,
       textY: this.props.y,
-      scaleX: 1,
-      scaleY: 1
+      scaleX: this.props.scaleX,
+      scaleY: this.props.scaleY
     }
     this.sticky = React.createRef();
   }
@@ -154,8 +154,8 @@ class Sticky extends React.Component {
         draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
-        scaleX={this.state.scaleX}
-        scaleY={this.state.scaleY}
+        // scaleX={this.state.scaleX}
+        // scaleY={this.state.scaleY}
         x={this.state.position.x}
         y={this.state.position.y}
         rotation={this.state.rotation}

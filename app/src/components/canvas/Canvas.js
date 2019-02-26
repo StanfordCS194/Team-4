@@ -133,6 +133,8 @@ class Canvas extends React.Component {
       newComponent = (
       <Sticky
         id={this.state.id}
+        scaleX={this.state.scaleX}
+        scaleY={this.state.scaleY}
         x={e.evt.clientX}
         y={e.evt.clientY}
         stageX={this.state.stageX}
