@@ -81,7 +81,7 @@ class Canvas extends React.Component {
           this.downloadURI(dataURL, 'stage.png'); // Todo: Dynamically name this image, maybe {Name of board} + {Date/Time printed}
       }
   }
-  handleClick(e) {
+  handleStageClick(e) {
     // clicked on stage - clear selection
     if (e.target === e.target.getStage()) {
       this.setState({
@@ -93,6 +93,7 @@ class Canvas extends React.Component {
     const clickedOnTransformer =
         e.target.getParent().className === 'Transformer';
     if (clickedOnTransformer) {
+      console.log('clicked transformer');
       return;
     }
 
@@ -111,11 +112,12 @@ class Canvas extends React.Component {
   }
 
   handleDblClick(e) {
-    this.state.justOpenedApp = false;
-    // So that we don't create a sticky when we're trying to edit a sticky
-    if (e.target.nodeType === "Shape") {
+    // Removes greeting text when justOpenedApp
+    if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
       return;
     }
+    this.setState({ justOpenedApp: false});
+
     let newComponent = null;
     // Add plain text
     if (window.event.metaKey) {
@@ -224,7 +226,7 @@ class Canvas extends React.Component {
         scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
-        onClick={(e) => this.handleClick(e)}
+        onClick={(e) => this.handleStageClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
