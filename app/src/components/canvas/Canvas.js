@@ -81,6 +81,7 @@ class Canvas extends React.Component {
           this.downloadURI(dataURL, 'stage.png'); // Todo: Dynamically name this image, maybe {Name of board} + {Date/Time printed}
       }
   }
+
   handleStageClick(e) {
     // clicked on stage - clear selection
     if (e.target === e.target.getStage()) {
@@ -108,6 +109,22 @@ class Canvas extends React.Component {
       this.setState({
         selectedCanvasObjectId: ''
       });
+    }
+  }
+
+  handleMouseDown(e) {
+    // Remove transformer if you drag another sticky
+    // Only keep transformer if you click it directly
+    if (e.target.getParent()) {
+      const clickedOnTransformer =
+          e.target.getParent().className === 'Transformer';
+      if (clickedOnTransformer) {
+        return;
+      } else {
+        this.setState({
+          selectedCanvasObjectId: ''
+        });
+      }
     }
   }
 
@@ -226,6 +243,7 @@ class Canvas extends React.Component {
         scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
+        onMouseDown={(e) => this.handleMouseDown(e)}
         onClick={(e) => this.handleStageClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
