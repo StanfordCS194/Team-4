@@ -81,7 +81,7 @@ class Canvas extends React.Component {
           this.downloadURI(dataURL, 'stage.png'); // Todo: Dynamically name this image, maybe {Name of board} + {Date/Time printed}
       }
   }
-  handleMouseDown(e) {
+  handleClick(e) {
     // clicked on stage - clear selection
     if (e.target === e.target.getStage()) {
       this.setState({
@@ -134,7 +134,6 @@ class Canvas extends React.Component {
       <Sticky
         id={this.state.id}
         scaleX={this.state.scaleX}
-        scaleY={this.state.scaleY}
         x={e.evt.clientX}
         y={e.evt.clientY}
         stageX={this.state.stageX}
@@ -225,7 +224,7 @@ class Canvas extends React.Component {
         scaleY={this.state.scaleY}
         x={this.state.stageX}
         y={this.state.stageY}
-        onMouseDown={(e) => this.handleMouseDown(e)}
+        onClick={(e) => this.handleClick(e)}
         onDblClick={(e) => this.handleDblClick(e)}
         onWheel={(e) => this.handleOnWheel(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
