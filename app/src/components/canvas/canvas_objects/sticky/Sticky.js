@@ -27,8 +27,8 @@ class Sticky extends React.Component {
       textEditVisible: true,
       textX: this.props.x - 125,
       textY: this.props.y,
-      scaleX: this.props.scaleX,
-      scaleY: this.props.scaleY
+      scaleX: 1,
+      scaleY: 1
     }
     this.sticky = React.createRef();
   }
