@@ -8,7 +8,7 @@ import './Canvas.css';
 import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 import TransformerComponent from './canvas_objects/transformercomponent/TransformerComponent';
-
+import ImageComponent from './canvas_objects/image/image'
 class OpeningGreeting extends React.Component {
   constructor(props) {
     super(props);
@@ -53,7 +53,8 @@ class Canvas extends React.Component {
           scaleBy: 1.05,
           objectArray: [],
           activeSticky: null,
-          selectedCanvasObjectId: ''
+          selectedCanvasObjectId: '',
+          imageSrc: ''
     };
       this.handleClick = this.handleClick.bind(this);
       this.downloadURI = this.downloadURI.bind(this);
@@ -225,6 +226,11 @@ class Canvas extends React.Component {
     // if command-z, undo previously added object
     if (e.metaKey && e.keyCode === 90) {
       this.undo();
+    } else if (e.keyCode === 73) {
+      console.log('i!');
+      this.setState({
+        imageSrc: 'https://fcbk.su/_data/stickers/taz/taz_00.png'
+      })
     }
   }
 
@@ -257,6 +263,9 @@ class Canvas extends React.Component {
         onKeyDown={(e) => this.handleKeyPress(e)}
         >
         <Layer>
+          <ImageComponent
+            src={this.state.imageSrc}/>
+
           <OpeningGreeting
             justOpenedApp={this.state.justOpenedApp}
           />
