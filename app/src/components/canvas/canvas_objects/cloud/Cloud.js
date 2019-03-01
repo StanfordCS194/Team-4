@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
+import { Stage, Layer, Rect, Circle, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
 
-
 // Todo: Transformer support
-class Arrow extends React.Component {
+// Todo: Text within cloud (like sticky) support
+class Cloud extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -53,26 +53,35 @@ class Arrow extends React.Component {
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 >
-                <Rect
-                    width={300}
-                    height={20}
-                    fill={'black'}
+                <Circle
+                    radius={210}
+                    fill={'#7EC0EE'}
                     shadowColor={'black'}
                     />
-                <RegularPolygon
-                    width={150}
-                    height={20}
-                    radius={50}
-                    y={10}
-                    fill={'black'}
+                <Circle
+                    radius={210}
+                    y={180}
+                    x={-180}
+                    fill={'#7EC0EE'}
                     shadowColor={'black'}
-                    sides={3}
-                    rotation={-90}
-                >
-                </RegularPolygon>
+                />
+                <Circle
+                    radius={150}
+                    y={240}
+                    x={180}
+                    fill={'#7EC0EE'}
+                    shadowColor={'black'}
+                />
+                <Rect
+                    width={360}
+                    height={240}
+                    y={150}
+                    x={-180}
+                    fill={'#7EC0EE'}
+                />
             </Group>
         )
     }
 }
 
-export default Arrow;
+export default Cloud;

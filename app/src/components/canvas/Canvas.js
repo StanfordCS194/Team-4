@@ -9,6 +9,10 @@ import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 import TransformerComponent from './canvas_objects/transformercomponent/TransformerComponent';
 import ImageComponent from './canvas_objects/image/image'
+import Arrow from './canvas_objects/arrow/Arrow';
+import Cloud from './canvas_objects/cloud/Cloud';
+
+
 class OpeningGreeting extends React.Component {
   constructor(props) {
     super(props);
@@ -58,6 +62,7 @@ class Canvas extends React.Component {
     };
       this.handleClick = this.handleClick.bind(this);
       this.downloadURI = this.downloadURI.bind(this);
+      this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
     componentWillMount() {
@@ -74,6 +79,7 @@ class Canvas extends React.Component {
         document.body.removeChild(link);
     }
 
+  // Todo: Find more elegant way to solve this problem. Hacky solution for now
   handleClick(e) {
       console.log(e);
       if (e.target.id === "saveToImageBtn") {
@@ -232,7 +238,42 @@ class Canvas extends React.Component {
         imageSrc: 'https://fcbk.su/_data/stickers/taz/taz_00.png'
       })
     }
-  }
+
+    /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
+       (dev purposes), probably want to create with double clicks,
+        but couldn't figure out how to read for keys other than
+        cmd when double-clicking.
+        Change or get rid of this when we've found the cleaner solution
+     */
+
+    // Make arrow
+    if (e.metaKey && e.keyCode === 65) {
+        console.log("make arrow cmd");
+        let newComponent = (
+            <Arrow
+                id={this.state.id}
+            />
+        );
+        this.setState({
+            objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
+            id: this.state.id + 1,
+        });
+    }
+
+    // Make cloud
+      if (e.metaKey && e.keyCode === 67) {
+          console.log("make cloud cmd");
+          let newComponent = (
+              <Cloud
+                  id={this.state.id}
+              />
+          );
+          this.setState({
+              objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
+              id: this.state.id + 1,
+          });
+      }
+  };
 
   // add document level keydown listeners
   componentDidMount(){
