@@ -15,7 +15,7 @@ class TransformerComponent extends React.Component {
         // here we need to manually attach or detach Transformer node
         const stage = this.transformer.getStage();
         const { selectedCanvasObjectId } = this.props;
-        const selectedNode = stage.findOne('.' + selectedCanvasObjectId.toString());
+        const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
 
         // do nothing if selected node is already attached
         if (selectedNode === this.transformer.node()) {
