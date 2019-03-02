@@ -27,7 +27,7 @@ class App extends Component {
     this.state = {
       sidebarOpen: false,
         rightSidebarOpen: false,
-      user: {name: 'Marilu Bravo', img: '/anon.png'},
+      user: {name: 'Marilu Bravo', img: '../../media/anon.png'},
       nextColor: '#fffdd0',
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -206,7 +206,7 @@ class App extends Component {
           nextColor={this.state.nextColor}
           />
 
-        <div className="logo"><img src="/media/logo.png" id="logo" /></div>
+        <div className="logo"><img src="./public/media/logo.png" id="logo" />hi there</div>
       </Fragment>
     );
   }

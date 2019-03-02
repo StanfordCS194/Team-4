@@ -5,8 +5,8 @@ var express = require('express');
 var app = express();
 
 // add favicon
-var favicon = require('serve-favicon');
-app.use(favicon(__dirname + '/src/media/favicon.ico'));
+// var favicon = require('serve-favicon');
+// app.use(favicon(__dirname + '/src/media/favicon.ico'));
 
 // use the directory that this file is in as the main directory
 app.use(express.static(__dirname));
