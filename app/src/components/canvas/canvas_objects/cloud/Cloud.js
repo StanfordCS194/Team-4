@@ -50,6 +50,7 @@ class Cloud extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
+                onClick={this.props.onClick}
                 >
                 <Circle
                     radius={scale*210}

@@ -9,13 +9,8 @@ import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
 import { Stage, Layer, Rect } from 'react-konva';
 
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Fab from '@material-ui/core/Fab';
-import Icon from '@material-ui/core/Icon';
 import AddIcon from '@material-ui/icons/Add';
 import AccountIcon from '@material-ui/icons/AccountCircle';
-import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 
@@ -34,6 +29,8 @@ class App extends Component {
     this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
     this.onUndo = this.onUndo.bind(this);
+    this.onCloudButtonClicked = this.onCloudButtonClicked.bind(this);
+    this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
   }
 
   onColorChange(color) {
@@ -42,6 +39,14 @@ class App extends Component {
 
   onUndo() {
     this.canvas.current.undo();
+  }
+
+  onCloudButtonClicked() {
+      this.canvas.current.addCloudToBoard();
+  }
+
+  onArrowButtonClicked() {
+      this.canvas.current.addArrowToBoard();
   }
 
   onMouseOverRightSidebarElement(e) { // Todo: dis don work for custom elements
@@ -142,7 +147,7 @@ class App extends Component {
                                 scale={0.75}
                                 onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)} // TODO: Get this to work
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
-
+                                onClick={this.onArrowButtonClicked}
                             />
                             <Cloud
                                 scale={0.4}
@@ -155,6 +160,7 @@ class App extends Component {
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
                                 scaleX={0.4}
                                 scaleY={0.4}
+                                onClick={this.onCloudButtonClicked}
                             />
                         </Layer>
                     </Stage>

@@ -48,6 +48,7 @@ class Arrow extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
+                onClick={this.props.onClick}
                 >
                 <Rect
                     width={this.props.scale*300}
