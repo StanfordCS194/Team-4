@@ -40,6 +40,7 @@ class Cloud extends React.Component {
             this.animateRaise();
         }
     }
+    
     onMouseOut() {
         document.body.style.cursor = 'default';
         if (this.props.isButton) {
