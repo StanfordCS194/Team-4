@@ -23,8 +23,6 @@ class Cloud extends React.Component {
         e.target.to({
             scaleX: 1.1 * e.target.attrs.scaleX,
             scaleY: 1.1 * e.target.attrs.scaleY,
-                shadowOffsetX: 15,
-                shadowOffsetY: 15,
             easing: Konva.Easings.ElasticEaseOut,
         });
         e.target.moveToTop();
@@ -36,48 +34,45 @@ class Cloud extends React.Component {
             scaleX: e.target.attrs.scaleX / 1.1,
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
-                shadowOffsetX: 0,
-                shadowOffsetY: 0,
         });
     };
 
     render() {
+        const scale = this.props.scale;
+        const fill = this.props.fill;
         return (
             <Group
-                draggable={true}
+                draggable={this.props.draggable}
                 id={this.props.id.toString()}
-                x={100}
-                y={100}
+                x={this.props.x}
+                y={this.props.y}
                 onMouseOver={(e) => this.onMouseOver(e)}
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 >
                 <Circle
-                    radius={210}
-                    fill={'#7EC0EE'}
-                    shadowColor={'black'}
+                    radius={scale*210}
+                    fill={fill}
                     />
                 <Circle
-                    radius={210}
-                    y={180}
-                    x={-180}
-                    fill={'#7EC0EE'}
-                    shadowColor={'black'}
+                    radius={scale*210}
+                    y={scale*180}
+                    x={scale*-180}
+                    fill={fill}
                 />
                 <Circle
-                    radius={150}
-                    y={240}
-                    x={180}
-                    fill={'#7EC0EE'}
-                    shadowColor={'black'}
+                    radius={scale*150}
+                    y={scale*240}
+                    x={scale*180}
+                    fill={fill}
                 />
                 <Rect
-                    width={360}
-                    height={240}
-                    y={150}
-                    x={-180}
-                    fill={'#7EC0EE'}
+                    width={scale*360}
+                    height={scale*240}
+                    y={scale*150}
+                    x={scale*-180}
+                    fill={fill}
                 />
             </Group>
         )

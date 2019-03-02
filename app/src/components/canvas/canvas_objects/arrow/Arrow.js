@@ -23,8 +23,6 @@ class Arrow extends React.Component {
         e.target.to({
             scaleX: 1.1 * e.target.attrs.scaleX,
             scaleY: 1.1 * e.target.attrs.scaleY,
-                shadowOffsetX: 15,
-                shadowOffsetY: 15,
             easing: Konva.Easings.ElasticEaseOut,
         });
         e.target.moveToTop();
@@ -36,40 +34,37 @@ class Arrow extends React.Component {
             scaleX: e.target.attrs.scaleX / 1.1,
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
-                shadowOffsetX: 0,
-                shadowOffsetY: 0,
         });
     };
 
     render() {
         return (
             <Group
-                draggable={true}
+                draggable={this.props.draggable}
                 id={this.props.id.toString()}
-                x={100}
-                y={100}
+                x={this.props.x}
+                y={this.props.y}
                 onMouseOver={(e) => this.onMouseOver(e)}
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 >
                 <Rect
-                    width={300}
-                    height={20}
+                    width={this.props.scale*300}
+                    height={this.props.scale*20}
                     fill={'black'}
                     shadowColor={'black'}
                     />
                 <RegularPolygon
-                    width={150}
-                    height={20}
-                    radius={50}
+                    width={this.props.scale*150}
+                    height={this.props.scale*20}
+                    radius={this.props.scale*50}
                     y={10}
                     fill={'black'}
                     shadowColor={'black'}
                     sides={3}
                     rotation={-90}
-                >
-                </RegularPolygon>
+                />
             </Group>
         )
     }

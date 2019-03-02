@@ -87,6 +87,11 @@ class Canvas extends React.Component {
           console.log(dataURL);
           this.downloadURI(dataURL, 'stage.png'); // Todo: Dynamically name this image, maybe {Name of board} + {Date/Time printed}
       }
+
+      if (e.target.id === "sidebarCloud") {
+          console.log("adding cloud to board"); // Todo: this doesn't work
+          this.addCloudToBoard();
+      }
   }
 
   handleStageClick(e) {
@@ -227,6 +232,23 @@ class Canvas extends React.Component {
     });
   }
 
+  addCloudToBoard() {
+      let newComponent = (
+          <Cloud
+              id={this.state.id}
+              draggable={true}
+              x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
+              y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
+              fill={'#7EC0EE'}
+              scale={1}
+          />
+      );
+      this.setState({
+          objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
+          id: this.state.id + 1,
+      });
+  }
+
   // handle keypresses
   handleKeyPress = (e) => {
     // if command-z, undo previously added object
@@ -248,10 +270,13 @@ class Canvas extends React.Component {
 
     // Make arrow
     if (e.metaKey && e.keyCode === 65) {
-        console.log("make arrow cmd");
         let newComponent = (
             <Arrow
                 id={this.state.id}
+                draggable={true}
+                x={this.stage.current.getStage().width()/2-150} // Todo: subtract half of arrow width
+                y={this.stage.current.getStage().height()/2-40} // Todo: subtract half of arrow height
+                scale={1}
             />
         );
         this.setState({
@@ -262,16 +287,7 @@ class Canvas extends React.Component {
 
     // Make cloud
       if (e.metaKey && e.keyCode === 67) {
-          console.log("make cloud cmd");
-          let newComponent = (
-              <Cloud
-                  id={this.state.id}
-              />
-          );
-          this.setState({
-              objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
-              id: this.state.id + 1,
-          });
+        this.addCloudToBoard();
       }
   };
 
