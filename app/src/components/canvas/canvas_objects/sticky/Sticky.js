@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import Portal from '../portal/Portal';
 import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
+import Textarea from "../textarea/Textarea";
 
 class Sticky extends React.Component {
   constructor(props) {
@@ -27,48 +28,6 @@ class Sticky extends React.Component {
       textY: this.props.y,
     };
     this.sticky = React.createRef();
-  }
-
-  handleTextEdit(e) {
-    this.setState({
-      textAreaValue: e.target.value
-    });
-  }
-
-  // on pressing enter, exit text edit
-  handleTextareaKeyDown(e) {
-    const KEY_CODE_ENTER = 13;
-    if (e.keyCode === KEY_CODE_ENTER) {
-      this.setState({
-        finalTextValue: e.target.value,
-        textEditVisible: false,
-        draggable: true,
-      });
-    }
-  }
-
-  // On dbl click, set make text editor visible and focus on textedit
-  handleTextDblClick(e) {
-    const absPos = e.target.getAbsolutePosition();
-    this.setState({
-      finalTextValue: '', //hide the current sticky text
-      textEditVisible: true,
-      draggable: false,
-      textX: absPos.x,
-      textY: absPos.y,
-    });
-    let textarea = document.getElementById(this.props.id.toString());
-    textarea.focus();
-  }
-
-  // On focus out/ blur of text area, leave editing mode
-  handleBlur() {
-    let textarea = document.getElementById(this.props.id.toString());
-    this.setState({
-      finalTextValue: textarea.value,
-      textEditVisible: false,
-      draggable: true,
-    });
   }
 
   handleTransform(e) {
@@ -146,20 +105,21 @@ class Sticky extends React.Component {
   render() {
     return (
       <Group
-
         draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
         x={this.state.position.x}
         y={this.state.position.y}
         rotation={this.state.rotation}
-        onDblClick={(e) => this.handleTextDblClick(e)}
+        // onDblClick={(e) => this.handleTextDblClick(e)}
         onKeyPress={(e) => this.edit(e)}
         onTransform={(e) => this.handleTransform(e)}
         onMouseOver={(e) => this.onMouseOver(e)}
         onMouseOut={(e) => this.onMouseOut(e)}
         onDragStart={(e) => this.onDragStart(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
+        scaleX={this.props.scale}
+        scaleY={this.props.scale}
         >
         <Rect
           ref={this.sticky}
@@ -170,37 +130,16 @@ class Sticky extends React.Component {
           scaleX={1.1}
           scaleY={1.1}
           />
-        <Text
-          text={this.state.finalTextValue}
-          fontSize={this.props.fontSize}
-          fontFamily={'Klee'}
-          fill={'#555'}
-          width={this.props.width}
-          height={this.props.height}
-          padding={20}
-          align={'center'}
-          listening={true}
-          scaleX={1}
-          scaleY={1}
-          />
-        <Portal>
-          <textarea
-            value={this.state.textAreaValue}
-            id={this.props.id.toString()}
-            style={{
-              display: this.state.textEditVisible ? 'block' : 'none',
-              position: 'absolute',
-              top: this.state.textY + 'px',
-              left: this.state.textX + 'px',
-              width: this.props.width,
-              height: this.props.height,
-              fontSize: this.props.fontSize,
-            }}
-            onChange={(e) => this.handleTextEdit(e)}
-            onKeyDown={(e) => this.handleTextareaKeyDown(e)}
-            onBlur={() => this.handleBlur()}
+          <Textarea
+              id={this.props.id}
+              textEditVisible={this.state.textEditVisible}
+              finalTextValue={this.state.finalTextValue}
+              textX={this.state.textX}
+              textY={this.state.textY}
+              width={this.props.width}
+              height={this.props.height}
+              fontSize={this.props.fontSize}
             />
-        </Portal>
       </Group>
     );
   }
