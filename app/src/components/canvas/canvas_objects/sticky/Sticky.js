@@ -146,7 +146,6 @@ class Sticky extends React.Component {
   render() {
     return (
       <Group
-
         draggable={this.state.draggable}
         name={this.props.id.toString()}
         id={this.props.id.toString()}
@@ -160,6 +159,8 @@ class Sticky extends React.Component {
         onMouseOut={(e) => this.onMouseOut(e)}
         onDragStart={(e) => this.onDragStart(e)}
         onDragEnd={(e) => this.onDragEnd(e)}
+        scaleX={this.props.scale}
+        scaleY={this.props.scale}
         >
         <Rect
           ref={this.sticky}

@@ -171,6 +171,7 @@ class Canvas extends React.Component {
         height={250}
         width={250}
         fontSize={35}
+        scale={this.props.nextStickyScale}
       />
       );
     }

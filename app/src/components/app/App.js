@@ -20,10 +20,11 @@ class App extends Component {
     this.rightSidebarStage = React.createRef();
     this.canvas = React.createRef();
     this.state = {
-      sidebarOpen: false,
+        sidebarOpen: false,
         rightSidebarOpen: false,
-      user: {name: 'Marilu Bravo', img: '/anon.png'},
-      nextColor: '#fffdd0',
+        user: {name: 'Marilu Bravo', img: '/anon.png'},
+        nextColor: '#fffdd0',
+        nextStickyScale: 1,
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
@@ -103,6 +104,7 @@ class App extends Component {
                         >
                         <Layer>
                             <Rect // Todo: dynamically place these stickies to be in center of stage
+                                id="smallStickyButton"
                                 fill={'#fffdd0'}
                                 width={60}
                                 height={60}
@@ -112,9 +114,11 @@ class App extends Component {
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
                                 scaleX={1.0}
                                 scaleY={1.0}
+                                onClick={() => this.setState({ nextStickyScale: 1 })}
                             >
                             </Rect>
                             <Rect
+                                id="medStickyButton"
                                 fill={'#fffdd0'}
                                 width={60}
                                 height={60}
@@ -124,10 +128,12 @@ class App extends Component {
                                 y={40}
                                 onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                onClick={() => this.setState({ nextStickyScale: 2 })}
 
                             >
                             </Rect>
                             <Rect
+                                id="largeStickyButton"
                                 fill={'#fffdd0'}
                                 width={60}
                                 height={60}
@@ -137,6 +143,8 @@ class App extends Component {
                                 y={30}
                                 onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                onClick={() => this.setState({ nextStickyScale: 3 })}
+
                             >
                             </Rect>
                             <Arrow
@@ -210,6 +218,7 @@ class App extends Component {
         <Canvas
           ref={this.canvas}
           nextColor={this.state.nextColor}
+          nextStickyScale={this.state.nextStickyScale}
           />
 
         <div className="logo"><img src="/media/logo.png" id="logo" /></div>

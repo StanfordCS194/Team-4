@@ -60,7 +60,7 @@ class Arrow extends React.Component {
                     width={this.props.scale*150}
                     height={this.props.scale*20}
                     radius={this.props.scale*50}
-                    y={10}
+                    y={this.props.scale*10}
                     fill={'black'}
                     shadowColor={'black'}
                     sides={3}
