@@ -22,7 +22,7 @@ class App extends Component {
     this.state = {
         sidebarOpen: false,
         rightSidebarOpen: false,
-        user: {name: 'Marilu Bravo', img: '/anon.png'},
+        user: {name: 'Marilu Bravo', img: '.public/media/anon.png'},
         nextColor: '#fffdd0',
         nextStickyScale: 1,
         smallSelected: true,
@@ -242,7 +242,7 @@ class App extends Component {
           nextStickyScale={this.state.nextStickyScale}
           />
 
-        <div className="logo"><img src="/media/logo.png" id="logo" /></div>
+        <div className="logo"><img src="./public/media/logo.png" id="logo" />hi there</div>
       </Fragment>
     );
   }

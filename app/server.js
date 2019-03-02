@@ -1,34 +1,24 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const Pusher = require('pusher');
+'use strict';
 
-const app = express();
-const port = process.env.PORT || 4000;
+// build app using express
+var express = require('express');
+var app = express();
 
-const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_KEY,
-  secret: process.env.PUSHER_SECRET,
-  cluster: 'eu',
+// add favicon
+// var favicon = require('serve-favicon');
+// app.use(favicon(__dirname + '/src/media/favicon.ico'));
+
+// use the directory that this file is in as the main directory
+app.use(express.static(__dirname));
+
+// simple response to the home directory of wherever this is served
+// send response and load index.html
+app.get('/', function (request, response) {
+    response.send('Simple web server of files from ' + __dirname);
 });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
-
-app.post('/paint', (req, res) => {
-  pusher.trigger('painting', 'draw', req.body);
-  res.json(req.body);
-});
-
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
+// have app listen on port 3000
+var server = app.listen(3000, () => {
+  var port = server.address().port;
+  console.log('Listening at http://localhost:' + port + ' exporting the directory ' + __dirname);
 });
