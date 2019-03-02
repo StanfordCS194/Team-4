@@ -181,7 +181,7 @@ class App extends Component {
           styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6", zIndex: "2"} }}
           >
           <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
-            <ArrowIcon id="arrowIcon" />
+              <AccountIcon id="accountIconTab"/>
           </div>
         </Sidebar>
         <Toolbar
@@ -198,7 +198,7 @@ class App extends Component {
               pullRight={true}
               >
               <div id="rightHandle" onMouseEnter={() => this.onSetRightSidebarOpen(true)}>
-                  <ArrowIcon id="rightArrowIcon" />
+                  <AddIcon id="addIcon" />
               </div>
           </Sidebar>
         <Canvas

@@ -91,10 +91,3 @@ h5 {
   	position: fixed;
   	z-index: 1;
 }
-
-#ArrowIcon {
-}
-
-#rightArrowIcon {
-  transform: rotate(180deg);
-}
