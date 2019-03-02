@@ -235,8 +235,11 @@ class Canvas extends React.Component {
               draggable={true}
               x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
               y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
+              width={720}
+              height={600}
               fill={'#7EC0EE'}
               scale={1}
+              fontSize={35}
           />
       );
       this.setState({

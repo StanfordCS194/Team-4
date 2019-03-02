@@ -2,11 +2,18 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Stage, Layer, Rect, Circle, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
+import Textarea from "../sticky/Sticky";
 
 // Todo: Text within cloud (like sticky) support
 class Cloud extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            finalTextValue: '',
+            textEditVisible: this.props.textEditVisible,
+            textX: this.props.x - this.props.width / 2,
+            textY: this.props.y,
+        }
         this.group = React.createRef();
     }
 
