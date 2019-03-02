@@ -2,6 +2,7 @@
   "name": "epiphany",
   "version": "0.1.1",
   "private": true,
+  "main": "server.js",
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
@@ -10,8 +11,7 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "konva": "^2.5.1",
-    "pusher": "^2.0.0",
-    "pusher-js": "^4.2.2",
+    "nodemon": "^1.18.10",
     "react": "^16.8.1",
     "react-bootstrap": "^1.0.0-beta.5",
     "react-color": "2.17.0",
@@ -20,11 +20,12 @@
     "react-scripts": "1.1.4",
     "react-sidebar": "^3.0.2",
     "react-spring": "^8.0.7",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "serve-favicon": "^2.5.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node_modules/.bin/webpack -d",
+    "build:w": "node_modules/.bin/webpack -d --watch",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "node_modules/.bin/eslint server.js src/components/*/*.js src/*.js"
@@ -44,7 +45,7 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "style-loader": "^0.23.0",
-    "webpack": "^4.5.0",
+    "webpack": "^4.29.6",
     "webpack-cli": "^3.1.2"
   }
 }
