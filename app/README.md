@@ -24,13 +24,13 @@ PUSHER_APP_SECRET=681bbc3a21a87ea6d81a
 
 - Clone the repo
 - Enter the project folder
-- Run npm install 
+- Run npm install
 - Start server by running `node server`
-- Run `yarn start` to start the dev server 
+- Run `yarn start` to start the dev server
 
 
 ## Built With
 
-* [React](https://reactjs.org/) 
+* [React](https://reactjs.org/)
 * [Angular](https://angular.io)
 * [Express](https://expressjs.com/)
