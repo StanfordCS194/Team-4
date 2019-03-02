@@ -3,19 +3,41 @@ import { render } from 'react-dom';
 import { Stage, Layer, Rect, Circle, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
 
-// Todo: Transformer support
 // Todo: Text within cloud (like sticky) support
 class Cloud extends React.Component {
     constructor(props) {
         super(props);
+        this.group = React.createRef();
+    }
+
+    animateRaise() {
+        this.group.current.to({
+            scaleX: 1.1,
+            scaleY: 1.1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+    }
+
+    animateDrop() {
+        this.group.current.to({
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
     }
 
     // Add cursor styling
-    onMouseOver() {
+    onMouseOver(e) {
         document.body.style.cursor = 'pointer';
+        if (this.props.isButton) {
+            this.animateRaise();
+        }
     }
     onMouseOut() {
         document.body.style.cursor = 'default';
+        if (this.props.isButton) {
+            this.animateDrop();
+        }
     }
 
     // Raising and lowering animations
@@ -37,11 +59,22 @@ class Cloud extends React.Component {
         });
     };
 
+    componentDidMount() {
+        this.group.current.to({
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+    }
+
     render() {
         const scale = this.props.scale;
         const fill = this.props.fill;
         return (
             <Group
+                ref={this.group}
+                scaleX={1.3} // bigger animation for big cloud
+                scaleY={1.3}
                 draggable={this.props.draggable}
                 id={this.props.id.toString()}
                 x={this.props.x}

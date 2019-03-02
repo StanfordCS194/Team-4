@@ -25,6 +25,9 @@ class App extends Component {
         user: {name: 'Marilu Bravo', img: '/anon.png'},
         nextColor: '#fffdd0',
         nextStickyScale: 1,
+        smallSelected: true,
+        medSelected: false,
+        largeSelected: false,
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
@@ -50,7 +53,7 @@ class App extends Component {
       this.canvas.current.addArrowToBoard();
   }
 
-  onMouseOverRightSidebarElement(e) { // Todo: dis don work for custom elements
+  onMouseOverRightSidebarElement(e) {
       document.body.style.cursor = 'pointer';
       e.target.to({
           scaleX: 1.1 * e.target.attrs.scaleX,
@@ -59,9 +62,8 @@ class App extends Component {
       });
   }
 
-  onMouseOutRightSidebarElement(e) { // Todo: dis one don work either
+  onMouseOutRightSidebarElement(e) {
         document.body.style.cursor = 'pointer';
-        console.log("hovering out of sidebar elem");
         console.log(e.target);
         e.target.to({
             scaleX: e.target.attrs.scaleX / 1.1,
@@ -114,7 +116,14 @@ class App extends Component {
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
                                 scaleX={1.0}
                                 scaleY={1.0}
-                                onClick={() => this.setState({ nextStickyScale: 1 })}
+                                onClick={() => this.setState({
+                                    nextStickyScale: 1,
+                                    smallSelected: true,
+                                    medSelected: false,
+                                    largeSelected: false,
+                                })}
+                                stroke={this.state.smallSelected ? 'black' : null}
+                                strokeWidth={3}
                             >
                             </Rect>
                             <Rect
@@ -128,7 +137,14 @@ class App extends Component {
                                 y={40}
                                 onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
-                                onClick={() => this.setState({ nextStickyScale: 2 })}
+                                onClick={() => this.setState({
+                                    nextStickyScale: 2,
+                                    smallSelected: false,
+                                    medSelected: true,
+                                    largeSelected: false,
+                                })}
+                                stroke={this.state.medSelected ? 'black' : null}
+                                strokeWidth={3}
 
                             >
                             </Rect>
@@ -143,7 +159,14 @@ class App extends Component {
                                 y={30}
                                 onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
                                 onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
-                                onClick={() => this.setState({ nextStickyScale: 3 })}
+                                onClick={() => this.setState({
+                                    nextStickyScale: 3,
+                                    smallSelected: false,
+                                    medSelected: false,
+                                    largeSelected: true,
+                                })}
+                                stroke={this.state.largeSelected ? 'black' : null}
+                                strokeWidth={3}
 
                             >
                             </Rect>
@@ -153,9 +176,8 @@ class App extends Component {
                                 y={200}
                                 x={75}
                                 scale={0.75}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)} // TODO: Get this to work
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
                                 onClick={this.onArrowButtonClicked}
+                                isButton={true}
                             />
                             <Cloud
                                 scale={0.4}
@@ -164,11 +186,10 @@ class App extends Component {
                                 x={180}
                                 y={350}
                                 fill={'white'}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)} // TODO: Get this to work
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
                                 scaleX={0.4}
                                 scaleY={0.4}
                                 onClick={this.onCloudButtonClicked}
+                                isButton={true}
                             />
                         </Layer>
                     </Stage>

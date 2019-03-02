@@ -322,10 +322,10 @@ class Canvas extends React.Component {
         <Layer>
           <ImageComponent
             src={this.state.imageSrc}/>
-
+            {this.state.objectArray.length === 0 &&
           <OpeningGreeting
-            justOpenedApp={this.state.justOpenedApp}
-          />
+              justOpenedApp={this.state.justOpenedApp}
+          />}
           <TransformerComponent
               selectedCanvasObjectId={this.state.selectedCanvasObjectId}
           />
