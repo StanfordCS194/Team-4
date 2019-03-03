@@ -58,7 +58,8 @@ class Canvas extends React.Component {
             objectArray: [],
             activeSticky: null,
             selectedCanvasObjectId: '',
-            imageSrc: ''
+            imageSrc: '',
+            savedBoardJson: '',
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
@@ -253,7 +254,27 @@ class Canvas extends React.Component {
     }
 
     saveToJSON() {
-        console.log("json: " + this.stage.current.getStage().toJSON());
+        let savedCanvasJson = this.stage.current.getStage().toJSON();
+        console.log("canvas json: " + this.stage.current.getStage().toJSON());
+        console.log("state json: " + JSON.stringify(this.state));
+        this.setState({savedBoardJson: savedCanvasJson});
+    }
+
+    loadFromJSON() {
+        console.log("loading from json");
+        // let json = '{"attrs":{"width":1124,"height":772,"draggable":true,"listening":true},"className":"Stage","children":[{"attrs":{},"className":"Layer","children":[{"attrs":{"draggable":true},"className":"Image"},{"attrs":{},"className":"Transformer"},{"attrs":{"draggable":true,"name":"0","id":"0","x":168,"y":269,"rotation":-1},"className":"Group","children":[{"attrs":{"width":250,"height":250,"fill":"#fffdd0","shadowColor":"black"},"className":"Rect"},{"attrs":{"fill":"#555","text":"TEST","fontSize":35,"fontFamily":"Klee","width":250,"height":250,"padding":20,"align":"center","listening":true},"className":"Text"}]}]}]}';
+        const json = this.state.savedBoardJson;
+        // let stage = this.stage.current.getStage();
+        // stage.destroyChildren();
+        let stage2 = Konva.Node.create(json, 'canvas-container');
+
+        // let json = '{"justOpenedApp":false,"creatingSticky":false,"editingShape":false,"stageWidth":975,"stageHeight":760,"id":1,"stageX":0,"stageY":0,"scaleX":1,"scaleY":1,"scaleBy":1.05,"objectArray":[{"key":null,"ref":null,"props":{"id":0,"scaleX":1,"x":304,"y":207,"stageX":0,"stageY":0,"nextColor":"#fffdd0","height":250,"width":250,"fontSize":35,"scale":1},"_owner":null,"_store":{}}],"activeSticky":null,"selectedCanvasObjectId":"","imageSrc":""}';
+        // let newState = JSON.parse(json);
+        // console.log(this.state);
+        // this.state = newState;
+        // // this.setState({newState});
+        // this.forceUpdate();
+        // console.log(this.state);
     }
 
     // handle keypresses
@@ -288,6 +309,10 @@ class Canvas extends React.Component {
         // Dev: test save to JSON
         if (e.metaKey && e.keyCode === 67) {
             this.saveToJSON();
+        }
+
+        if (e.metaKey && e.keyCode === 74) {
+            this.loadFromJSON();
         }
     };
 

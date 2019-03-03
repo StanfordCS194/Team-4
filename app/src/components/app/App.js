@@ -242,11 +242,13 @@ class App extends Component {
                   <AddIcon id="addIcon" />
               </div>
           </Sidebar>
-        <Canvas
-          ref={this.canvas}
-          nextColor={this.state.nextColor}
-          nextStickyScale={this.state.nextStickyScale}
-          />
+          <div id="canvas-container">
+            <Canvas
+              ref={this.canvas}
+              nextColor={this.state.nextColor}
+              nextStickyScale={this.state.nextStickyScale}
+              />
+          </div>
 
         <div className="logo"><img src="./public/media/logo.png" id="logo" />hi there</div>
       </Fragment>
