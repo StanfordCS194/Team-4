@@ -58,7 +58,9 @@ class Textarea extends React.Component {
 
     render() {
         return (
-            <Group>
+            <Group
+                id={this.props.id.toString()}
+                >
                 <Text
                     text={this.state.finalTextValue}
                     fontSize={this.props.fontSize}

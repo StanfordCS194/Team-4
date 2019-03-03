@@ -107,7 +107,7 @@ class Canvas extends React.Component {
 
     // find clicked sticky (group) by its id
     const id = e.target.parent.attrs.id;
-    const sticky = this.state.objectArray.find(sticky => sticky.props.id.toString() === id);
+    const sticky = this.state.objectArray.find(sticky => sticky.props.id.toString() === id.toString());
     if (sticky) {
       this.setState({
         selectedCanvasObjectId: id
