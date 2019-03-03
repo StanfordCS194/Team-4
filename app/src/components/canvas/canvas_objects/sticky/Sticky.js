@@ -134,11 +134,13 @@ class Sticky extends React.Component {
               id={this.props.id}
               textEditVisible={this.state.textEditVisible}
               finalTextValue={this.state.finalTextValue}
-              textX={this.state.textX}
-              textY={this.state.textY}
               width={this.props.width}
               height={this.props.height}
               fontSize={this.props.fontSize}
+              textareaX={this.state.textX}
+              textareaY={this.state.textY}
+              textX={this.state.position.x}
+              textY={this.state.position.y}
             />
       </Group>
     );

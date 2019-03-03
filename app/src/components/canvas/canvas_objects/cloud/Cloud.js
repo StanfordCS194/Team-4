@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Stage, Layer, Rect, Circle, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
-import Textarea from "../sticky/Sticky";
+import Textarea from "../textarea/Textarea";
 
 // Todo: Text within cloud (like sticky) support
 class Cloud extends React.Component {
@@ -11,8 +11,8 @@ class Cloud extends React.Component {
         this.state = {
             finalTextValue: '',
             textEditVisible: this.props.textEditVisible,
-            textX: this.props.x - this.props.width / 2,
-            textY: this.props.y,
+            textX: - this.props.width / 2.5,
+            textY: - this.props.height / 3 + 175,
         }
         this.group = React.createRef();
     }
@@ -40,7 +40,7 @@ class Cloud extends React.Component {
             this.animateRaise();
         }
     }
-    
+
     onMouseOut() {
         document.body.style.cursor = 'default';
         if (this.props.isButton) {
@@ -115,6 +115,18 @@ class Cloud extends React.Component {
                     y={scale*150}
                     x={scale*-180}
                     fill={fill}
+                />
+                <Textarea
+                    id={this.props.id}
+                    textEditVisible={this.state.textEditVisible}
+                    finalTextValue={this.state.finalTextValue}
+                    width={this.props.width / 1.5}
+                    height={this.props.height / 1.5}
+                    fontSize={this.props.fontSize}
+                    textareaX={this.props.x + this.state.textX}
+                    textareaY={this.props.y + this.state.textY}
+                    x={this.state.textX}
+                    y={this.state.textY}
                 />
             </Group>
         )

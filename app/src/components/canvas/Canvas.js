@@ -239,7 +239,9 @@ class Canvas extends React.Component {
               height={600}
               fill={'#7EC0EE'}
               scale={1}
-              fontSize={35}
+              fontSize={60}
+              textEditVisible={true}
+              isButton={false}
           />
       );
       this.setState({

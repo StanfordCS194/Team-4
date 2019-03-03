@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Tween, Transformer, Group, Text} from 'react-konva';
+import {Tween, Transformer, Group, Text, Rect} from 'react-konva';
 import Portal from "../portal/Portal";
 
 class Textarea extends React.Component {
@@ -9,8 +9,8 @@ class Textarea extends React.Component {
             finalTextValue: '',
             textAreaValue: '',
             textEditVisible: this.props.textEditVisible,
-            textX: this.props.textX,
-            textY: this.props.textY
+            textareaX: this.props.textareaX,
+            textareaY: this.props.textareaY,
         }
     }
 
@@ -39,8 +39,8 @@ class Textarea extends React.Component {
             finalTextValue: '', //hide the current sticky text
             textEditVisible: true,
             draggable: false,
-            textX: absPos.x,
-            textY: absPos.y,
+            textareaX: absPos.x,
+            textareaY: absPos.y,
         });
         let textarea = document.getElementById(this.props.id.toString());
         textarea.focus();
@@ -72,6 +72,8 @@ class Textarea extends React.Component {
                     scaleX={1}
                     scaleY={1}
                     onDblClick={(e) => this.handleTextDblClick(e)}
+                    x={this.props.x}
+                    y={this.props.y}
                 />
                 <Portal>
                   <textarea
@@ -80,8 +82,8 @@ class Textarea extends React.Component {
                       style={{
                           display: this.state.textEditVisible ? 'block' : 'none',
                           position: 'absolute',
-                          top: this.state.textY + 'px',
-                          left: this.state.textX + 'px',
+                          top: this.state.textareaY + 'px',
+                          left: this.state.textareaX + 'px',
                           width: this.props.width,
                           height: this.props.height,
                           fontSize: this.props.fontSize,

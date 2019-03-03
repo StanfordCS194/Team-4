@@ -190,6 +190,7 @@ class App extends Component {
                                 scaleY={0.4}
                                 onClick={this.onCloudButtonClicked}
                                 isButton={true}
+                                textEditVisible={false}
                             />
                         </Layer>
                     </Stage>
