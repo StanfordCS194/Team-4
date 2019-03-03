@@ -35,6 +35,7 @@ class App extends Component {
     this.onUndo = this.onUndo.bind(this);
     this.onCloudButtonClicked = this.onCloudButtonClicked.bind(this);
     this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
+    this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
   }
 
   onColorChange(color) {
@@ -51,6 +52,10 @@ class App extends Component {
 
   onArrowButtonClicked() {
       this.canvas.current.addArrowToBoard();
+  }
+
+  onSaveToImageClicked() {
+      this.canvas.current.saveToImage();
   }
 
   onMouseOverRightSidebarElement(e) {
@@ -79,7 +84,7 @@ class App extends Component {
           <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
         </div>
         <div className="sidebarContent">
-          <a href='#' id="saveToImageBtn">Save Board to Image</a>
+          <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
         </div>
         <div className="sidebarContent">
           <a href='#'>My Boards</a>
