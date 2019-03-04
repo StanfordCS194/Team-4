@@ -1,21 +1,45 @@
 'use strict';
+/* jshint node: true */
 
-// build app using express
+/*
+* This builds a server for the epiphany app and
+* establishes a connection to the MongoDB named ''.
+*
+* To start the webserver run the command:
+*    node server.js
+*
+*
+* This webServer exports the following URLs:
+* /              -  Returns a text status message.  And index.html
+* /api/test     -  Returns the SchemaInfo object from the database (JSON format).  Good
+*
+*/
+
+//set up mongodb
+let runServer = false;
+
+if (runServer) {
+  var mongoose = require('mongoose');
+  mongoose.Promise = require('bluebird');
+  mongoose.connect('mongodb://localhost/epiphanydb', { useMongoClient: true });
+
+  // Load the Mongoose schema for Konva-Canvas and Image
+  var Canvas = require('./schema/canvas.js');
+  var Img = require('./schema/img.js');
+}
+
+
+
+// helpful installs
+var async = require('async');
+var fs = require('fs');
+
+// build server application using express
 var express = require('express');
 var app = express();
-
-// add favicon
-// var favicon = require('serve-favicon');
-// app.use(favicon(__dirname + '/src/media/favicon.ico'));
-
 // use the directory that this file is in as the main directory
 app.use(express.static(__dirname));
 
-// simple response to the home directory of wherever this is served
-// send response and load index.html
-app.get('/', function (request, response) {
-    response.send('Simple web server of files from ' + __dirname);
-});
 
 // have app listen on port 3000
 var server = app.listen(3000, () => {
