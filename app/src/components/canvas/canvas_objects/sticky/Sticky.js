@@ -148,10 +148,8 @@ class Sticky extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
-                // scaleX={this.props.scale}
-                // scaleY={this.props.scale}
-                scaleX={this.state.scaleX}
-                scaleY={this.state.scaleY}
+                scaleX={this.state.scale}
+                scaleY={this.state.scale}
             >
                 <Rect
                     ref={this.sticky}

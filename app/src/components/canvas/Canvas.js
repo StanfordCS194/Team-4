@@ -158,7 +158,6 @@ class Canvas extends React.Component {
                 <Sticky
                     ref={componentRef}
                     id={this.state.id}
-                    // className={'sticky'}
                     scaleX={this.state.scaleX}
                     scaleY={this.state.scaleY}
                     x={e.evt.clientX}
