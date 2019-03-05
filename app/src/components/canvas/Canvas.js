@@ -134,10 +134,14 @@ class Canvas extends React.Component {
         this.setState({justOpenedApp: false});
 
         let newComponent = null;
+        let componentRef = React.createRef();
+        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+
         // Add plain text
         if (window.event.metaKey) {
             newComponent = (
                 <Plaintext
+                    ref={componentRef}
                     id={this.state.id}
                     className={'plaintext'}
                     scaleX={this.state.scaleX}
@@ -151,9 +155,6 @@ class Canvas extends React.Component {
                 />
             );
         } else {
-            let componentRef = React.createRef();
-            this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
-
             newComponent = (
                 <Sticky
                     ref={componentRef}
@@ -385,6 +386,17 @@ class Canvas extends React.Component {
                     />);
                     break;
                 case ('plaintext'):
+                    newComponent = (<Plaintext
+                        id={state.id}
+                        scaleX={state.scaleX}
+                        x={state.x}
+                        y={state.y}
+                        stageX={state.stageX}
+                        stateY={state.stageY}
+                        height={state.height}
+                        width={state.width}
+                        fontSize={state.fontSize}
+                    />);
                     break;
                 case ('cloud'):
                     break;
