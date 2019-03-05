@@ -44,7 +44,6 @@ class Canvas extends React.Component {
         super(props);
         this.stage = React.createRef();
         this.objectRefs = [];
-        this.savedState = null;
         this.state = {
             justOpenedApp: true,
             creatingSticky: false,
@@ -62,11 +61,9 @@ class Canvas extends React.Component {
             selectedCanvasObjectId: '',
             imageSrc: '',
 
-            savedBoardJson: '',
-            savedObjArrayJson: '',
-
+            // Todo: these are for json loading testing, will not need later
             savedComponentStates: '',
-            savedId: null,
+            savedBoardState: ''
 
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -271,50 +268,34 @@ class Canvas extends React.Component {
     }
 
     saveToJSON() {
-        // // Saves canvas to json using konva method and updates state
-        // let savedCanvasJson = this.stage.current.getStage().toJSON();
-        // console.log("canvas json: " + this.stage.current.getStage().toJSON());
-        // console.log("state json: " + JSON.stringify(this.state));
-        // this.setState({savedBoardJson: savedCanvasJson});
-
-        // // saves object array to json and stores in state
-        // let objectArrayJson = JSON.stringify(this.state.objectArray);
-        // this.setState({
-        //     savedObjArrayJson: objectArrayJson,
-        //     savedObjArrayId: this.state.id,
-        // });
-        // console.log(objectArrayJson);
-
+        // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
-        this.setState({savedId: this.state.id});
         this.objectRefs.slice(0, this.state.id).map(ref => {
-            console.log(ref.current.getStateObj());
             savedComponents = savedComponents.concat(ref.current.getStateObj());
         });
+
+        // save board state
         let savedBoardState = {};
         Object.assign(savedBoardState, this.state);
         delete savedBoardState.objectArray;
         delete savedBoardState.savedObjArrayJson;
-        this.savedState = JSON.stringify(savedBoardState);
 
+        // for testing purposes: save state objects to canvas state to load later
         this.setState({
             savedComponentStates: JSON.stringify(savedComponents),
+            savedBoardState: JSON.stringify(savedBoardState)
         });
-        console.log("Saved board to JSON string");
+        console.log("Saved board and states to JSON string");
     }
 
-    // Given a JSON string representing an array of object states (and a previous id),
-    // recreate a board by making a new object from each state object
+    // Given a JSON string representing an array of object states and a board state,
+    // recreate a board by making a new object from each state object and setting board vals
     loadFromJSON() {
-
-        // savedComponents is an array of objects which gives the states of the
-        // components they correspond to
         console.log("Loading from JSON string");
         let savedComponentStates = JSON.parse(this.state.savedComponentStates);
-        let savedBoardState = JSON.parse(this.savedState);
+        let savedBoardState = JSON.parse(this.state.savedBoardState);
         let newObjectRefs = [];
         let newObjArray = [];
-        // console.log(savedComponentStates);
 
         // Update board to have correct state
         this.setState({
@@ -323,18 +304,17 @@ class Canvas extends React.Component {
             editingShape: false,
             stageWidth: savedBoardState.stageWidth,
             stageHeight: savedBoardState.stageHeight,
-            // id: savedBoardState.id,
             stageX: savedBoardState.stageX,
             stageY: savedBoardState.stageY,
             scaleX: savedBoardState.scaleX,
             scaleY: savedBoardState.scaleY,
             scaleBy: savedBoardState.scaleBy,
-            // objectArray: savedBoardState.objectArray,
             activeSticky: savedBoardState.activeSticky,
             selectedCanvasObjectId: savedBoardState.selectedCanvasObjectId,
             imageSrc: savedBoardState.imageSrc,
         });
 
+        // For each component state object, create a new object
         savedComponentStates.map(state => {
             console.log(state);
             let newComponent = null;
@@ -346,15 +326,12 @@ class Canvas extends React.Component {
                             isBeingLoaded={true}
                             id={state.id}
                             scaleX={state.scaleX}
-                            // scaleX={this.state.scaleX}
                             x={state.position.x}
                             y={state.position.y}
                             finalTextValue={state.finalTextValue}
                             //rotation = TODO
                             stageX={state.stageX}
                             stageY={state.stageY}
-                            // stageX={this.state.stageX}
-                            // stageY={this.state.stageY}
                             nextColor={state.color}
                             height={state.height}
                             width={state.width}
@@ -375,24 +352,13 @@ class Canvas extends React.Component {
             newObjArray = newObjArray.concat(newComponent);
             newObjectRefs = newObjectRefs.concat(newComponentRef);
         });
+
+        // Update object array, id, and object refs
         this.setState({
             objectArray: newObjArray,
-            id: this.state.savedId
+            id: savedBoardState.id // for some reason only works when I update this after creating the components
         });
         this.objectRefs = newObjectRefs;
-
-
-
-
-
-
-        // let json = '{"justOpenedApp":false,"creatingSticky":false,"editingShape":false,"stageWidth":975,"stageHeight":760,"id":1,"stageX":0,"stageY":0,"scaleX":1,"scaleY":1,"scaleBy":1.05,"objectArray":[{"key":null,"ref":null,"props":{"id":0,"scaleX":1,"x":304,"y":207,"stageX":0,"stageY":0,"nextColor":"#fffdd0","height":250,"width":250,"fontSize":35,"scale":1},"_owner":null,"_store":{}}],"activeSticky":null,"selectedCanvasObjectId":"","imageSrc":""}';
-        // let newState = JSON.parse(json);
-        // console.log(this.state);
-        // this.state = newState;
-        // // this.setState({newState});
-        // this.forceUpdate();
-        // console.log(this.state);
     }
 
     // handle keypresses

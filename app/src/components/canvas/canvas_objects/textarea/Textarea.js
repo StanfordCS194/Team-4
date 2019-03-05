@@ -6,7 +6,6 @@ class Textarea extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // finalTextValue: '',
             finalTextValue: this.props.finalTextValue,
             textAreaValue: '',
             textEditVisible: this.props.textEditVisible,

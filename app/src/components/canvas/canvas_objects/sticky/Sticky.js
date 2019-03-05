@@ -29,8 +29,6 @@ class Sticky extends React.Component {
             rotation: Math.floor(Math.random() * (11) - 5),
             textAreaValue: '',
             finalTextValue: this.props.finalTextValue,
-            // finalTextValue: this.props.finalTextValue ? this.props.finalTextValue : '',
-            // textEditVisible: true,
             textEditVisible: !this.props.isBeingLoaded,
             textX: this.props.x - this.props.width / 2,
             textY: this.props.y,
@@ -62,12 +60,11 @@ class Sticky extends React.Component {
 
     // focus on sticky text after mounting
     componentDidMount() {
-        if (this.props.isBeingLoaded) return;
         // need to put code within a setTimeout because
         // getElementById must happen after render
         setTimeout(() => {
             let textarea = document.getElementById(this.props.id.toString());
-            textarea.focus();
+            if (!this.props.isBeingLoaded) textarea.focus();
             console.log(this.sticky);
             this.sticky.current.to({
                 scaleX: 1,
@@ -90,13 +87,6 @@ class Sticky extends React.Component {
     onDragStart(e) {
         console.log("printing drag start event");
         console.log(e);
-        // console.log(e.evt.clientX, e.evt.clientY);
-        // console.log("printing initial x and y");
-        // console.log(this.state.position.x, this.state.position.y);
-        this.setState({ // Used to update position x and y
-            clientX: e.evt.clientX,
-            clientY: e.evt.clientY,
-        });
 
         e.target.to({
             scaleX: 1.1 * e.target.attrs.scaleX,
@@ -115,21 +105,14 @@ class Sticky extends React.Component {
     }
 
     onDragEnd(e) {
-        // console.log("printing drag end event");
-        // console.log(e.evt.clientX, e.evt.clientY);
-        // console.log("printing final x and y");
-        // console.log(this.state.position.x, this.state.position.y);
-        console.log("drag end event")
-        console.log(e);
         e.target.to({
             scaleX: e.target.attrs.scaleX / 1.1,
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
         });
+
         this.setState({
             position: { // set new position by calculating offset from e.evt.clientX/Y
-                // x: this.state.position.x + (e.evt.clientX - this.state.clientX),
-                // y: this.state.position.y + (e.evt.clientY - this.state.clientY)
                 x: e.target.x(),
                 y: e.target.y()
             }
@@ -151,8 +134,6 @@ class Sticky extends React.Component {
                 id={this.props.id.toString()}
                 x={this.state.position.x}
                 y={this.state.position.y}
-                // x={this.state.position.x / this.state.scaleX - this.state.stageX / this.state.scaleX - this.state.width / 2}
-                // y={this.state.position.y / this.state.scaleX - this.state.stageY / this.state.scaleX - 10}
                 rotation={this.state.rotation}
                 // onDblClick={(e) => this.handleTextDblClick(e)}
                 onKeyPress={(e) => this.edit(e)}
