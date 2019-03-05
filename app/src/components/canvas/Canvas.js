@@ -43,6 +43,8 @@ class Canvas extends React.Component {
     constructor(props) {
         super(props);
         this.stage = React.createRef();
+        this.objectRefs = [];
+        this.savedState = null;
         this.state = {
             justOpenedApp: true,
             creatingSticky: false,
@@ -59,7 +61,13 @@ class Canvas extends React.Component {
             activeSticky: null,
             selectedCanvasObjectId: '',
             imageSrc: '',
+
             savedBoardJson: '',
+            savedObjArrayJson: '',
+
+            savedComponentStates: '',
+            savedId: null,
+
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
@@ -133,6 +141,7 @@ class Canvas extends React.Component {
             newComponent = (
                 <Plaintext
                     id={this.state.id}
+                    className={'plaintext'}
                     scaleX={this.state.scaleX}
                     x={e.evt.clientX}
                     y={e.evt.clientY}
@@ -144,9 +153,14 @@ class Canvas extends React.Component {
                 />
             );
         } else {
+            let componentRef = React.createRef();
+            this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+
             newComponent = (
                 <Sticky
+                    ref={componentRef}
                     id={this.state.id}
+                    // className={'sticky'}
                     scaleX={this.state.scaleX}
                     x={e.evt.clientX}
                     y={e.evt.clientY}
@@ -159,6 +173,7 @@ class Canvas extends React.Component {
                     scale={this.props.nextStickyScale}
                 />
             );
+
         }
         this.setState({
             objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
@@ -219,6 +234,7 @@ class Canvas extends React.Component {
       let newComponent = (
           <Cloud
               id={this.state.id}
+              className={'cloud'}
               draggable={true}
               x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
               y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
@@ -241,6 +257,7 @@ class Canvas extends React.Component {
         let newComponent = (
             <Arrow
                 id={this.state.id}
+                className={'arrow'}
                 draggable={true}
                 x={this.stage.current.getStage().width() / 2 - 150} // Todo: subtract half of arrow width
                 y={this.stage.current.getStage().height() / 2 - 40} // Todo: subtract half of arrow height
@@ -254,19 +271,120 @@ class Canvas extends React.Component {
     }
 
     saveToJSON() {
-        let savedCanvasJson = this.stage.current.getStage().toJSON();
-        console.log("canvas json: " + this.stage.current.getStage().toJSON());
-        console.log("state json: " + JSON.stringify(this.state));
-        this.setState({savedBoardJson: savedCanvasJson});
+        // // Saves canvas to json using konva method and updates state
+        // let savedCanvasJson = this.stage.current.getStage().toJSON();
+        // console.log("canvas json: " + this.stage.current.getStage().toJSON());
+        // console.log("state json: " + JSON.stringify(this.state));
+        // this.setState({savedBoardJson: savedCanvasJson});
+
+        // // saves object array to json and stores in state
+        // let objectArrayJson = JSON.stringify(this.state.objectArray);
+        // this.setState({
+        //     savedObjArrayJson: objectArrayJson,
+        //     savedObjArrayId: this.state.id,
+        // });
+        // console.log(objectArrayJson);
+
+        let savedComponents = [];
+        this.setState({savedId: this.state.id});
+        this.objectRefs.slice(0, this.state.id).map(ref => {
+            console.log(ref.current.getStateObj());
+            savedComponents = savedComponents.concat(ref.current.getStateObj());
+        });
+        let savedBoardState = {};
+        Object.assign(savedBoardState, this.state);
+        delete savedBoardState.objectArray;
+        delete savedBoardState.savedObjArrayJson;
+        this.savedState = JSON.stringify(savedBoardState);
+
+        this.setState({
+            savedComponentStates: JSON.stringify(savedComponents),
+        });
+        console.log("Saved board to JSON string");
     }
 
+    // Given a JSON string representing an array of object states (and a previous id),
+    // recreate a board by making a new object from each state object
     loadFromJSON() {
-        console.log("loading from json");
-        // let json = '{"attrs":{"width":1124,"height":772,"draggable":true,"listening":true},"className":"Stage","children":[{"attrs":{},"className":"Layer","children":[{"attrs":{"draggable":true},"className":"Image"},{"attrs":{},"className":"Transformer"},{"attrs":{"draggable":true,"name":"0","id":"0","x":168,"y":269,"rotation":-1},"className":"Group","children":[{"attrs":{"width":250,"height":250,"fill":"#fffdd0","shadowColor":"black"},"className":"Rect"},{"attrs":{"fill":"#555","text":"TEST","fontSize":35,"fontFamily":"Klee","width":250,"height":250,"padding":20,"align":"center","listening":true},"className":"Text"}]}]}]}';
-        const json = this.state.savedBoardJson;
-        // let stage = this.stage.current.getStage();
-        // stage.destroyChildren();
-        let stage2 = Konva.Node.create(json, 'canvas-container');
+
+        // savedComponents is an array of objects which gives the states of the
+        // components they correspond to
+        console.log("Loading from JSON string");
+        let savedComponentStates = JSON.parse(this.state.savedComponentStates);
+        let savedBoardState = JSON.parse(this.savedState);
+        let newObjectRefs = [];
+        let newObjArray = [];
+        // console.log(savedComponentStates);
+
+        // Update board to have correct state
+        this.setState({
+            justOpenedApp: savedBoardState.justOpenedApp,
+            creatingSticky: false,
+            editingShape: false,
+            stageWidth: savedBoardState.stageWidth,
+            stageHeight: savedBoardState.stageHeight,
+            // id: savedBoardState.id,
+            stageX: savedBoardState.stageX,
+            stageY: savedBoardState.stageY,
+            scaleX: savedBoardState.scaleX,
+            scaleY: savedBoardState.scaleY,
+            scaleBy: savedBoardState.scaleBy,
+            // objectArray: savedBoardState.objectArray,
+            activeSticky: savedBoardState.activeSticky,
+            selectedCanvasObjectId: savedBoardState.selectedCanvasObjectId,
+            imageSrc: savedBoardState.imageSrc,
+        });
+
+        savedComponentStates.map(state => {
+            console.log(state);
+            let newComponent = null;
+            let newComponentRef = React.createRef();
+            switch (state.className) {
+                case ('sticky'):
+                    newComponent = (<Sticky
+                            ref={newComponentRef}
+                            isBeingLoaded={true}
+                            id={state.id}
+                            scaleX={state.scaleX}
+                            // scaleX={this.state.scaleX}
+                            x={state.position.x}
+                            y={state.position.y}
+                            finalTextValue={state.finalTextValue}
+                            //rotation = TODO
+                            stageX={state.stageX}
+                            stageY={state.stageY}
+                            // stageX={this.state.stageX}
+                            // stageY={this.state.stageY}
+                            nextColor={state.color}
+                            height={state.height}
+                            width={state.width}
+                            fontSize={state.fontSize}
+                            scale={state.scale}
+                        />);
+                    break;
+                case ('arrow'):
+                    break;
+                case ('plaintext'):
+                    break;
+                case ('cloud'):
+                    break;
+
+                default:
+                    break;
+            }
+            newObjArray = newObjArray.concat(newComponent);
+            newObjectRefs = newObjectRefs.concat(newComponentRef);
+        });
+        this.setState({
+            objectArray: newObjArray,
+            id: this.state.savedId
+        });
+        this.objectRefs = newObjectRefs;
+
+
+
+
+
 
         // let json = '{"justOpenedApp":false,"creatingSticky":false,"editingShape":false,"stageWidth":975,"stageHeight":760,"id":1,"stageX":0,"stageY":0,"scaleX":1,"scaleY":1,"scaleBy":1.05,"objectArray":[{"key":null,"ref":null,"props":{"id":0,"scaleX":1,"x":304,"y":207,"stageX":0,"stageY":0,"nextColor":"#fffdd0","height":250,"width":250,"fontSize":35,"scale":1},"_owner":null,"_store":{}}],"activeSticky":null,"selectedCanvasObjectId":"","imageSrc":""}';
         // let newState = JSON.parse(json);

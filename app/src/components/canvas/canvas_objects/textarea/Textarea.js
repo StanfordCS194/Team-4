@@ -6,12 +6,18 @@ class Textarea extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            finalTextValue: '',
+            // finalTextValue: '',
+            finalTextValue: this.props.finalTextValue,
             textAreaValue: '',
             textEditVisible: this.props.textEditVisible,
             textareaX: this.props.textareaX,
             textareaY: this.props.textareaY,
-        }
+        };
+        this.getTextValue = this.getTextValue.bind(this);
+    }
+
+    getTextValue() {
+        return this.state.finalTextValue;
     }
 
     handleTextEdit(e) {
