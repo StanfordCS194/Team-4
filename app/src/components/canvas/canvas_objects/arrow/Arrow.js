@@ -7,21 +7,47 @@ class Arrow extends React.Component {
     constructor(props) {
         super(props);
         this.group = React.createRef();
+        this.state = {
+            id: this.props.id,
+            className: 'arrow',
+            x: this.props.x,
+            y: this.props.y,
+            scale: this.props.scale,
+            scaleX: this.props.scaleX,
+            scaleY: this.props.scaleY,
+            rotation: this.props.rotation
+        };
+        this.getStateObj = this.getStateObj.bind(this);
+    }
+
+    getStateObj() {
+        return this.state;
     }
 
     animateRaise() {
         this.group.current.to({
-            scaleX: 1.1,
-            scaleY: 1.1,
+            scaleX: 1.1 * this.state.scaleX,
+            scaleY: 1.1 * this.state.scaleY,
             easing: Konva.Easings.ElasticEaseOut,
         });
     }
 
     animateDrop() {
         this.group.current.to({
-            scaleX: 1,
-            scaleY: 1,
+            scaleX: this.state.scaleX / 1.1,
+            scaleY: this.state.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
+        });
+    }
+
+    handleTransform(e) {
+        // Update the scaleX and scaleY of sticky after transforming
+        this.setState({
+            scaleX: e.currentTarget.attrs.scaleX,
+            scaleY: e.currentTarget.attrs.scaleY,
+            rotation: e.currentTarget.attrs.rotation,
+            x: e.currentTarget.attrs.x,
+            y: e.currentTarget.attrs.y
         });
     }
 
@@ -56,27 +82,31 @@ class Arrow extends React.Component {
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
         });
+
+        this.setState({
+            x: e.target.x(),
+            y: e.target.y()
+        });
     };
 
     componentDidMount() {
-        this.group.current.to({
-            scaleX: 1,
-            scaleY: 1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
+        if (this.props.isBeingLoaded) return;
+        this.animateDrop();
     }
 
     render() {
-        const scale = this.props.scale;
+        const scale = this.state.scale;
         return (
             <Group
                 ref={this.group}
-                scaleX={1.1}
-                scaleY={1.1}
+                scaleX={this.state.scaleX}
+                scaleY={this.state.scaleY}
                 draggable={this.props.draggable}
                 id={this.props.id.toString()}
-                x={this.props.x}
-                y={this.props.y}
+                x={this.state.x}
+                y={this.state.y}
+                rotation={this.state.rotation}
+                onTransform={(e) => this.handleTransform(e)}
                 onMouseOver={(e) => this.onMouseOver(e)}
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
@@ -84,15 +114,15 @@ class Arrow extends React.Component {
                 onClick={this.props.onClick}
                 >
                 <Rect
-                    width={scale*300}
-                    height={scale*20}
+                    width={300}
+                    height={20}
                     fill={'black'}
                     shadowColor={'black'}
                     />
                 <RegularPolygon
-                    width={scale*150}
-                    height={scale*20}
-                    radius={scale*50}
+                    width={150}
+                    height={20}
+                    radius={50}
                     y={scale*10}
                     fill={'black'}
                     shadowColor={'black'}

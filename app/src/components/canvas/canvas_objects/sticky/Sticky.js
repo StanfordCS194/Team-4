@@ -54,7 +54,7 @@ class Sticky extends React.Component {
                 x: e.currentTarget.attrs.x,
                 y: e.currentTarget.attrs.y
             }
-        })
+        });
     }
 
     addTransformerToComponent() {
@@ -91,9 +91,6 @@ class Sticky extends React.Component {
 
     // Raising and lowering animations
     onDragStart(e) {
-        console.log("printing drag start event");
-        console.log(e);
-
         e.target.to({
             scaleX: 1.1 * e.target.attrs.scaleX,
             scaleY: 1.1 * e.target.attrs.scaleY,
@@ -118,7 +115,7 @@ class Sticky extends React.Component {
         });
 
         this.setState({
-            position: { // set new position by calculating offset from e.evt.clientX/Y
+            position: {
                 x: e.target.x(),
                 y: e.target.y()
             }

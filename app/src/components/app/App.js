@@ -187,6 +187,8 @@ class App extends Component {
                                 y={200}
                                 x={75}
                                 scale={0.75}
+                                scaleX={0.75}
+                                scaleY={0.75}
                                 onClick={this.onArrowButtonClicked}
                                 isButton={true}
                             />

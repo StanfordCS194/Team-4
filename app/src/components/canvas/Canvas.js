@@ -252,14 +252,18 @@ class Canvas extends React.Component {
   }
 
     addArrowToBoard() {
+        let componentRef = React.createRef();
+        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
         let newComponent = (
             <Arrow
+                ref={componentRef}
                 id={this.state.id}
-                className={'arrow'}
                 draggable={true}
                 x={this.stage.current.getStage().width() / 2 - 150} // Todo: subtract half of arrow width
                 y={this.stage.current.getStage().height() / 2 - 40} // Todo: subtract half of arrow height
                 scale={1}
+                scaleX={1.1}
+                scaleY={1.1}
             />
         );
         this.setState({
@@ -366,6 +370,19 @@ class Canvas extends React.Component {
                         />);
                     break;
                 case ('arrow'):
+                    console.log("arrow");
+                    newComponent = (<Arrow
+                        ref={newComponentRef}
+                        isBeingLoaded={true}
+                        id={state.id}
+                        scaleX={state.scaleX}
+                        scaleY={state.scaleY}
+                        x={state.x}
+                        y={state.y}
+                        rotation = {state.rotation}
+                        scale={state.scale}
+                        draggable={true}
+                    />);
                     break;
                 case ('plaintext'):
                     break;
