@@ -159,6 +159,7 @@ class Canvas extends React.Component {
                     id={this.state.id}
                     // className={'sticky'}
                     scaleX={this.state.scaleX}
+                    scaleY={this.state.scaleY}
                     x={e.evt.clientX}
                     y={e.evt.clientY}
                     stageX={this.state.stageX}
@@ -326,10 +327,11 @@ class Canvas extends React.Component {
                             isBeingLoaded={true}
                             id={state.id}
                             scaleX={state.scaleX}
+                            scaleY={state.scaleY}
                             x={state.position.x}
                             y={state.position.y}
                             finalTextValue={state.finalTextValue}
-                            //rotation = TODO
+                            rotation = {state.rotation}
                             stageX={state.stageX}
                             stageY={state.stageY}
                             nextColor={state.color}

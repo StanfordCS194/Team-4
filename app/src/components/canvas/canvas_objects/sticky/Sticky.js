@@ -13,6 +13,7 @@ class Sticky extends React.Component {
             className: 'sticky',
             id: this.props.id,
             scaleX: this.props.scaleX,
+            scaleY: this.props.scaleY,
             stageX: this.props.stageX,
             stageY: this.props.stageY,
             height: this.props.height,
@@ -26,7 +27,7 @@ class Sticky extends React.Component {
                 x: this.props.isBeingLoaded? this.props.x : this.props.x / this.props.scaleX - this.props.stageX / this.props.scaleX - this.props.width / 2,
                 y: this.props.isBeingLoaded? this.props.y : this.props.y / this.props.scaleX - this.props.stageY / this.props.scaleX - 10,
             },
-            rotation: Math.floor(Math.random() * (11) - 5),
+            rotation: this.props.isBeingLoaded? this.props.rotation : Math.floor(Math.random() * (11) - 5),
             textAreaValue: '',
             finalTextValue: this.props.finalTextValue,
             textEditVisible: !this.props.isBeingLoaded,
@@ -47,7 +48,12 @@ class Sticky extends React.Component {
         // Update the scaleX and scaleY of sticky after transforming
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
-            scaleY: e.currentTarget.attrs.scaleY
+            scaleY: e.currentTarget.attrs.scaleY,
+            rotation: e.currentTarget.attrs.rotation,
+            position: {
+                x: e.currentTarget.attrs.x,
+                y: e.currentTarget.attrs.y
+            }
         })
     }
 
@@ -142,8 +148,10 @@ class Sticky extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
-                scaleX={this.props.scale}
-                scaleY={this.props.scale}
+                // scaleX={this.props.scale}
+                // scaleY={this.props.scale}
+                scaleX={this.state.scaleX}
+                scaleY={this.state.scaleY}
             >
                 <Rect
                     ref={this.sticky}
