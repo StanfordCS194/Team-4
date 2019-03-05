@@ -1,17 +1,16 @@
 import React from 'react';
-import { Rect, Circle, Group, Tween, Transformer } from 'react-konva';
+import { Circle, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 import Textarea from "../textarea/Textarea";
 
 // Todo: Text within cloud (like sticky) support
-class Cloud extends React.Component {
+class VennDiagram extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            finalTextValue: '',
             textEditVisible: this.props.textEditVisible,
-            textX: - this.props.width / 2.5,
-            textY: - this.props.height / 3 + 175,
+            textX: 606 / 2,
+            textY: 426 / 2,
         }
         this.group = React.createRef();
     }
@@ -76,7 +75,12 @@ class Cloud extends React.Component {
 
     render() {
         const scale = this.props.scale;
-        const fill = this.props.fill;
+        const fill = this.props.outlineColor;
+        const xOffset = 25;
+        const yOffset = 426/5;
+        const height = 426/1.75;
+        const width = 606/4;
+
         return (
             <Group
                 ref={this.group}
@@ -91,45 +95,58 @@ class Cloud extends React.Component {
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 onClick={this.props.onClick}
-                >
+            >
                 <Circle
                     radius={scale*210}
-                    fill={fill}
-                    />
+                    x={scale*90}
+                    stroke={fill}
+                    strokeWidth={5}
+                />
                 <Circle
                     radius={scale*210}
-                    y={scale*180}
-                    x={scale*-180}
-                    fill={fill}
+                    x={scale*-90}
+                    stroke={fill}
+                    strokeWidth={5}
                 />
-                <Circle
-                    radius={scale*150}
-                    y={scale*240}
-                    x={scale*180}
-                    fill={fill}
-                />
-                <Rect
-                    width={scale*360}
-                    height={scale*240}
-                    y={scale*150}
-                    x={scale*-180}
-                    fill={fill}
-                />
+
                 <Textarea
                     id={this.props.id}
                     textEditVisible={this.state.textEditVisible}
-                    finalTextValue={this.state.finalTextValue}
-                    width={this.props.width / 1.5}
-                    height={this.props.height / 1.5}
+                    width={width}
+                    height={height}
                     fontSize={this.props.fontSize}
-                    textareaX={this.props.x + this.state.textX}
-                    textareaY={this.props.y + this.state.textY}
-                    x={this.state.textX}
-                    y={this.state.textY}
+                    textareaX={this.props.x + this.state.textX - width - xOffset}
+                    textareaY={this.props.y - this.state.textY + yOffset}
+                    x={this.state.textX - width - xOffset}
+                    y={- this.state.textY + yOffset}
+                />
+
+                <Textarea
+                    id={this.props.id + .1}
+                    textEditVisible={this.state.textEditVisible}
+                    width={width}
+                    height={height}
+                    fontSize={this.props.fontSize}
+                    textareaX={this.props.x - this.state.textX + xOffset}
+                    textareaY={this.props.y - this.state.textY + yOffset}
+                    x={- this.state.textX + xOffset}
+                    y={- this.state.textY + yOffset}
+                />
+
+                <Textarea
+                    id={this.props.id + .2}
+                    textEditVisible={this.state.textEditVisible}
+                    width={width}
+                    height={height}
+                    fontSize={this.props.fontSize}
+                    textareaX={this.props.x - width/2 }
+                    textareaY={this.props.y - this.state.textY + yOffset}
+                    x={- width/2 }
+                    y={- this.state.textY + yOffset}
                 />
             </Group>
         )
     }
 }
 
-export default Cloud;
+export default VennDiagram;

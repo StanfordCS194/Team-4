@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {Tween, Transformer, Group, Text, Rect} from 'react-konva';
+import React from 'react';
+import { Tween, Group, Text } from 'react-konva';
 import Portal from "../portal/Portal";
 
 class Textarea extends React.Component {

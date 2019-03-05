@@ -13,6 +13,7 @@ import AddIcon from '@material-ui/icons/Add';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
+import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
 
 class App extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class App extends Component {
     this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
     this.onUndo = this.onUndo.bind(this);
+    this.onVennDiagramButtonClicked = this.onVennDiagramButtonClicked.bind(this);
     this.onCloudButtonClicked = this.onCloudButtonClicked.bind(this);
     this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
     this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
@@ -44,6 +46,10 @@ class App extends Component {
 
   onUndo() {
     this.canvas.current.undo();
+  }
+
+  onVennDiagramButtonClicked() {
+      this.canvas.current.addVennDiagramToBoard();
   }
 
   onCloudButtonClicked() {
@@ -196,6 +202,19 @@ class App extends Component {
                                 onClick={this.onCloudButtonClicked}
                                 isButton={true}
                                 textEditVisible={false}
+                            />
+                            <VennDiagram
+                                id={"sidebarVennDiagram"}
+                                className={'cloud'}
+                                draggable={true}
+                                x={180}
+                                y={650}
+                                outlineColor={'white'}
+                                scale={.4}
+                                fontSize={30}
+                                textEditVisible={false}
+                                isButton={true}
+                                onClick={this.onVennDiagramButtonClicked}
                             />
                         </Layer>
                     </Stage>

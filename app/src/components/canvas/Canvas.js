@@ -11,6 +11,7 @@ import TransformerComponent from './canvas_objects/transformercomponent/Transfor
 import ImageComponent from './canvas_objects/image/image'
 import Arrow from './canvas_objects/arrow/Arrow';
 import Cloud from './canvas_objects/cloud/Cloud';
+import VennDiagram from './canvas_objects/venndiagram/VennDiagram';
 
 
 class OpeningGreeting extends React.Component {
@@ -268,6 +269,30 @@ class Canvas extends React.Component {
         });
     }
 
+    addVennDiagramToBoard() {
+        let newComponent = (
+            <VennDiagram
+                id={this.state.id}
+                className={'cloud'}
+                draggable={true}
+                x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
+                y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
+                width={720}
+                height={600}
+                outlineColor={'#7EC0EE'}
+                scale={1}
+                fontSize={30}
+                textEditVisible={true}
+                isButton={false}
+            />
+        );
+        console.log(newComponent);
+        this.setState({
+            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+            id: this.state.id + 1,
+        });
+    }
+
     saveToJSON() {
         // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
@@ -390,6 +415,10 @@ class Canvas extends React.Component {
         // Make cloud
         if (e.shiftKey && e.keyCode === 67) {
             this.addCloudToBoard();
+        }
+
+        if (e.shiftKey && e.keyCode == 86) {
+            this.addVennDiagramToBoard();
         }
 
         // Dev: test save to JSON

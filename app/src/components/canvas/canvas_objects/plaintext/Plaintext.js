@@ -1,8 +1,4 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import Portal from '../portal/Portal';
-import {Text, Group, Transformer, Rect} from 'react-konva';
-import Konva from 'konva';
+import React from 'react';
 import Sticky from "../sticky/Sticky";
 
 class Plaintext extends React.Component {
