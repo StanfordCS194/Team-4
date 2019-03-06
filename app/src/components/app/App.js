@@ -211,7 +211,7 @@ class App extends Component {
                                 x={180}
                                 y={650}
                                 outlineColor={'black'}
-                                scale={.4}
+                                scale={.7}
                                 isButton={true}
                                 onClick={this.onVennDiagramButtonClicked}
                             />

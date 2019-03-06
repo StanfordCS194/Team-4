@@ -41,7 +41,7 @@ class Arrow extends React.Component {
     }
 
     handleTransform(e) {
-        // Update the scaleX and scaleY of sticky after transforming
+        // Update the scaleX and scaleY after transforming
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
             scaleY: e.currentTarget.attrs.scaleY,
