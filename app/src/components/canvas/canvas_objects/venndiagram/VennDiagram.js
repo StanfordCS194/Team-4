@@ -8,9 +8,9 @@ class VennDiagram extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            textEditVisible: this.props.textEditVisible,
-            textX: 606 / 2,
-            textY: 426 / 2,
+            // textEditVisible: this.props.textEditVisible,
+            // textX: 606 / 2,
+            // textY: 426 / 2,
         }
         this.group = React.createRef();
     }
@@ -84,7 +84,7 @@ class VennDiagram extends React.Component {
         return (
             <Group
                 ref={this.group}
-                scaleX={1.3} // bigger animation for big cloud
+                scaleX={1.3}
                 scaleY={1.3}
                 draggable={this.props.draggable}
                 id={this.props.id.toString()}
@@ -107,42 +107,6 @@ class VennDiagram extends React.Component {
                     x={scale*-90}
                     stroke={fill}
                     strokeWidth={5}
-                />
-
-                <Textarea
-                    id={this.props.id}
-                    textEditVisible={this.state.textEditVisible}
-                    width={width}
-                    height={height}
-                    fontSize={this.props.fontSize}
-                    textareaX={this.props.x + this.state.textX - width - xOffset}
-                    textareaY={this.props.y - this.state.textY + yOffset}
-                    x={this.state.textX - width - xOffset}
-                    y={- this.state.textY + yOffset}
-                />
-
-                <Textarea
-                    id={this.props.id + .1}
-                    textEditVisible={this.state.textEditVisible}
-                    width={width}
-                    height={height}
-                    fontSize={this.props.fontSize}
-                    textareaX={this.props.x - this.state.textX + xOffset}
-                    textareaY={this.props.y - this.state.textY + yOffset}
-                    x={- this.state.textX + xOffset}
-                    y={- this.state.textY + yOffset}
-                />
-
-                <Textarea
-                    id={this.props.id + .2}
-                    textEditVisible={this.state.textEditVisible}
-                    width={width}
-                    height={height}
-                    fontSize={this.props.fontSize}
-                    textareaX={this.props.x - width/2 }
-                    textareaY={this.props.y - this.state.textY + yOffset}
-                    x={- width/2 }
-                    y={- this.state.textY + yOffset}
                 />
             </Group>
         )

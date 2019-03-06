@@ -207,14 +207,11 @@ class App extends Component {
                             />
                             <VennDiagram
                                 id={"sidebarVennDiagram"}
-                                className={'cloud'}
-                                draggable={true}
+                                draggable={false}
                                 x={180}
                                 y={650}
-                                outlineColor={'white'}
+                                outlineColor={'black'}
                                 scale={.4}
-                                fontSize={30}
-                                textEditVisible={false}
                                 isButton={true}
                                 onClick={this.onVennDiagramButtonClicked}
                             />

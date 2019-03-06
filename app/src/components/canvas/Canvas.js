@@ -281,20 +281,16 @@ class Canvas extends React.Component {
         let newComponent = (
             <VennDiagram
                 id={this.state.id}
-                className={'cloud'}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 20} // Todo: subtract half of cloud width
-                y={this.stage.current.getStage().height() / 2 - 90} // Todo: subtract half of cloud height
+                x={this.stage.current.getStage().width() / 2 - 20}
+                y={this.stage.current.getStage().height() / 2 - 90}
                 width={720}
                 height={600}
-                outlineColor={'#7EC0EE'}
-                scale={1}
-                fontSize={30}
-                textEditVisible={true}
+                outlineColor={'black'}
+                scale={5}
                 isButton={false}
             />
         );
-        console.log(newComponent);
         this.setState({
             objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
             id: this.state.id + 1,
