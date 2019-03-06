@@ -8,7 +8,6 @@ import Textarea from "../textarea/Textarea";
 class Sticky extends React.Component {
     constructor(props) {
         super(props);
-        this.textarea = React.createRef();
         this.state = {
             className: 'sticky',
             id: this.props.id,
@@ -35,6 +34,7 @@ class Sticky extends React.Component {
             textY: this.props.y,
         };
         this.sticky = React.createRef();
+        this.textarea = React.createRef();
         this.getStateObj = this.getStateObj.bind(this);
     }
 

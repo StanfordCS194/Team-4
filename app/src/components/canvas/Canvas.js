@@ -96,19 +96,19 @@ class Canvas extends React.Component {
             return;
         }
 
-    // find clicked sticky (group) by its id
-    const id = e.target.parent.attrs.id;
-    const sticky = this.state.objectArray.find(sticky => sticky.props.id.toString() === id.toString());
-    if (sticky) {
-      this.setState({
-        selectedCanvasObjectId: id
-      });
-    } else {
-      this.setState({
-        selectedCanvasObjectId: ''
-      });
+        // find clicked sticky (group) by its id
+        const id = e.target.parent.attrs.id;
+        const sticky = this.state.objectArray.find(sticky => sticky.props.id.toString() === id.toString());
+        if (sticky) {
+            this.setState({
+                selectedCanvasObjectId: id
+            });
+        } else {
+            this.setState({
+                selectedCanvasObjectId: ''
+            });
+        }
     }
-  }
 
     handleMouseDown(e) {
         // Remove transformer if you drag another sticky
@@ -229,28 +229,32 @@ class Canvas extends React.Component {
         });
     }
 
-  addCloudToBoard() {
-      let newComponent = (
-          <Cloud
-              id={this.state.id}
-              className={'cloud'}
-              draggable={true}
-              x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
-              y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
-              width={720}
-              height={600}
-              fill={'#7EC0EE'}
-              scale={1}
-              fontSize={60}
-              textEditVisible={true}
-              isButton={false}
-          />
-      );
-      this.setState({
-          objectArray: this.state.objectArray.slice(0,this.state.id).concat([newComponent]),
-          id: this.state.id + 1,
-      });
-  }
+    addCloudToBoard() {
+        let componentRef = React.createRef();
+        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+        let newComponent = (
+            <Cloud
+                ref={componentRef}
+                id={this.state.id}
+                finalTextValue={''}
+                className={'cloud'}
+                draggable={true}
+                x={this.stage.current.getStage().width() / 2 - 20} // Todo: subtract half of cloud width
+                y={this.stage.current.getStage().height() / 2 - 90} // Todo: subtract half of cloud height
+                width={720}
+                height={600}
+                fill={'#7EC0EE'}
+                scale={1}
+                fontSize={60}
+                textEditVisible={true}
+                isButton={false}
+            />
+        );
+        this.setState({
+            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+            id: this.state.id + 1,
+        });
+    }
 
     addArrowToBoard() {
         let componentRef = React.createRef();
@@ -279,8 +283,8 @@ class Canvas extends React.Component {
                 id={this.state.id}
                 className={'cloud'}
                 draggable={true}
-                x={this.stage.current.getStage().width()/2-20} // Todo: subtract half of cloud width
-                y={this.stage.current.getStage().height()/2-90} // Todo: subtract half of cloud height
+                x={this.stage.current.getStage().width() / 2 - 20} // Todo: subtract half of cloud width
+                y={this.stage.current.getStage().height() / 2 - 90} // Todo: subtract half of cloud height
                 width={720}
                 height={600}
                 outlineColor={'#7EC0EE'}
@@ -352,26 +356,25 @@ class Canvas extends React.Component {
             switch (state.className) {
                 case ('sticky'):
                     newComponent = (<Sticky
-                            ref={newComponentRef}
-                            isBeingLoaded={true}
-                            id={state.id}
-                            scaleX={state.scaleX}
-                            scaleY={state.scaleY}
-                            x={state.position.x}
-                            y={state.position.y}
-                            finalTextValue={state.finalTextValue}
-                            rotation = {state.rotation}
-                            stageX={state.stageX}
-                            stageY={state.stageY}
-                            nextColor={state.color}
-                            height={state.height}
-                            width={state.width}
-                            fontSize={state.fontSize}
-                            scale={state.scale}
-                        />);
+                        ref={newComponentRef}
+                        isBeingLoaded={true}
+                        id={state.id}
+                        scaleX={state.scaleX}
+                        scaleY={state.scaleY}
+                        x={state.position.x}
+                        y={state.position.y}
+                        finalTextValue={state.finalTextValue}
+                        rotation={state.rotation}
+                        stageX={state.stageX}
+                        stageY={state.stageY}
+                        nextColor={state.color}
+                        height={state.height}
+                        width={state.width}
+                        fontSize={state.fontSize}
+                        scale={state.scale}
+                    />);
                     break;
                 case ('arrow'):
-                    console.log("arrow");
                     newComponent = (<Arrow
                         ref={newComponentRef}
                         isBeingLoaded={true}
@@ -380,13 +383,14 @@ class Canvas extends React.Component {
                         scaleY={state.scaleY}
                         x={state.x}
                         y={state.y}
-                        rotation = {state.rotation}
+                        rotation={state.rotation}
                         scale={state.scale}
                         draggable={true}
                     />);
                     break;
                 case ('plaintext'):
                     newComponent = (<Plaintext
+                        ref={newComponentRef}
                         id={state.id}
                         scaleX={state.scaleX}
                         x={state.x}
@@ -399,6 +403,25 @@ class Canvas extends React.Component {
                     />);
                     break;
                 case ('cloud'):
+                    newComponent = (<Cloud
+                        ref={newComponentRef}
+                        id={state.id}
+                        draggable={true}
+                        x={state.x}
+                        y={state.y}
+                        width={state.width}
+                        height={state.height}
+                        fill={state.fill}
+                        scale={state.scale}
+                        fontSize={state.fontSize}
+                        textEditVisible={false}
+                        isButton={false}
+                        isBeingLoaded={true}
+                        finalTextValue={state.finalTextValue}
+                        scaleX={state.scaleX}
+                        scaleY={state.scaleY}
+                        rotation={state.rotation}
+                    />);
                     break;
 
                 default:
