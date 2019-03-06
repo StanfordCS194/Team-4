@@ -323,6 +323,7 @@ class Canvas extends React.Component {
     // recreate a board by making a new object from each state object and setting board vals
     loadFromJSON() {
         console.log("Loading from JSON string");
+        this.setState({id: 0});
         let savedComponentStates = JSON.parse(this.state.savedComponentStates);
         let savedBoardState = JSON.parse(this.state.savedBoardState);
         let newObjectRefs = [];
