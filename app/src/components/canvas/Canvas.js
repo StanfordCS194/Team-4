@@ -278,16 +278,17 @@ class Canvas extends React.Component {
     }
 
     addVennDiagramToBoard() {
+        let componentRef = React.createRef();
+        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
         let newComponent = (
             <VennDiagram
+                ref={componentRef}
                 id={this.state.id}
                 draggable={true}
                 x={this.stage.current.getStage().width() / 2 - 20}
                 y={this.stage.current.getStage().height() / 2 - 90}
-                width={720}
-                height={600}
                 outlineColor={'black'}
-                scale={5}
+                scale={2.5}
                 isButton={false}
             />
         );
@@ -322,6 +323,7 @@ class Canvas extends React.Component {
     // recreate a board by making a new object from each state object and setting board vals
     loadFromJSON() {
         console.log("Loading from JSON string");
+        this.setState({id: 0});
         let savedComponentStates = JSON.parse(this.state.savedComponentStates);
         let savedBoardState = JSON.parse(this.state.savedBoardState);
         let newObjectRefs = [];
@@ -419,7 +421,22 @@ class Canvas extends React.Component {
                         rotation={state.rotation}
                     />);
                     break;
-
+                case ('vennDiagram'):
+                    console.log("venn diagram");
+                    newComponent = (<VennDiagram
+                        ref={newComponentRef}
+                        id={state.id}
+                        draggable={true}
+                        x={state.x}
+                        y={state.y}
+                        scale={state.scale}
+                        rotation={state.rotation}
+                        isBeingLoaded={true}
+                        outlineColor={'black'}
+                        scaleX={state.scaleX}
+                        scaleY={state.scaleY}
+                    />);
+                    break;
                 default:
                     break;
             }

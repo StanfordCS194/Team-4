@@ -3,30 +3,53 @@ import { Circle, Group, Tween, Transformer } from 'react-konva';
 import Konva from 'konva';
 import Textarea from "../textarea/Textarea";
 
-// Todo: Text within cloud (like sticky) support
 class VennDiagram extends React.Component {
     constructor(props) {
         super(props);
+        let loaded = this.props.isBeingLoaded;
         this.state = {
-            // textEditVisible: this.props.textEditVisible,
-            // textX: 606 / 2,
-            // textY: 426 / 2,
-        }
+            className: 'vennDiagram',
+            id: this.props.id,
+            x: this.props.x,
+            y: this.props.y,
+            scale: this.props.scale,
+            rotation: loaded ? this.props.rotation : 0,
+            scaleX: loaded ? this.props.scaleX : this.props.scale,
+            scaleY: loaded ? this.props.scaleY : this.props.scale,
+
+        };
         this.group = React.createRef();
+        this.textarea = React.createRef();
+        this.getStateObj = this.getStateObj.bind(this);
+    }
+
+    getStateObj() {
+        return this.state;
+    }
+
+    handleTransform(e) {
+        // Update the scaleX and scaleY after transforming
+        this.setState({
+            scaleX: e.currentTarget.attrs.scaleX,
+            scaleY: e.currentTarget.attrs.scaleY,
+            rotation: e.currentTarget.attrs.rotation,
+            x: e.currentTarget.attrs.x,
+            y: e.currentTarget.attrs.y,
+        });
     }
 
     animateRaise() {
         this.group.current.to({
-            scaleX: 1.1,
-            scaleY: 1.1,
+            scaleX: 1.1 * this.state.scaleX,
+            scaleY: 1.1 * this.state.scaleY,
             easing: Konva.Easings.ElasticEaseOut,
         });
     }
 
     animateDrop() {
         this.group.current.to({
-            scaleX: 1,
-            scaleY: 1,
+            scaleX: this.state.scaleX / 1.1,
+            scaleY: this.state.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
         });
     }
@@ -63,38 +86,37 @@ class VennDiagram extends React.Component {
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
         });
+
+        this.setState({
+            x: e.target.x(),
+            y: e.target.y()
+        });
     };
 
     componentDidMount() {
-        this.group.current.to({
-            scaleX: 1,
-            scaleY: 1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
+        if (!this.props.isBeingLoaded) this.animateDrop();
     }
 
     render() {
         const scale = this.props.scale;
         const fill = this.props.outlineColor;
-        const xOffset = 25;
-        const yOffset = 426/5;
-        const height = 426/1.75;
-        const width = 606/4;
 
         return (
             <Group
                 ref={this.group}
-                scaleX={1.3}
-                scaleY={1.3}
+                scaleX={this.state.scaleX}
+                scaleY={this.state.scaleY}
                 draggable={this.props.draggable}
                 id={this.props.id.toString()}
-                x={this.props.x}
-                y={this.props.y}
+                x={this.state.x}
+                y={this.state.y}
                 onMouseOver={(e) => this.onMouseOver(e)}
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 onClick={this.props.onClick}
+                onTransform={(e) => this.handleTransform(e)}
+                rotation={this.state.rotation}
             >
                 <Circle
                     radius={scale*210}

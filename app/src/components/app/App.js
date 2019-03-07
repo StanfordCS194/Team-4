@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import Toolbar from '../toolbar/Toolbar';
@@ -7,7 +7,7 @@ import Konva from 'konva';
 
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
-import { Stage, Layer, Rect } from 'react-konva';
+import {Stage, Layer, Rect} from 'react-konva';
 
 import AddIcon from '@material-ui/icons/Add';
 import AccountIcon from '@material-ui/icons/AccountCircle';
@@ -16,64 +16,67 @@ import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.rightSidebarStage = React.createRef();
-    this.canvas = React.createRef();
-    this.state = {
-        sidebarOpen: false,
-        rightSidebarOpen: false,
-        user: {name: 'Marilu Bravo', img: '.public/media/anon.png'},
-        nextColor: '#fffdd0',
-        nextStickyScale: 1,
-        smallSelected: true,
-        medSelected: false,
-        largeSelected: false,
-    };
-    this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
-    this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
-    this.onColorChange = this.onColorChange.bind(this);
-    this.onUndo = this.onUndo.bind(this);
-    this.onVennDiagramButtonClicked = this.onVennDiagramButtonClicked.bind(this);
-    this.onCloudButtonClicked = this.onCloudButtonClicked.bind(this);
-    this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
-    this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.rightSidebarStage = React.createRef();
+        this.canvas = React.createRef();
+        this.state = {
+            sidebarOpen: false,
+            rightSidebarOpen: false,
+            // myBoardsBarOpen: false,
+            user: {name: 'Marilu Bravo', img: '.public/media/anon.png'},
+            nextColor: '#fffdd0',
+            nextStickyScale: 1,
+            smallSelected: true,
+            medSelected: false,
+            largeSelected: false,
+            viewingMyBoards: false,
+        };
+        this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+        this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
+        // this.onSetMyBoardsBarOpen = this.onSetMyBoardsBarOpen.bind(this);
+        this.onColorChange = this.onColorChange.bind(this);
+        this.onUndo = this.onUndo.bind(this);
+        this.onVennDiagramButtonClicked = this.onVennDiagramButtonClicked.bind(this);
+        this.onCloudButtonClicked = this.onCloudButtonClicked.bind(this);
+        this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
+        this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
+    }
 
-  onColorChange(color) {
-    this.setState({nextColor: color.hex})
-  }
+    onColorChange(color) {
+        this.setState({nextColor: color.hex})
+    }
 
-  onUndo() {
-    this.canvas.current.undo();
-  }
+    onUndo() {
+        this.canvas.current.undo();
+    }
 
-  onVennDiagramButtonClicked() {
-      this.canvas.current.addVennDiagramToBoard();
-  }
+    onVennDiagramButtonClicked() {
+        this.canvas.current.addVennDiagramToBoard();
+    }
 
-  onCloudButtonClicked() {
-      this.canvas.current.addCloudToBoard();
-  }
+    onCloudButtonClicked() {
+        this.canvas.current.addCloudToBoard();
+    }
 
-  onArrowButtonClicked() {
-      this.canvas.current.addArrowToBoard();
-  }
+    onArrowButtonClicked() {
+        this.canvas.current.addArrowToBoard();
+    }
 
-  onSaveToImageClicked() {
-      this.canvas.current.saveToImage();
-  }
+    onSaveToImageClicked() {
+        this.canvas.current.saveToImage();
+    }
 
-  onMouseOverRightSidebarElement(e) {
-      document.body.style.cursor = 'pointer';
-      e.target.to({
-          scaleX: 1.1 * e.target.attrs.scaleX,
-          scaleY: 1.1 * e.target.attrs.scaleY,
-          easing: Konva.Easings.ElasticEaseOut,
-      });
-  }
+    onMouseOverRightSidebarElement(e) {
+        document.body.style.cursor = 'pointer';
+        e.target.to({
+            scaleX: 1.1 * e.target.attrs.scaleX,
+            scaleY: 1.1 * e.target.attrs.scaleY,
+            easing: Konva.Easings.ElasticEaseOut,
+        });
+    }
 
-  onMouseOutRightSidebarElement(e) {
+    onMouseOutRightSidebarElement(e) {
         document.body.style.cursor = 'pointer';
         console.log(e.target);
         e.target.to({
@@ -81,40 +84,55 @@ class App extends Component {
             scaleY: e.target.attrs.scaleY / 1.1,
             easing: Konva.Easings.ElasticEaseOut,
         });
-  }
+    }
 
-  makeSideBarContent(user) {
-    return (
-      <Fragment>
-        <div className="sidebarContent" id="user">
-          <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
-        </div>
-        <div className="sidebarContent">
-          <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
-        </div>
-        <div className="sidebarContent">
-          <a href='#'>My Boards</a>
-        </div>
-        <div className="sidebarContent">
-          <a href='#'>Account Settings</a>
-        </div>
-        <div className="sidebarContent">
-          <a href='#'>Log Out</a>
-        </div>
-      </Fragment>
-    );
-  }
+    makeSideBarContent(user) {
+        if (this.state.viewingMyBoards) {
+            return (
+                <Fragment>
+                    <div className="sidebarContent" id="user">
+                        <h3><AccountIcon id="accountIcon"/><span id="userName">My Boards</span></h3>
+                    </div>
+                    <div className="sidebarContent" id="user">
+                        <h3><AccountIcon id="accountIcon" onClick={() => this.setState({viewingMyBoards: false})}/><span id="userName">back</span></h3>
+                    </div>
+
+
+                </Fragment>
+            );
+        } else {
+            return (
+                <Fragment>
+                    <div className="sidebarContent" id="user">
+                        <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
+                    </div>
+                    <div className="sidebarContent">
+                        <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
+                    </div>
+                    <div className="sidebarContent">
+                        <a href='#' onClick={() => this.setState({viewingMyBoards: true})}>My Boards</a>
+                    </div>
+                    <div className="sidebarContent">
+                        <a href='#'>Account Settings</a>
+                    </div>
+                    <div className="sidebarContent">
+                        <a href='#'>Log Out</a>
+                    </div>
+                </Fragment>
+            );
+        }
+    }
 
     makeRightSideBarContent(user) {
         return (
             <Fragment>
-                <div className="sidebarContent" >
+                <div className="sidebarContent">
                     <Stage
                         width={350}
                         height={1000}
                         listening={true}
                         ref={this.rightSidebarStage}
-                        >
+                    >
                         <Layer>
                             <Rect // Todo: dynamically place these stickies to be in center of stage
                                 id="smallStickyButton"
@@ -211,7 +229,7 @@ class App extends Component {
                                 x={180}
                                 y={650}
                                 outlineColor={'black'}
-                                scale={.4}
+                                scale={.7}
                                 isButton={true}
                                 onClick={this.onVennDiagramButtonClicked}
                             />
@@ -222,56 +240,72 @@ class App extends Component {
         );
     }
 
-  onSetSidebarOpen(open) {
-    this.setState({ sidebarOpen: open });
-  }
+    onSetSidebarOpen(open) {
+        this.setState({sidebarOpen: open});
+    }
 
-  onSetRightSidebarOpen(open) {
-    this.setState({ rightSidebarOpen: open });
-  }
+    onSetRightSidebarOpen(open) {
+        this.setState({rightSidebarOpen: open});
+    }
 
-  render() {
-    return (
-      <Fragment>
-        <Sidebar
-          sidebar={this.makeSideBarContent(this.state.user)}
-          open={this.state.sidebarOpen}
-          onSetOpen={this.onSetSidebarOpen}
-          styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6", zIndex: "2"} }}
-          >
-          <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
-              <AccountIcon id="accountIconTab"/>
-          </div>
-        </Sidebar>
-        <Toolbar
-          onColorChange={this.onColorChange}
-          nextColor={this.state.nextColor}
-          undo={this.onUndo}
-          />
+    render() {
+        return (
+            <Fragment>
+                <Sidebar
+                    sidebar={this.makeSideBarContent(this.state.user)}
+                    open={this.state.sidebarOpen}
+                    onSetOpen={this.onSetSidebarOpen}
+                    styles={{
+                        sidebar: {
+                            background: "white",
+                            textAlign: "center",
+                            padding: "10px",
+                            backgroundColor: "#2EC4B6",
+                            zIndex: "2"
+                        }
+                    }}
+                >
+                    <div id="handle" onMouseEnter={() => this.onSetSidebarOpen(true)}>
+                        <AccountIcon id="accountIconTab"/>
+                    </div>
+                </Sidebar>
+                <Toolbar
+                    onColorChange={this.onColorChange}
+                    nextColor={this.state.nextColor}
+                    undo={this.onUndo}
+                />
 
-          <Sidebar
-              sidebar={this.makeRightSideBarContent(this.state.user)}
-              open={this.state.rightSidebarOpen}
-              onSetOpen={this.onSetRightSidebarOpen}
-              styles={{ sidebar: { background: "white", textAlign: "center", padding: "10px", backgroundColor: "#2EC4B6", zIndex: "2"} }}
-              pullRight={true}
-              >
-              <div id="rightHandle" onMouseEnter={() => this.onSetRightSidebarOpen(true)}>
-                  <AddIcon id="addIcon" />
-              </div>
-          </Sidebar>
-          <div id="canvas-container">
-            <Canvas
-              ref={this.canvas}
-              nextColor={this.state.nextColor}
-              nextStickyScale={this.state.nextStickyScale}
-              />
-          </div>
+                <Sidebar
+                    sidebar={this.makeRightSideBarContent(this.state.user)}
+                    open={this.state.rightSidebarOpen}
+                    onSetOpen={this.onSetRightSidebarOpen}
+                    styles={{
+                        sidebar: {
+                            background: "white",
+                            textAlign: "center",
+                            padding: "10px",
+                            backgroundColor: "#2EC4B6",
+                            zIndex: "2"
+                        }
+                    }}
+                    pullRight={true}
+                >
+                    <div id="rightHandle" onMouseEnter={() => this.onSetRightSidebarOpen(true)}>
+                        <AddIcon id="addIcon"/>
+                    </div>
+                </Sidebar>
+                <div id="canvas-container">
+                    <Canvas
+                        ref={this.canvas}
+                        nextColor={this.state.nextColor}
+                        nextStickyScale={this.state.nextStickyScale}
+                    />
+                </div>
 
-        <div className="logo"><img src="./public/media/logo.png" id="logo" />hi there</div>
-      </Fragment>
-    );
-  }
+                <div className="logo"><img src="./public/media/logo.png" id="logo"/>hi there</div>
+            </Fragment>
+        );
+    }
 }
 
 export default App;
