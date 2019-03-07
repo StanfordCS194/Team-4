@@ -1,6 +1,5 @@
-import React, { Component } from "react";
-import { render } from "react-dom";
-import { Stage, Layer, Image } from "react-konva";
+import React from "react";
+import { Image } from "react-konva";
 
 
 class ImageComponent extends React.Component {

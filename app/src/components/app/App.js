@@ -1,5 +1,4 @@
 import React, {Component, Fragment} from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import Toolbar from '../toolbar/Toolbar';
 import Konva from 'konva';

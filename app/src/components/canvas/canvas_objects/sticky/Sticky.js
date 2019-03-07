@@ -1,7 +1,5 @@
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import Portal from '../portal/Portal';
-import {Stage, Layer, Rect, Text, Group, Tween, Transformer} from 'react-konva';
+import React from 'react';
+import { Rect, Group } from 'react-konva';
 import Konva from 'konva';
 import Textarea from "../textarea/Textarea";
 
@@ -127,7 +125,7 @@ class Sticky extends React.Component {
             shadowOffsetX: 0,
             shadowOffsetY: 0,
         });
-    };
+    }
 
     render() {
         return (

@@ -1,14 +1,11 @@
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {Stage, Layer, Rect, Text, Group, Tween, Transformer} from 'react-konva';
-import Konva from 'konva';
+import React from 'react';
+import {Stage, Layer, Text} from 'react-konva';
 
 import './Canvas.css';
 
 import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 import TransformerComponent from './canvas_objects/transformercomponent/TransformerComponent';
-import ImageComponent from './canvas_objects/image/image'
 import Arrow from './canvas_objects/arrow/Arrow';
 import Cloud from './canvas_objects/cloud/Cloud';
 import VennDiagram from './canvas_objects/venndiagram/VennDiagram';
@@ -189,11 +186,6 @@ class Canvas extends React.Component {
         let mousePointTo = {
             x: stage.getPointerPosition().x / oldScale - this.state.stageX / oldScale,
             y: stage.getPointerPosition().y / oldScale - this.state.stageY / oldScale,
-        };
-
-        let stageDimensions = {
-            x: window.innerWidth * this.state.scaleX,
-            y: window.innerHeight * this.state.scaleX,
         };
 
         let newScale =
@@ -457,11 +449,6 @@ class Canvas extends React.Component {
         // if command-z, undo previously added object
         if (e.metaKey && e.keyCode === 90) {
             this.undo();
-        } else if (e.keyCode === 73) {
-            console.log('i!');
-            this.setState({
-                imageSrc: 'https://fcbk.su/_data/stickers/taz/taz_00.png'
-            })
         }
 
         /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
@@ -525,8 +512,6 @@ class Canvas extends React.Component {
                 onKeyDown={(e) => this.handleKeyPress(e)}
             >
                 <Layer>
-                    <ImageComponent
-                        src={this.state.imageSrc}/>
                     {this.state.objectArray.length === 0 &&
                     <OpeningGreeting
                         justOpenedApp={this.state.justOpenedApp}

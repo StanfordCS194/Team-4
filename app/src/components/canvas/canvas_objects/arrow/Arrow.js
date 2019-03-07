@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text, Group, Tween, Transformer, RegularPolygon } from 'react-konva';
+import React from 'react';
+import { Rect, Group, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
 
 class Arrow extends React.Component {
@@ -52,7 +51,7 @@ class Arrow extends React.Component {
     }
 
     // Add cursor styling
-    onMouseOver(e) {
+    onMouseOver() {
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
@@ -87,7 +86,7 @@ class Arrow extends React.Component {
             x: e.target.x(),
             y: e.target.y()
         });
-    };
+    }
 
     componentDidMount() {
         if (this.props.isBeingLoaded) return;

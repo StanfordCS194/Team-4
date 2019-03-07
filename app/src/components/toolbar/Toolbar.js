@@ -1,19 +1,13 @@
-import React, {Component, Fragment} from 'react';
-import {Button, ButtonToolbar} from 'react-bootstrap';
+import React, {Component} from 'react';
+import { ButtonToolbar} from 'react-bootstrap';
 import './Toolbar.css';
 
 import ColorPicker from '../colorpicker/ColorPicker';
 
-import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
-import ColorFillIcon from '@material-ui/icons/FormatColorFill';
-
 
 class Toolbar extends Component {
     constructor(props) {

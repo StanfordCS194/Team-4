@@ -40,7 +40,7 @@ class Canvas extends Component {
     }
   }
 
-  onDoubleClick({ nativeEvent }) {
+  onDoubleClick() {
     console.log('double click!')
   }
 
@@ -76,7 +76,6 @@ class Canvas extends Component {
         'content-type': 'application/json',
       },
     });
-    const res = await req.json();
     this.line = [];
   }
 
