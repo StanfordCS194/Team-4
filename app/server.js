@@ -22,7 +22,6 @@
 */
 
 //set up mongodb
-let runServer = true;
 
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
@@ -33,7 +32,6 @@ var Canvas = require('./schema/canvas.js');
 var Img = require('./schema/img.js');
 var Board = require('./schema/board.js');
 var User = require('./schema/user.js');
-
 
 
 // helpful installs

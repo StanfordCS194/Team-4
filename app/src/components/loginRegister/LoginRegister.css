@@ -1,0 +1,27 @@
+.form input[type=text], select {
+  padding: 3px 5px;
+  margin: 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form input[type=submit] {
+  background-color: rgba(0,0,255, 0.7);
+  color: white;
+  padding: 3px;
+  margin: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+ .form input[type=submit]:hover {
+  background-color: rgba(0,0,255, 0.8);
+}
+.password {
+  -webkit-text-security: disc;
+  -moz-text-security: disc;
+  text-security: disc;
+}
