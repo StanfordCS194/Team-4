@@ -76,6 +76,10 @@ class Canvas extends React.Component {
         );
     }
 
+    getImageURI() {
+        return this.stage.current.getStage().toDataURL({pixelRatio: 1}); // Todo: Dynamically change this number based on stage scale for optimal image quality
+    }
+
     saveToImage() {
         let uri = this.stage.current.getStage().toDataURL({pixelRatio: 3}); // Todo: Dynamically change this number based on stage scale for optimal image quality
         let link = document.createElement('a');
@@ -319,6 +323,7 @@ class Canvas extends React.Component {
         let savedBoard = {};
         savedBoard.boardState = savedBoardState;
         savedBoard.componentStates = savedComponents;
+        savedBoard.imgUri = this.getImageURI(); // thumbnail image
 
         // for testing purposes: save state objects to canvas state to load later
         this.setState({
@@ -329,6 +334,11 @@ class Canvas extends React.Component {
         return savedBoard;
     }
 
+    /*
+    Loading a new board requires clearing the current one first.
+    Loading a board occurs in the callback function of setState to
+    ensure the board is entirely cleared first.
+     */
     clearBoardAndLoadNewBoard(newBoard, saveBoardToBoardList) {
         console.log("clearing board");
         this.setState({
@@ -639,7 +649,7 @@ class Canvas extends React.Component {
             this.addCloudToBoard();
         }
 
-        if (e.shiftKey && e.keyCode == 86) {
+        if (e.shiftKey && e.keyCode === 86) {
             this.addVennDiagramToBoard();
         }
 

@@ -2,13 +2,14 @@ import React, {Component, Fragment} from 'react';
 import './App.css';
 import Toolbar from '../toolbar/Toolbar';
 import Konva from 'konva';
-
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
 import {Stage, Layer, Rect} from 'react-konva';
 
 import AddIcon from '@material-ui/icons/Add';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
@@ -47,11 +48,14 @@ class App extends Component {
 
     saveBoardToBoardList() {
         let newBoards = [];
+        let newBoard = this.canvas.current.saveBoard();
+        newBoard.lastUpdated = new Date();
         if (this.state.boards.length === 0) { // no saved boards
-            newBoards = newBoards.concat(this.canvas.current.saveBoard());
+            newBoards = newBoards.concat(newBoard);
         } else {
             newBoards = this.state.boards.slice(); // todo: find way of doing this that scales better
-            newBoards[this.state.editingBoardIndex] = this.canvas.current.saveBoard();
+            // newBoards[this.state.editingBoardIndex] = this.canvas.current.saveBoard();
+            newBoards[this.state.editingBoardIndex] = newBoard;
         }
         this.setState({boards: newBoards});
     }
@@ -59,26 +63,19 @@ class App extends Component {
     switchToBoard(boardIndex) {
         this.setState({editingBoardIndex: boardIndex});
         this.canvas.current.clearBoardAndLoadNewBoard(this.state.boards[boardIndex]);
-        // this.canvas.current.loadBoard(this.state.boards[boardIndex]);
-        // this.canvas.current.loadBoard(JSON.stringify(this.state.boards[boardIndex]));
         console.log("switched to board " + boardIndex);
     }
 
     makeNewBoard() {
+        let newBoard = {lastUpdated: new Date()};
         this.setState((state) => {
             return {
-                boards: state.boards.concat({}),
+                boards: state.boards.concat(newBoard),
                 editingBoardIndex: state.boards.length
             };
-        }, () =>  {
+        }, () => {
             this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
-            // this.saveBoardToBoardList();
         });
-        // this.canvas.current.loadBoard(this.state.boards[this.state.editingBoardIndex]); //todo make copy?
-
-        // this.canvas.current.clearBoardAndLoadNewBoard(null);
-        // this.saveBoardToBoardList();
-
     }
 
     onColorChange(color) {
@@ -132,23 +129,40 @@ class App extends Component {
         this.setState({rightSidebarOpen: open});
     }
 
+
+    //todo use position fixed for the top my boards part (or absolute or sticky)
+    //todo left off make arrow correct size
+    //todo hovering over elements styles them differently
+    //todo list boards by date last modified
+    //todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
     makeSideBarContent(user) {
         if (this.state.viewingMyBoards) {
             return (
                 <Fragment>
                     <div className="sidebarContent" id="user">
-                        <h3><AccountIcon id="accountIcon"/><span id="userName">My Boards</span></h3>
+                        <h3>
+                            <ArrowBackIcon
+                                id="arrow-back-icon"
+                                onClick={() => this.setState({viewingMyBoards: false})}
+                            />
+                            <span id="userName">My Boards</span>
+                        </h3>
                     </div>
-                    <div className="sidebarContent" id="backToMain" onClick={() => this.setState({viewingMyBoards: false})}>
-                        <h3><a href='#'>back</a></h3>
+                    <div className="sidebarContent" id="new-board-button" onClick={() => this.makeNewBoard()}>
+                        <AddCircleIcon id="new-board-button-addIcon"/>
                     </div>
-                    <div className="sidebarContent" id="newBoard" onClick={() => this.makeNewBoard()}>
-                        <h3><a href='#'>make new board</a></h3>
-                    </div>
-                    <div className="sidebarContent" id="savedBoards" onClick={() => this.setState({viewingMyBoards: true})}>
+                    <div className="sidebarContent" id="savedBoards"
+                         onClick={() => this.setState({viewingMyBoards: true})}>
                         <ul>
                             {this.state.boards.map((board, i) =>
-                                <li onClick={() => this.switchToBoard(i)}>{i}</li>
+                                <li className="saved-board-elem" onClick={() => this.switchToBoard(i)}>
+                                    <div>
+                                        <img
+                                            className={i === this.state.editingBoardIndex ? "board-thumbnail-selected" : "board-thumbnail"}
+                                            src={board.imgUri}/>
+                                    </div>
+                                    <div>{board.lastUpdated.toUTCString()}</div>
+                                </li>
                             )}
                         </ul>
                     </div>
