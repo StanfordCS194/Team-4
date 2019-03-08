@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {CirclePicker} from 'react-color';
 import './ColorPicker.css';
 import {Spring} from 'react-spring/renderprops'
@@ -10,7 +10,7 @@ class ColorPicker extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange(color, e) {
+    handleChange(color) {
         this.props.onColorChange(color);
     }
 

@@ -1,19 +1,13 @@
-import React, {Component, Fragment} from 'react';
-import {Button, ButtonToolbar} from 'react-bootstrap';
+import React, {Component} from 'react';
+import { ButtonToolbar} from 'react-bootstrap';
 import './Toolbar.css';
 
 import ColorPicker from '../colorpicker/ColorPicker';
 
-import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
-import ColorFillIcon from '@material-ui/icons/FormatColorFill';
-
 
 class Toolbar extends Component {
     constructor(props) {
@@ -22,7 +16,8 @@ class Toolbar extends Component {
         this.state = {
             tools: ['undo', 'save', 'delete', 'color'],
             openColorPicker: false,
-            icons: [<UndoIcon onClick={this.props.undo}/>, <SaveIcon/>, <DeleteIcon/>, null]
+            icons: [<UndoIcon onClick={this.props.undo}/>, <SaveIcon onClick={this.props.saveBoard}/>, <DeleteIcon/>, null],
+            onClicks: [this.props.undo, this.props.saveBoard, null, null]
         };
     }
 
@@ -38,6 +33,7 @@ class Toolbar extends Component {
                 key={this.state.tools[i]}
                 color="primary"
                 className="tools"
+                onClick={this.state.onClicks[i]}
             >
                 {this.state.icons[i]}
                 {this.state.tools[i] === 'color' &&
@@ -53,6 +49,7 @@ class Toolbar extends Component {
         }))
     }
 
+    // clicking anywhere should close the color picker
     handleClick = e => {
         if (e.target.id !== 'color' && e.target.id !== 'colorDot') {
             this.setState({openColorPicker: false});
@@ -60,9 +57,9 @@ class Toolbar extends Component {
             this.setState({openColorPicker: !this.state.openColorPicker});
         }
 
-        if (e.target.id === 'undo') {
-            this.props.undo();
-        }
+        // if (e.target.id === 'undo') {
+        //     this.props.undo();
+        // }
     };
 
     render() {

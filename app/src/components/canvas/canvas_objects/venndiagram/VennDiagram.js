@@ -1,7 +1,6 @@
 import React from 'react';
-import { Circle, Group, Tween, Transformer } from 'react-konva';
+import { Circle, Group } from 'react-konva';
 import Konva from 'konva';
-import Textarea from "../textarea/Textarea";
 
 class VennDiagram extends React.Component {
     constructor(props) {
@@ -55,7 +54,7 @@ class VennDiagram extends React.Component {
     }
 
     // Add cursor styling
-    onMouseOver(e) {
+    onMouseOver() {
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
@@ -91,7 +90,7 @@ class VennDiagram extends React.Component {
             x: e.target.x(),
             y: e.target.y()
         });
-    };
+    }
 
     componentDidMount() {
         if (!this.props.isBeingLoaded) this.animateDrop();

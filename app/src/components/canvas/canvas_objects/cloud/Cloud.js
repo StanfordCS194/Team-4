@@ -1,5 +1,5 @@
 import React from 'react';
-import { Rect, Circle, Group, Tween, Transformer } from 'react-konva';
+import { Rect, Circle, Group } from 'react-konva';
 import Konva from 'konva';
 import Textarea from "../textarea/Textarea";
 
@@ -34,6 +34,7 @@ class Cloud extends React.Component {
     getStateObj() {
         let state = this.state;
         state.finalTextValue = this.textarea.current.getTextValue(); // need to get final text value which is a level deeper in textarea component
+        state.fontSize = this.textarea.current.getFontSize(); // need final font size
         return state;
     }
 
@@ -65,7 +66,7 @@ class Cloud extends React.Component {
     }
 
     // Add cursor styling
-    onMouseOver(e) {
+    onMouseOver() {
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
@@ -101,7 +102,7 @@ class Cloud extends React.Component {
             x: e.target.x(),
             y: e.target.y()
         });
-    };
+    }
 
     componentDidMount() {
         if (!this.props.isBeingLoaded) this.animateDrop();

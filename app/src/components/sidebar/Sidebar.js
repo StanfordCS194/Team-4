@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 class Toolbar extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Toolbar extends Component {
       tools.push(<div key={this.state.tools[i]}> {this.state.tools[i]} </div>);
     }
     const res = (
-      <div className="tools">{matchingStates}</div>
+      <div className="tools"></div>
     );
     return res;
   }

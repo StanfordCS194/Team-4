@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
+import React from 'react';
 import Portal from '../portal/Portal';
 import Outline from '../outline/Outline';
-import { Stage, Layer, Rect, Text, Group, Tween, Transformer } from 'react-konva';
+import { Rect, Text } from 'react-konva';
 import Konva from 'konva';
 
 class Sticky extends React.Component {
@@ -80,7 +79,7 @@ class Sticky extends React.Component {
     // we can read attrs here and send them to store
   }
 
-  handleClick(e) {
+  handleClick() {
     this.setState({ transformer: true });
   }
 
@@ -90,7 +89,7 @@ class Sticky extends React.Component {
     // getElementById must happen after render
     setTimeout( () => {
       let textarea = document.getElementById(this.props.id.toString());
-      // textarea.focus();
+      textarea.focus();
       if (this.state.transformer) {
         const stage = this.transformer.getStage();
         const rectangle = stage.findOne('.' + this.props.id.toString());

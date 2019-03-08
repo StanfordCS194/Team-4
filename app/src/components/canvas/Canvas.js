@@ -1,14 +1,11 @@
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {Stage, Layer, Rect, Text, Group, Tween, Transformer} from 'react-konva';
-import Konva from 'konva';
+import React from 'react';
+import {Stage, Layer, Text} from 'react-konva';
 
 import './Canvas.css';
 
 import Sticky from './canvas_objects/sticky/Sticky';
 import Plaintext from './canvas_objects/plaintext/Plaintext';
 import TransformerComponent from './canvas_objects/transformercomponent/TransformerComponent';
-import ImageComponent from './canvas_objects/image/image'
 import Arrow from './canvas_objects/arrow/Arrow';
 import Cloud from './canvas_objects/cloud/Cloud';
 import VennDiagram from './canvas_objects/venndiagram/VennDiagram';
@@ -44,7 +41,7 @@ class Canvas extends React.Component {
     constructor(props) {
         super(props);
         this.stage = React.createRef();
-        this.objectRefs = [];
+        // this.objectRefs = [];
         this.state = {
             justOpenedApp: true,
             creatingSticky: false,
@@ -62,12 +59,21 @@ class Canvas extends React.Component {
             selectedCanvasObjectId: '',
             imageSrc: '',
 
-            // Todo: these are for json loading testing, will not need later
-            savedComponentStates: '',
-            savedBoardState: ''
+            // Todo: these are for loading testing, will not need later
+            objectRefs: [],
+            savedBoard: {}
 
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.loadBoard = this.loadBoard.bind(this);
+        this.clearBoardAndLoadNewBoard = this.clearBoardAndLoadNewBoard.bind(this);
+    }
+
+    getSavedBoardList() {
+        let boards = ["hello", "heno?", "weow"];
+        return boards.map((board) =>
+            <li>{board}</li>
+        );
     }
 
     saveToImage() {
@@ -135,7 +141,7 @@ class Canvas extends React.Component {
 
         let newComponent = null;
         let componentRef = React.createRef();
-        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
 
         // Add plain text
         if (window.event.metaKey) {
@@ -168,7 +174,7 @@ class Canvas extends React.Component {
                     nextColor={this.props.nextColor}
                     height={250}
                     width={250}
-                    fontSize={35}
+                    fontSize={50}
                     scale={this.props.nextStickyScale}
                 />
             );
@@ -189,11 +195,6 @@ class Canvas extends React.Component {
         let mousePointTo = {
             x: stage.getPointerPosition().x / oldScale - this.state.stageX / oldScale,
             y: stage.getPointerPosition().y / oldScale - this.state.stageY / oldScale,
-        };
-
-        let stageDimensions = {
-            x: window.innerWidth * this.state.scaleX,
-            y: window.innerHeight * this.state.scaleX,
         };
 
         let newScale =
@@ -231,7 +232,8 @@ class Canvas extends React.Component {
 
     addCloudToBoard() {
         let componentRef = React.createRef();
-        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
+
         let newComponent = (
             <Cloud
                 ref={componentRef}
@@ -245,7 +247,7 @@ class Canvas extends React.Component {
                 height={600}
                 fill={'#7EC0EE'}
                 scale={1}
-                fontSize={60}
+                fontSize={80}
                 textEditVisible={true}
                 isButton={false}
             />
@@ -258,7 +260,8 @@ class Canvas extends React.Component {
 
     addArrowToBoard() {
         let componentRef = React.createRef();
-        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
+
         let newComponent = (
             <Arrow
                 ref={componentRef}
@@ -279,7 +282,8 @@ class Canvas extends React.Component {
 
     addVennDiagramToBoard() {
         let componentRef = React.createRef();
-        this.objectRefs = this.objectRefs.slice(0, this.state.id).concat([componentRef]);
+        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
+
         let newComponent = (
             <VennDiagram
                 ref={componentRef}
@@ -298,10 +302,10 @@ class Canvas extends React.Component {
         });
     }
 
-    saveToJSON() {
+    saveBoard() {
         // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
-        this.objectRefs.slice(0, this.state.id).map(ref => {
+        this.state.objectRefs.slice(0, this.state.id).map(ref => {
             savedComponents = savedComponents.concat(ref.current.getStateObj());
         });
 
@@ -309,23 +313,76 @@ class Canvas extends React.Component {
         let savedBoardState = {};
         Object.assign(savedBoardState, this.state);
         delete savedBoardState.objectArray;
-        delete savedBoardState.savedObjArrayJson;
+        delete savedBoardState.objectRefs;
+
+        // Combine board state and component states into one object
+        let savedBoard = {};
+        savedBoard.boardState = savedBoardState;
+        savedBoard.componentStates = savedComponents;
 
         // for testing purposes: save state objects to canvas state to load later
         this.setState({
-            savedComponentStates: JSON.stringify(savedComponents),
-            savedBoardState: JSON.stringify(savedBoardState)
+            savedBoard: savedBoard,
         });
-        console.log("Saved board and states to JSON string");
+        console.log("saved board:");
+        console.log(savedBoard);
+        return savedBoard;
     }
+
+    clearBoardAndLoadNewBoard(newBoard, saveBoardToBoardList) {
+        console.log("clearing board");
+        this.setState({
+                justOpenedApp: true,
+                creatingSticky: false,
+                editingShape: false,
+                stageWidth: window.innerWidth,
+                stageHeight: window.innerHeight,
+                id: 0,
+                stageX: 0,
+                stageY: 0,
+                scaleX: 1,
+                scaleY: 1,
+                scaleBy: 1.05,
+                objectArray: [],
+                activeSticky: null,
+                selectedCanvasObjectId: '',
+                imageSrc: '',
+
+                objectRefs: [],
+                savedBoard: {}
+            }, () => { // Need to use a callback function to wait until board is cleared
+                if (newBoard) {
+                    console.log("non-null board.");
+                    this.loadBoard(newBoard);
+                } else {
+                    console.log("null board");
+                    saveBoardToBoardList();
+                }
+            }
+        );
+    }
+
 
     // Given a JSON string representing an array of object states and a board state,
     // recreate a board by making a new object from each state object and setting board vals
-    loadFromJSON() {
-        console.log("Loading from JSON string");
-        this.setState({id: 0});
-        let savedComponentStates = JSON.parse(this.state.savedComponentStates);
-        let savedBoardState = JSON.parse(this.state.savedBoardState);
+    loadBoard(board) {
+        console.log("Loading board");
+
+        // this.clearBoardAndLoadNewBoard();
+
+        // console.log("After clearing board, object array: ");
+        // console.log(this.state.objectArray);
+        // this.setState({
+        //     id: 0,
+        //     objectArray: [],
+        //     savedBoard: savedBoard,
+        // }); // remove existing components from board
+        // if (savedBoard === {})
+        // let board = Object.assign({}, this.state.savedBoard);
+        // let board = Object.assign({}, savedBoard);
+        // let board = JSON.parse(savedBoard);
+        let savedComponentStates = board.componentStates;
+        let savedBoardState = board.boardState;
         let newObjectRefs = [];
         let newObjArray = [];
 
@@ -344,112 +401,218 @@ class Canvas extends React.Component {
             activeSticky: savedBoardState.activeSticky,
             selectedCanvasObjectId: savedBoardState.selectedCanvasObjectId,
             imageSrc: savedBoardState.imageSrc,
+            // });
+        }, () => {
+            // For each component state object, create a new object
+            savedComponentStates.map(state => {
+                console.log(state);
+                let newComponent = null;
+                let newComponentRef = React.createRef();
+                switch (state.className) {
+                    case ('sticky'):
+                        newComponent = (<Sticky
+                            ref={newComponentRef}
+                            isBeingLoaded={true}
+                            id={state.id}
+                            scaleX={state.scaleX}
+                            scaleY={state.scaleY}
+                            x={state.position.x}
+                            y={state.position.y}
+                            finalTextValue={state.finalTextValue}
+                            rotation={state.rotation}
+                            stageX={state.stageX}
+                            stageY={state.stageY}
+                            nextColor={state.color}
+                            height={state.height}
+                            width={state.width}
+                            fontSize={state.fontSize}
+                            scale={state.scale}
+                        />);
+                        break;
+                    case ('arrow'):
+                        newComponent = (<Arrow
+                            ref={newComponentRef}
+                            isBeingLoaded={true}
+                            id={state.id}
+                            scaleX={state.scaleX}
+                            scaleY={state.scaleY}
+                            x={state.x}
+                            y={state.y}
+                            rotation={state.rotation}
+                            scale={state.scale}
+                            draggable={true}
+                        />);
+                        break;
+                    case ('plaintext'):
+                        newComponent = (<Plaintext
+                            ref={newComponentRef}
+                            id={state.id}
+                            scaleX={state.scaleX}
+                            x={state.x}
+                            y={state.y}
+                            stageX={state.stageX}
+                            stateY={state.stageY}
+                            height={state.height}
+                            width={state.width}
+                            fontSize={state.fontSize}
+                        />);
+                        break;
+                    case ('cloud'):
+                        newComponent = (<Cloud
+                            ref={newComponentRef}
+                            id={state.id}
+                            draggable={true}
+                            x={state.x}
+                            y={state.y}
+                            width={state.width}
+                            height={state.height}
+                            fill={state.fill}
+                            scale={state.scale}
+                            fontSize={state.fontSize}
+                            textEditVisible={false}
+                            isButton={false}
+                            isBeingLoaded={true}
+                            finalTextValue={state.finalTextValue}
+                            scaleX={state.scaleX}
+                            scaleY={state.scaleY}
+                            rotation={state.rotation}
+                        />);
+                        break;
+                    case ('vennDiagram'):
+                        console.log("venn diagram");
+                        newComponent = (<VennDiagram
+                            ref={newComponentRef}
+                            id={state.id}
+                            draggable={true}
+                            x={state.x}
+                            y={state.y}
+                            scale={state.scale}
+                            rotation={state.rotation}
+                            isBeingLoaded={true}
+                            outlineColor={'black'}
+                            scaleX={state.scaleX}
+                            scaleY={state.scaleY}
+                        />);
+                        break;
+                    default:
+                        break;
+                }
+                newObjArray = newObjArray.concat(newComponent);
+                newObjectRefs = newObjectRefs.concat(newComponentRef);
+            });
+
+            // Update object array, id, and object refs
+            this.setState({
+                objectArray: newObjArray,
+                id: savedBoardState.id, // for some reason only works when I update this after creating the components
+                objectRefs: newObjectRefs,
+            });
         });
 
-        // For each component state object, create a new object
-        savedComponentStates.map(state => {
-            console.log(state);
-            let newComponent = null;
-            let newComponentRef = React.createRef();
-            switch (state.className) {
-                case ('sticky'):
-                    newComponent = (<Sticky
-                        ref={newComponentRef}
-                        isBeingLoaded={true}
-                        id={state.id}
-                        scaleX={state.scaleX}
-                        scaleY={state.scaleY}
-                        x={state.position.x}
-                        y={state.position.y}
-                        finalTextValue={state.finalTextValue}
-                        rotation={state.rotation}
-                        stageX={state.stageX}
-                        stageY={state.stageY}
-                        nextColor={state.color}
-                        height={state.height}
-                        width={state.width}
-                        fontSize={state.fontSize}
-                        scale={state.scale}
-                    />);
-                    break;
-                case ('arrow'):
-                    newComponent = (<Arrow
-                        ref={newComponentRef}
-                        isBeingLoaded={true}
-                        id={state.id}
-                        scaleX={state.scaleX}
-                        scaleY={state.scaleY}
-                        x={state.x}
-                        y={state.y}
-                        rotation={state.rotation}
-                        scale={state.scale}
-                        draggable={true}
-                    />);
-                    break;
-                case ('plaintext'):
-                    newComponent = (<Plaintext
-                        ref={newComponentRef}
-                        id={state.id}
-                        scaleX={state.scaleX}
-                        x={state.x}
-                        y={state.y}
-                        stageX={state.stageX}
-                        stateY={state.stageY}
-                        height={state.height}
-                        width={state.width}
-                        fontSize={state.fontSize}
-                    />);
-                    break;
-                case ('cloud'):
-                    newComponent = (<Cloud
-                        ref={newComponentRef}
-                        id={state.id}
-                        draggable={true}
-                        x={state.x}
-                        y={state.y}
-                        width={state.width}
-                        height={state.height}
-                        fill={state.fill}
-                        scale={state.scale}
-                        fontSize={state.fontSize}
-                        textEditVisible={false}
-                        isButton={false}
-                        isBeingLoaded={true}
-                        finalTextValue={state.finalTextValue}
-                        scaleX={state.scaleX}
-                        scaleY={state.scaleY}
-                        rotation={state.rotation}
-                    />);
-                    break;
-                case ('vennDiagram'):
-                    console.log("venn diagram");
-                    newComponent = (<VennDiagram
-                        ref={newComponentRef}
-                        id={state.id}
-                        draggable={true}
-                        x={state.x}
-                        y={state.y}
-                        scale={state.scale}
-                        rotation={state.rotation}
-                        isBeingLoaded={true}
-                        outlineColor={'black'}
-                        scaleX={state.scaleX}
-                        scaleY={state.scaleY}
-                    />);
-                    break;
-                default:
-                    break;
-            }
-            newObjArray = newObjArray.concat(newComponent);
-            newObjectRefs = newObjectRefs.concat(newComponentRef);
-        });
-
-        // Update object array, id, and object refs
-        this.setState({
-            objectArray: newObjArray,
-            id: savedBoardState.id // for some reason only works when I update this after creating the components
-        });
-        this.objectRefs = newObjectRefs;
+        // // For each component state object, create a new object
+        // savedComponentStates.map(state => {
+        //     console.log(state);
+        //     let newComponent = null;
+        //     let newComponentRef = React.createRef();
+        //     switch (state.className) {
+        //         case ('sticky'):
+        //             newComponent = (<Sticky
+        //                 ref={newComponentRef}
+        //                 isBeingLoaded={true}
+        //                 id={state.id}
+        //                 scaleX={state.scaleX}
+        //                 scaleY={state.scaleY}
+        //                 x={state.position.x}
+        //                 y={state.position.y}
+        //                 finalTextValue={state.finalTextValue}
+        //                 rotation={state.rotation}
+        //                 stageX={state.stageX}
+        //                 stageY={state.stageY}
+        //                 nextColor={state.color}
+        //                 height={state.height}
+        //                 width={state.width}
+        //                 fontSize={state.fontSize}
+        //                 scale={state.scale}
+        //             />);
+        //             break;
+        //         case ('arrow'):
+        //             newComponent = (<Arrow
+        //                 ref={newComponentRef}
+        //                 isBeingLoaded={true}
+        //                 id={state.id}
+        //                 scaleX={state.scaleX}
+        //                 scaleY={state.scaleY}
+        //                 x={state.x}
+        //                 y={state.y}
+        //                 rotation={state.rotation}
+        //                 scale={state.scale}
+        //                 draggable={true}
+        //             />);
+        //             break;
+        //         case ('plaintext'):
+        //             newComponent = (<Plaintext
+        //                 ref={newComponentRef}
+        //                 id={state.id}
+        //                 scaleX={state.scaleX}
+        //                 x={state.x}
+        //                 y={state.y}
+        //                 stageX={state.stageX}
+        //                 stateY={state.stageY}
+        //                 height={state.height}
+        //                 width={state.width}
+        //                 fontSize={state.fontSize}
+        //             />);
+        //             break;
+        //         case ('cloud'):
+        //             newComponent = (<Cloud
+        //                 ref={newComponentRef}
+        //                 id={state.id}
+        //                 draggable={true}
+        //                 x={state.x}
+        //                 y={state.y}
+        //                 width={state.width}
+        //                 height={state.height}
+        //                 fill={state.fill}
+        //                 scale={state.scale}
+        //                 fontSize={state.fontSize}
+        //                 textEditVisible={false}
+        //                 isButton={false}
+        //                 isBeingLoaded={true}
+        //                 finalTextValue={state.finalTextValue}
+        //                 scaleX={state.scaleX}
+        //                 scaleY={state.scaleY}
+        //                 rotation={state.rotation}
+        //             />);
+        //             break;
+        //         case ('vennDiagram'):
+        //             console.log("venn diagram");
+        //             newComponent = (<VennDiagram
+        //                 ref={newComponentRef}
+        //                 id={state.id}
+        //                 draggable={true}
+        //                 x={state.x}
+        //                 y={state.y}
+        //                 scale={state.scale}
+        //                 rotation={state.rotation}
+        //                 isBeingLoaded={true}
+        //                 outlineColor={'black'}
+        //                 scaleX={state.scaleX}
+        //                 scaleY={state.scaleY}
+        //             />);
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        //     newObjArray = newObjArray.concat(newComponent);
+        //     newObjectRefs = newObjectRefs.concat(newComponentRef);
+        // });
+        //
+        // // Update object array, id, and object refs
+        // this.setState({
+        //     objectArray: newObjArray,
+        //     id: savedBoardState.id, // for some reason only works when I update this after creating the components
+        //     objectRefs: newObjectRefs,
+        // });
     }
 
     // handle keypresses
@@ -457,11 +620,6 @@ class Canvas extends React.Component {
         // if command-z, undo previously added object
         if (e.metaKey && e.keyCode === 90) {
             this.undo();
-        } else if (e.keyCode === 73) {
-            console.log('i!');
-            this.setState({
-                imageSrc: 'https://fcbk.su/_data/stickers/taz/taz_00.png'
-            })
         }
 
         /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
@@ -487,17 +645,18 @@ class Canvas extends React.Component {
 
         // Dev: test save to JSON
         if (e.metaKey && e.keyCode === 67) {
-            this.saveToJSON();
+            this.saveBoard();
         }
 
         if (e.metaKey && e.keyCode === 74) {
-            this.loadFromJSON();
+            this.loadBoard(this.state.savedBoard);
         }
     };
 
     // add document level keydown listeners
     componentDidMount() {
         document.addEventListener("keydown", this.handleKeyPress, false);
+
     }
 
     componentWillUnmount() {
@@ -525,8 +684,6 @@ class Canvas extends React.Component {
                 onKeyDown={(e) => this.handleKeyPress(e)}
             >
                 <Layer>
-                    <ImageComponent
-                        src={this.state.imageSrc}/>
                     {this.state.objectArray.length === 0 &&
                     <OpeningGreeting
                         justOpenedApp={this.state.justOpenedApp}

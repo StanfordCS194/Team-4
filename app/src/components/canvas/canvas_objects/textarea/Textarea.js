@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tween, Group, Text } from 'react-konva';
+import { Group, Text } from 'react-konva';
 import Portal from "../portal/Portal";
 
 class Textarea extends React.Component {
@@ -7,16 +7,22 @@ class Textarea extends React.Component {
         super(props);
         this.state = {
             finalTextValue: this.props.finalTextValue,
-            textAreaValue: '',
+            textAreaValue: this.props.finalTextValue,
             textEditVisible: this.props.textEditVisible,
             textareaX: this.props.textareaX,
             textareaY: this.props.textareaY,
+            fontSize: this.props.fontSize
         };
         this.getTextValue = this.getTextValue.bind(this);
+        this.fontSize = this.props.fontSize;
     }
 
     getTextValue() {
         return this.state.finalTextValue;
+    }
+
+    getFontSize() {
+        return this.state.fontSize;
     }
 
     handleTextEdit(e) {
@@ -25,14 +31,37 @@ class Textarea extends React.Component {
       });
     }
 
-    // on pressing enter, exit text edit
+    // on pressing enter, exit text edit and reset font size so text fits in textarea
     handleTextareaKeyDown(e) {
         const KEY_CODE_ENTER = 13;
         if (e.keyCode === KEY_CODE_ENTER) {
+
+            let textarea = document.getElementById(this.props.id);
+            let fontSizeNum = this.props.fontSize;
+            if (textarea.scrollHeight === this.props.height ) {
+                textarea.style.fontSize = fontSizeNum + "px";
+            }
+
+            // When you have to start strolling, decrease font size and adjust line height until text fits
+            while (textarea.scrollHeight > this.props.height) {
+                fontSizeNum = Number(textarea.style.fontSize.replace("px", ""));
+                fontSizeNum -= 1;
+                textarea.style.fontSize = fontSizeNum + "px";
+
+                // Adjust the line height when the difference between text box and text area is noticeable
+                if (fontSizeNum < 33) {
+                    textarea.style.lineHeight = '25pt'
+                } else if (fontSizeNum > 50) {
+                  textarea.style.lineHeight = '70pt'
+                } else {
+                    textarea.style.lineHeight = '35pt'
+                }
+            }
             this.setState({
                 finalTextValue: e.target.value,
                 textEditVisible: false,
                 draggable: true,
+                fontSize: fontSizeNum,
             });
         }
     }
@@ -68,7 +97,7 @@ class Textarea extends React.Component {
                 >
                 <Text
                     text={this.state.finalTextValue}
-                    fontSize={this.props.fontSize}
+                    fontSize={this.state.fontSize}
                     fontFamily={'Klee'}
                     fill={'#555'}
                     width={this.props.width}
@@ -86,6 +115,7 @@ class Textarea extends React.Component {
                   <textarea
                       value={this.state.textAreaValue}
                       id={this.props.id.toString()}
+                      placeholder={"Start typing!"}
                       style={{
                           display: this.state.textEditVisible ? 'block' : 'none',
                           position: 'absolute',
@@ -93,7 +123,8 @@ class Textarea extends React.Component {
                           left: this.state.textareaX + 'px',
                           width: this.props.width,
                           height: this.props.height,
-                          fontSize: this.props.fontSize,
+                          fontSize: this.state.fontSize,
+                          lineHeight: this.props.fontSize > 50 ? '70pt' : '35pt',
                       }}
                       onChange={(e) => this.handleTextEdit(e)}
                       onKeyDown={(e) => this.handleTextareaKeyDown(e)}

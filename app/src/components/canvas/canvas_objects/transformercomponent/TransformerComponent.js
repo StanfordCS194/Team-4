@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Tween, Transformer } from 'react-konva';
+import React from 'react';
+import { Transformer } from 'react-konva';
 
 class TransformerComponent extends React.Component {
 
