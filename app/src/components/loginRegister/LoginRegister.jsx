@@ -24,20 +24,24 @@ class LoginRegister extends React.Component {
     };
   }
 
+  // handlers to watch for changes in the username and password field
   handleLoginValueChange = (event) => {
     this.setState({loginValue: event.target.value});
   }
-
   handlePasswordValueChange = (event) => {
     this.setState({passwordValue: event.target.value});
   }
 
+  // login by using the username and password filled in
   handleLogIn = () => {
+    event.preventDefault();
+    // POST to /admin/login
     axios.post('/admin/login', {
       login_name: this.state.loginValue,
       password: this.state.passwordValue
     })
     .then((res) => {
+      // On success, set state
       this.setState({
         login_name: res.data.login_name,
         first_name: res.data.first_name,
@@ -45,11 +49,6 @@ class LoginRegister extends React.Component {
         id: res.data._id,
         redirect: true,
         destination: '#/users/' + res.data._id,
-      });
-      this.props.loginStateUpdate({
-        login_name: res.data.login_name,
-        first_name: res.data.first_name,
-        last_name: res.data.last_name,
       });
     })
     .catch((error) => {
@@ -59,17 +58,19 @@ class LoginRegister extends React.Component {
       });
       console.log(error);
     });
-    event.preventDefault();
   };
 
+  // handle register creates a formData from registerForm
+  // then it parses the entries in the dormData into args, which
+  // acts as the args to a POST reqest to /user
   handleRegister = () => {
-    event.preventDefault();
+    event.preventDefault(); // prevent reload of page
     let args = {};
     let formData = new FormData(document.getElementById('registerForm'));
     for (var pair of formData.entries()) {
       args[pair[0]] = pair[1];
     }
-    console.log(args);
+    // check that form entries are valid and filled in
     if (args.password1 !== args.password2) {
       this.setState({registerMessage: 'entered passwords do not match, please try again'});
       return;
@@ -86,8 +87,11 @@ class LoginRegister extends React.Component {
       this.setState({registerMessage: 'please fill our your password'});
       return;
     }
+
+    // make a user with arguments args
     axios.post('/user', args)
     .then((res) => {
+      // on success
       console.log(res);
       this.setState({
         logInMessage: 'Your account has been made! please log in',
@@ -102,6 +106,7 @@ class LoginRegister extends React.Component {
     });
   };
 
+  // renders two forms, one for log in and one for register
   render() {
     return (
       <div className="center-align col s7 details-container">
