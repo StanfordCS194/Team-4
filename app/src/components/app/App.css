@@ -91,3 +91,59 @@ h5 {
   	position: fixed;
   	z-index: 1;
 }
+ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+li {
+  cursor: pointer;
+}
+
+.board-thumbnail {
+  max-width: 350px;
+  max-height: 300px;
+  border: 5px solid #2EC4B6;
+  background-color: #FDFFFC;
+}
+
+.board-thumbnail-selected {
+  max-width: 350px;
+  max-height: 300px;
+  background-color: #FDFFFC;
+  border: 5px solid black;
+
+}
+
+.saved-board-elem {
+  padding-bottom: 20px;
+}
+
+#arrow-back-icon {
+  transform: scale(2);
+  vertical-align: middle;
+  padding-right: 10px;
+  padding-left: 10px;
+  cursor: pointer;
+}
+
+#new-board-button {
+  width: 350px;
+  height: 273px;
+  background-color: #FDFFFC;
+  padding: 0px;
+  margin: 10px;
+  cursor: pointer;
+  border: 5px solid #2EC4B6;
+}
+
+#new-board-button-addIcon {
+  color: #2EC4B6;
+  position: absolute;
+  vertical-align: top;
+  width: 100px;
+  height: auto;
+  left: 140px;
+  top: 230px;
+  text-align: center;
+}
