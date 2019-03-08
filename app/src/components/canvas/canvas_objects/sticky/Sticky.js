@@ -39,6 +39,7 @@ class Sticky extends React.Component {
     getStateObj() {
         let state = this.state;
         state.finalTextValue = this.textarea.current.getTextValue(); // need to get final text value which is a level deeper in textarea component
+        state.fontSize = this.textarea.current.getFontSize(); // need final font size
         return state;
     }
 

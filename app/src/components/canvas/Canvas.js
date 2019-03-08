@@ -174,7 +174,7 @@ class Canvas extends React.Component {
                     nextColor={this.props.nextColor}
                     height={250}
                     width={250}
-                    fontSize={35}
+                    fontSize={50}
                     scale={this.props.nextStickyScale}
                 />
             );
@@ -247,7 +247,7 @@ class Canvas extends React.Component {
                 height={600}
                 fill={'#7EC0EE'}
                 scale={1}
-                fontSize={60}
+                fontSize={80}
                 textEditVisible={true}
                 isButton={false}
             />
