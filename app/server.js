@@ -25,7 +25,6 @@
 
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost/epiphanydb', { useMongoClient: true });
 
 // Load the Mongoose schema for Konva-Canvas and Image
 var Canvas = require('./schema/canvas.js');
@@ -33,8 +32,10 @@ var Img = require('./schema/img.js');
 var Board = require('./schema/board.js');
 var User = require('./schema/user.js');
 
+var express = require('express');
+var app = express();
 
-// ------------new
+// #################### New for proj7 ##########################
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var fs = require("fs");
@@ -43,12 +44,17 @@ var processFormBody = multer({storage: multer.memoryStorage()}).single('uploaded
 
 app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
-// ---------------
 
-// build server application using express
-var express = require('express');
-var app = express();
-// use the directory that this file is in as the main directory
+// ##############################################
+
+
+// XXX - Your submission should work without this line
+// var cs142models = require('./modelData/photoApp.js').cs142models;
+
+mongoose.connect('mongodb://localhost/cs142project6', { useMongoClient: true });
+
+// We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
+// the work for us.
 app.use(express.static(__dirname));
 
 // ################################# Server API #################################### //
