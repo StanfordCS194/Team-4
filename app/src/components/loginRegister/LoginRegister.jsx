@@ -18,9 +18,6 @@ class LoginRegister extends React.Component {
       first_name: null,
       last_name: null,
       id: null,
-      redirect: false,
-      destination: null,
-      context: 'users',
     };
   }
 
@@ -47,8 +44,6 @@ class LoginRegister extends React.Component {
         first_name: res.data.first_name,
         last_name: res.data.last_name,
         id: res.data._id,
-        redirect: true,
-        destination: '#/users/' + res.data._id,
       });
     })
     .catch((error) => {

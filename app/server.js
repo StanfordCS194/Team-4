@@ -34,9 +34,16 @@ var Board = require('./schema/board.js');
 var User = require('./schema/user.js');
 
 
-// helpful installs
-var async = require('async');
-var fs = require('fs');
+// ------------new
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var fs = require("fs");
+var multer = require('multer');
+var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
+
+app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
+app.use(bodyParser.json());
+// ---------------
 
 // build server application using express
 var express = require('express');
