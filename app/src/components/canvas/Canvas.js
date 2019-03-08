@@ -182,7 +182,6 @@ class Canvas extends React.Component {
                     scale={this.props.nextStickyScale}
                 />
             );
-
         }
         this.setState({
             objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
