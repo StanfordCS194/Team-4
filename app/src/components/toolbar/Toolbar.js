@@ -16,7 +16,8 @@ class Toolbar extends Component {
         this.state = {
             tools: ['undo', 'save', 'delete', 'color'],
             openColorPicker: false,
-            icons: [<UndoIcon onClick={this.props.undo}/>, <SaveIcon/>, <DeleteIcon/>, null]
+            icons: [<UndoIcon onClick={this.props.undo}/>, <SaveIcon onClick={this.props.saveBoard}/>, <DeleteIcon/>, null],
+            onClicks: [this.props.undo, this.props.saveBoard, null, null]
         };
     }
 
@@ -32,6 +33,7 @@ class Toolbar extends Component {
                 key={this.state.tools[i]}
                 color="primary"
                 className="tools"
+                onClick={this.state.onClicks[i]}
             >
                 {this.state.icons[i]}
                 {this.state.tools[i] === 'color' &&
@@ -47,6 +49,7 @@ class Toolbar extends Component {
         }))
     }
 
+    // clicking anywhere should close the color picker
     handleClick = e => {
         if (e.target.id !== 'color' && e.target.id !== 'colorDot') {
             this.setState({openColorPicker: false});
@@ -54,9 +57,9 @@ class Toolbar extends Component {
             this.setState({openColorPicker: !this.state.openColorPicker});
         }
 
-        if (e.target.id === 'undo') {
-            this.props.undo();
-        }
+        // if (e.target.id === 'undo') {
+        //     this.props.undo();
+        // }
     };
 
     render() {
