@@ -147,6 +147,7 @@ class Canvas extends React.Component {
                     id={this.state.id}
                     className={'plaintext'}
                     scaleX={this.state.scaleX}
+                    scaleY={this.state.scaleY}
                     x={e.evt.clientX}
                     y={e.evt.clientY}
                     stageX={this.state.stageX}
@@ -154,6 +155,7 @@ class Canvas extends React.Component {
                     height={200}
                     width={800}
                     fontSize={80}
+                    scale={1}
                 />
             );
         } else {
