@@ -8,13 +8,11 @@ var mongoose = require('mongoose');
 
 // create a schema
 var boardSchema = new mongoose.Schema({
-    board_name: String, // First name of the user.
-    board: String,  // A brief user description
+    name: String, // Name of board
+    date: String, // Date of last interaction with board
+    board_state: String,  // JSON description of the board state
 });
 
-// the schema is useless so far
-// we need to create a model using it
+// create model for board
 var Board = mongoose.model('Board', boardSchema);
-
-// make this available to our users in our Node applications
 module.exports = Board;

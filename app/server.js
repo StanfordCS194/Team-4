@@ -117,22 +117,28 @@ app.post('/admin/login', function(req, res) {
   });
 });
 
+// URL /admin/check - Check if the user is currently logged in
+app.get('/admin/check', function(req, res) {
+  console.log(req.session.loggedIn);
+  res.end(JSON.stringify(req.session.loggedIn));
+});
+
+// URL /admin/logout - Logout the current user
 app.post('/admin/logout', function(req, res) {
   req.session.loggedIn = false;
   req.session.user = null;
   res.end('logged out');
 });
 
+// create a
 app.post('/user', function(req, res) {
-  console.log({
-    login_name: req.body.loginName,
+  let new_user = {
+    username: req.body.username,
     password: req.body.password1,
-    first_name: req.body.firstName,
-    last_name: req.body.lastName,
-    location: req.body.location,
-    description: req.body.description,
-  });
-  User.find({login_name: req.body.loginName}, function (err, info) {
+    boards: [],
+  };
+  console.log(new_user);
+  User.find({login_name: new_user.username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
         // Error (500) error code.
@@ -146,33 +152,93 @@ app.post('/user', function(req, res) {
         res.status(400).send('Someone already has login name: ' + req.body.loginName);
         return;
     }
-  });
-  User.create(
-    {
-      login_name: req.body.loginName,
+    User.create({
+      username: req.body.username,
       password: req.body.password1,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
-      location: req.body.location,
-      description: req.body.description,
+      boards: [],
     },
+      (err, response) => {
+        console.log('result', response);
+        if (err) {
+            // Query returned an error.  We pass it back to the browser with an Internal Service
+            // Error (500) error code.
+            res.status(400).send('Doing /user, upload failed');
+            console.error('Doing /user, upload failed');
+            return;
+        }
+        if (!response) {
+            // Query didn't return an error but didn't find the object - This
+            // is also an internal error return.
+            res.status(400).send('Doing /user, upload failed');
+            console.error('Doing /user, upload failed');
+            return;
+        }
+        res.end(JSON.stringify(new_user));
+    });
+  });
+});
+
+/*
+ * URL /user/:id - Return the information for User (id)
+ */
+app.get('/user/:id', function (request, response) {
+    let id = request.params.id;
+    if (!request.session.loggedIn) {
+      console.error('must log in before accessing user content');
+      response.status(401).send('must log in before accessing user content with /user/:id');
+      return;
+    }
+    User.findById(id, function (err, info) {
+        if (err) {
+            // Query returned an error.  We pass it back to the browser with an Internal Service
+            // Error (500) error code.
+            console.error('Doing /user/:id with id', id, ' received error:', err);
+            response.status(400).send('Invalid ID ' + JSON.stringify(id) + ' received error ' + JSON.stringify(err));
+            return;
+        }
+        if (!info) {
+            // Query didn't return an error but didn't find the SchemaInfo object - This
+            // is also an internal error return.
+            response.status(400).send('Could not find user with id: ' + JSON.stringify(id));
+            return;
+        }
+        let userDetails = JSON.parse(JSON.stringify(info));
+        // get rid of __v from user details
+        delete userDetails.__v;
+        delete userDetails.password;
+        console.log('User with id', id, 'has info', info);
+        response.end(JSON.stringify(userDetails));
+    });
+});
+
+// URL: /user/:uid/board create a new board for user :uid
+app.post('/user/:uid/board', function(req, res) {
+  // console.log(req.session.user, id, comment, new Date());
+  Photo.updateOne(
+    {_id: id},
+    {$push: {
+      comments: {
+        comment: comment,
+        date_time: new Date(),
+        user_id: req.session.user._id
+      }
+    }},
     (err, response) => {
       console.log('result', response);
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
-          response.status(400).send('Doing /user, upload failed');
-          console.error('Doing /user, upload failed');
+          console.error('Doing /commentsOfPhoto/:photo_id with id', id, ' received error:', err);
+          res.status(400).send('Invalid id ' + id + ' received error ' + JSON.stringify(err));
           return;
       }
       if (!response) {
           // Query didn't return an error but didn't find the object - This
           // is also an internal error return.
-          response.status(400).send('Doing /user, upload failed');
-          console.error('Doing /user, upload failed');
+          res.status(400).send('Nothing with id ' + id + ' found');
           return;
       }
-      res.end('User has been added!');
+      res.end('added comment');
     }
   );
 });

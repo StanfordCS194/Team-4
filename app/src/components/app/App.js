@@ -1,12 +1,14 @@
 import React, {Component, Fragment} from 'react';
-import './App.css';
-import Toolbar from '../toolbar/Toolbar';
+import {Stage, Layer, Rect} from 'react-konva';
 import Konva from 'konva';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
+import './App.css';
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
-import {Stage, Layer, Rect} from 'react-konva';
+import Toolbar from '../toolbar/Toolbar';
+import Register from '../sidebar/register/Register';
+import Login from '../sidebar/login/Login';
 
 import AddIcon from '@material-ui/icons/Add';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -14,6 +16,8 @@ import AccountIcon from '@material-ui/icons/AccountCircle';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
+
+import axios from 'axios';
 
 class App extends Component {
     constructor(props) {
@@ -29,11 +33,12 @@ class App extends Component {
             smallSelected: true,
             medSelected: false,
             largeSelected: false,
-
             // My Boards state vars
             viewingMyBoards: false,
             boards: [],
             editingBoardIndex: 0,
+            username: null,
+            user_id: null,
         };
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
         this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
@@ -135,7 +140,21 @@ class App extends Component {
     //todo hovering over elements styles them differently
     //todo list boards by date last modified
     //todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
-    makeSideBarContent(user) {
+    makeSideBarContent = (user) => {
+        if (!this.state.username) {
+          return (
+            <Register
+              logIn={(username) => this.setState({username: username})}
+              />
+          );
+        }
+        // if (!this.state.user_id) {
+        //   return (
+        //     <Login
+        //       logIn={(username, user_id) => this.setState({username: username, user_id: user_id})}
+        //       />
+        //   );
+        // }
         if (this.state.viewingMyBoards) {
             return (
                 <Fragment>
@@ -166,8 +185,6 @@ class App extends Component {
                             )}
                         </ul>
                     </div>
-
-
                 </Fragment>
             );
         } else {
@@ -308,6 +325,21 @@ class App extends Component {
                 </div>
             </Fragment>
         );
+    }
+
+    // on update, check if user is still logged in
+    componentDidUpdate() {
+      axios.get('/admin/check')
+      .then((res) => {
+        console.log(res);
+        if (!res.data && this.state.user_id) {
+          this.setState({ user_id: null });
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
     }
 
     render() {
