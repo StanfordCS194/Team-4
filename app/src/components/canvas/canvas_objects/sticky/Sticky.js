@@ -82,20 +82,24 @@ class Sticky extends React.Component {
     onMouseOver(e) {
         document.body.style.cursor = 'pointer';
 
-        let stage = e.target.getStage();
-        let maxStickyScale = 1;
+        if (window.event.metaKey) {
+            let stage = e.target.getStage();
+            let maxStickyScale = 1;
 
-        // If there is no need for magnification, return
-        if (maxStickyScale/stage.attrs.scaleX < this.props.scale) {
-            return;
+            // If there is no need for magnification, return
+            if (maxStickyScale / stage.attrs.scaleX < this.props.scale) {
+                return;
+            }
+
+            // Magnify unreadable stickies to generic 'small' sticky size
+            e.target.parent.parent.to({
+                scaleX: maxStickyScale / stage.attrs.scaleX,
+                scaleY: maxStickyScale / stage.attrs.scaleY,
+                // easing: Konva.Easings.ElasticEaseOut,
+                easing: Konva.Easings.Linear,
+                duration: 0.2,
+            });
         }
-
-        // Magnify unreadable stickies to generic 'small' sticky size
-        e.target.parent.parent.to({
-            scaleX: maxStickyScale/stage.attrs.scaleX,
-            scaleY: maxStickyScale/stage.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
     }
 
     // Cursor styling
@@ -106,7 +110,9 @@ class Sticky extends React.Component {
         e.target.parent.parent.to({
             scaleX: this.props.scale,
             scaleY: this.props.scale,
-            easing: Konva.Easings.ElasticEaseOut,
+            // easing: Konva.Easings.ElasticEaseOut,
+            easing: Konva.Easings.Linear,
+            duration: 0.2
         });
     }
 
