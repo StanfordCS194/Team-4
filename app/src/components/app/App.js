@@ -52,21 +52,20 @@ class App extends Component {
     }
 
     saveBoardToBoardList() {
-        let newBoards = [];
         let newBoard = this.canvas.current.saveBoard();
+        let newBoards = [newBoard];
+        let oldBoards = this.state.boards;
         newBoard.lastUpdated = new Date();
-        if (this.state.boards.length === 0) { // no saved boards
-            newBoards = newBoards.concat(newBoard);
-        } else {
-            newBoards = this.state.boards.slice(); // todo: find way of doing this that scales better
-            // newBoards[this.state.editingBoardIndex] = this.canvas.current.saveBoard();
-            newBoards[this.state.editingBoardIndex] = newBoard;
+
+        // Move saved board to start of array since it is the most recently updated
+        if (oldBoards.length > 0) {
+            let editingBoardIndex = this.state.editingBoardIndex;
+            newBoards = newBoards.concat(oldBoards.slice(0, editingBoardIndex), oldBoards.slice(editingBoardIndex+1));
         }
-        // newBoards.sort((board1, board2) => { // Sort boards by most recent
-        //         return board1.lastUpdated > board2.lastUpdated ? -1 : board1.lastUpdated < board2.lastUpdated ? 1 : 0;
-        //     } // Todo: do a version of this that works
-        // );
-        this.setState({boards: newBoards});
+        this.setState({
+            boards: newBoards,
+            editingBoardIndex: 0,
+        });
     }
 
     switchToBoard(boardIndex) {
@@ -75,12 +74,12 @@ class App extends Component {
         console.log("switched to board " + boardIndex);
     }
 
-    makeNewBoard() {
-        let newBoard = {lastUpdated: new Date()};
+    makeNewBoard() { //Todo: warn user to save before switching, or just automatically save current board
+        let newBoards = [{lastUpdated: new Date()}];
         this.setState((state) => {
             return {
-                boards: state.boards.concat(newBoard),
-                editingBoardIndex: state.boards.length
+                boards: newBoards.concat(state.boards),
+                editingBoardIndex: 0
             };
         }, () => {
             this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
@@ -148,10 +147,10 @@ class App extends Component {
     }
 
 
-    //todo use position fixed for the top my boards part (or absolute or sticky)
-    //todo hovering over elements styles them differently
-    //todo list boards by date last modified
-    //todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
+//todo use position fixed for the top my boards part (or absolute or sticky)
+//todo hovering over elements styles them differently
+//todo list boards by date last modified
+//todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
     makeSideBarContent = (user) => {
         if (!this.state.username) {
           return (

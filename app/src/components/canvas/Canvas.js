@@ -354,7 +354,7 @@ class Canvas extends React.Component {
                 objectRefs: [],
                 savedBoard: {}
             }, () => { // Need to use a callback function to wait until board is cleared
-                if (newBoard) {
+                if (newBoard) { // only loading a board if newBoard is not null
                     console.log("non-null board.");
                     this.loadBoard(newBoard);
                 } else {
