@@ -18,6 +18,7 @@ class Plaintext extends React.Component {
                 ref={this.sticky}
                 id={this.props.id}
                 scaleX={this.props.scaleX}
+                scaleY={this.props.scaleY}
                 x={this.props.x}
                 y={this.props.y}
                 stageX={this.props.stageX}
@@ -26,6 +27,7 @@ class Plaintext extends React.Component {
                 height={this.props.height}
                 width={this.props.width}
                 fontSize={this.props.fontSize}
+                scale={1}
             />
         );
     }

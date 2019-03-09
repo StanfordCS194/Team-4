@@ -75,6 +75,10 @@ h5 {
   text-decoration: none;
 }
 
+.sidebarContent img:hover {
+  transform: scale(1.05);
+}
+
 #accountIcon {
   margin: 0;
   width: 50px;
@@ -96,8 +100,12 @@ ul {
   list-style-type: none;
 }
 
-li {
+.sidebarContent li {
   cursor: pointer;
+}
+
+.sidebarContent img {
+  transition: all .05s ease-in-out;
 }
 
 .board-thumbnail {
@@ -129,21 +137,33 @@ li {
 
 #new-board-button {
   width: 350px;
-  height: 273px;
+  height: 200px;
   background-color: #FDFFFC;
   padding: 0px;
   margin: 10px;
   cursor: pointer;
   border: 5px solid #2EC4B6;
+  transition: all .05s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#new-board-button:hover {
+  transform: scale(1.05);
 }
 
 #new-board-button-addIcon {
   color: #2EC4B6;
-  position: absolute;
-  vertical-align: top;
   width: 100px;
   height: auto;
-  left: 140px;
-  top: 230px;
-  text-align: center;
+}
+
+#my-boards-heading {
+  position: sticky;
+  padding-top: 20px;
+  font-size: 24px;
+  top: 0;
+  background-color: #2EC4B6;
+  z-index: 4;
 }

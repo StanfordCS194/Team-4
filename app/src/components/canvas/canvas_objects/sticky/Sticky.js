@@ -70,7 +70,6 @@ class Sticky extends React.Component {
         setTimeout(() => {
             let textarea = document.getElementById(this.props.id.toString());
             if (!this.props.isBeingLoaded) textarea.focus();
-            console.log(this.sticky);
             this.sticky.current.to({
                 scaleX: 1,
                 scaleY: 1,
@@ -79,13 +78,42 @@ class Sticky extends React.Component {
         });
     }
 
-    // Add cursor styling
-    onMouseOver() {
+    // Cursor styling
+    onMouseOver(e) {
         document.body.style.cursor = 'pointer';
+
+        if (window.event.metaKey) {
+            let stage = e.target.getStage();
+            let maxStickyScale = 1;
+
+            // If there is no need for magnification, return
+            if (maxStickyScale / stage.attrs.scaleX < this.props.scale) {
+                return;
+            }
+
+            // Magnify unreadable stickies to generic 'small' sticky size
+            e.target.parent.parent.to({
+                scaleX: maxStickyScale / stage.attrs.scaleX,
+                scaleY: maxStickyScale / stage.attrs.scaleY,
+                // easing: Konva.Easings.ElasticEaseOut,
+                easing: Konva.Easings.Linear,
+                duration: 0.2,
+            });
+        }
     }
 
-    onMouseOut() {
+    // Cursor styling
+    onMouseOut(e) {
         document.body.style.cursor = 'default';
+
+        // Return to original size after sticky magnification
+        e.target.parent.parent.to({
+            scaleX: this.props.scale,
+            scaleY: this.props.scale,
+            // easing: Konva.Easings.ElasticEaseOut,
+            easing: Konva.Easings.Linear,
+            duration: 0.2
+        });
     }
 
     // Raising and lowering animations
@@ -137,7 +165,6 @@ class Sticky extends React.Component {
                 x={this.state.position.x}
                 y={this.state.position.y}
                 rotation={this.state.rotation}
-                // onDblClick={(e) => this.handleTextDblClick(e)}
                 onKeyPress={(e) => this.edit(e)}
                 onTransform={(e) => this.handleTransform(e)}
                 onMouseOver={(e) => this.onMouseOver(e)}
