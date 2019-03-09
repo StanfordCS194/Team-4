@@ -57,6 +57,10 @@ class App extends Component {
             // newBoards[this.state.editingBoardIndex] = this.canvas.current.saveBoard();
             newBoards[this.state.editingBoardIndex] = newBoard;
         }
+        // newBoards.sort((board1, board2) => { // Sort boards by most recent
+        //         return board1.lastUpdated > board2.lastUpdated ? -1 : board1.lastUpdated < board2.lastUpdated ? 1 : 0;
+        //     } // Todo: do a version of this that works
+        // );
         this.setState({boards: newBoards});
     }
 
@@ -122,16 +126,24 @@ class App extends Component {
     }
 
     onSetSidebarOpen(open) {
+        if (open) this.onSetRightSidebarOpen(false);
         this.setState({sidebarOpen: open});
     }
 
     onSetRightSidebarOpen(open) {
+        if (open) this.onSetSidebarOpen(false);
         this.setState({rightSidebarOpen: open});
+    }
+
+    switchLeftSidebarView(viewingMyBoards) {
+        this.onSetSidebarOpen(false);
+        setTimeout(() => { // lets board close animation complete first
+            this.setState({viewingMyBoards: viewingMyBoards}, () => this.onSetSidebarOpen(true));
+        }, 350);
     }
 
 
     //todo use position fixed for the top my boards part (or absolute or sticky)
-    //todo left off make arrow correct size
     //todo hovering over elements styles them differently
     //todo list boards by date last modified
     //todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
@@ -139,16 +151,17 @@ class App extends Component {
         if (this.state.viewingMyBoards) {
             return (
                 <Fragment>
-                    <div className="sidebarContent" id="user">
+                    <div className="sidebarContent" id="my-boards-heading">
                         <h3>
                             <ArrowBackIcon
                                 id="arrow-back-icon"
-                                onClick={() => this.setState({viewingMyBoards: false})}
+                                // onClick={() => this.setState({viewingMyBoards: false})}
+                                onClick={() => this.switchLeftSidebarView(false)}
                             />
                             <span id="userName">My Boards</span>
                         </h3>
                     </div>
-                    <div className="sidebarContent" id="new-board-button" onClick={() => this.makeNewBoard()}>
+                    <div id="new-board-button" onClick={() => this.makeNewBoard()}>
                         <AddCircleIcon id="new-board-button-addIcon"/>
                     </div>
                     <div className="sidebarContent" id="savedBoards"
@@ -180,7 +193,7 @@ class App extends Component {
                         <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
                     </div>
                     <div className="sidebarContent">
-                        <a href='#' onClick={() => this.setState({viewingMyBoards: true})}>My Boards</a>
+                        <a href='#' onClick={() => this.switchLeftSidebarView(true)}>My Boards</a>
                     </div>
                     <div className="sidebarContent">
                         <a href='#'>Account Settings</a>
@@ -321,7 +334,7 @@ class App extends Component {
                         sidebar: {
                             background: "white",
                             textAlign: "center",
-                            padding: "10px",
+                            padding: "0px 10px 10px 10px",
                             backgroundColor: "#2EC4B6",
                             zIndex: "2"
                         }
@@ -362,6 +375,7 @@ class App extends Component {
                         ref={this.canvas}
                         nextColor={this.state.nextColor}
                         nextStickyScale={this.state.nextStickyScale}
+                        saveBoardToBoardList={this.saveBoardToBoardList}
                     />
                 </div>
 
