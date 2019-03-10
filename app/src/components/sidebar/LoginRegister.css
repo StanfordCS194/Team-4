@@ -15,14 +15,11 @@
 .login-register-message {
   font-size: 22px;
   font-weight: bold;
-  /*display: none;*/
 }
 
 .form label, .form input{
   display: block;
   font-family: 'Avenir', serif;
-  /*padding-top: 4px;*/
-  /*padding: 8px;*/
 }
 
 input {
@@ -47,7 +44,6 @@ input {
 }
 
 .login-register .titleContainer {
-  /*width: 300px;*/
   width: 350px;
 }
 
