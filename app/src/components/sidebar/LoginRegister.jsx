@@ -22,19 +22,23 @@ class LoginRegister extends React.Component {
           this.state.login?
           <div>
             <Login logIn={(username, id) => this.props.logIn(username, id)} />
+            <br />
             <button
+              className="switchLogin"
               onClick={() => this.setState({login: false})}
               >
-              register
+              Actually, I need to register
             </button>
           </div>
           :
           <div>
             <Register logIn={(username, id) => this.props.logIn(username, id)} />
+            <br />
             <button
+              className="switchLogin"
               onClick={() => this.setState({login: true})}
               >
-              login
+              Actually, let me login
             </button>
           </div>
         }

@@ -10,13 +10,19 @@
   padding-top: 4px;
 }
 
-.form input {
+input {
+  color: white;
   background-color: rgb(46, 196, 182);
   border: 2px solid white;
 }
 
 .login-register .titleContainer {
   width: 200px;
+}
+
+.switchLogin {
+  background-color: rgb(46, 196, 182);
+  border: 2px solid white;
 }
 
 input:focus,

@@ -97,10 +97,14 @@ class Canvas extends React.Component {
             console.log('clicked transformer');
             return;
         }
+        console.log(e);
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
-        const sticky = this.state.objectArray.find(sticky => sticky.props.id.toString() === id.toString());
+        const sticky = this.state.objectArray.find(sticky => {
+          if (!sticky) { return false; }
+          else { return sticky.props.id.toString() === id.toString(); }
+        });
         if (sticky) {
             this.setState({
                 selectedCanvasObjectId: id
@@ -133,11 +137,9 @@ class Canvas extends React.Component {
         if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
             return;
         }
-        this.setState({justOpenedApp: false});
 
         let newComponent = null;
         let componentRef = React.createRef();
-        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
 
         // Add plain text
         if (window.event.metaKey) {
@@ -178,6 +180,8 @@ class Canvas extends React.Component {
             );
         }
         this.setState({
+            justOpenedApp: false,
+            objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
             objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
             id: this.state.id + 1,
         });
@@ -229,7 +233,7 @@ class Canvas extends React.Component {
 
     addCloudToBoard() {
         let componentRef = React.createRef();
-        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
+        this.setState({});
 
         let newComponent = (
             <Cloud
@@ -250,14 +254,14 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
-            id: this.state.id + 1,
+          objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
+          objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+          id: this.state.id + 1,
         });
     }
 
     addArrowToBoard() {
         let componentRef = React.createRef();
-        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
 
         let newComponent = (
             <Arrow
@@ -272,6 +276,7 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
+            objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
             objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
             id: this.state.id + 1,
         });
@@ -279,7 +284,6 @@ class Canvas extends React.Component {
 
     addVennDiagramToBoard() {
         let componentRef = React.createRef();
-        this.setState({objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef])});
 
         let newComponent = (
             <VennDiagram
@@ -294,8 +298,9 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
-            id: this.state.id + 1,
+          objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
+          objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+          id: this.state.id + 1,
         });
     }
 
@@ -541,6 +546,14 @@ class Canvas extends React.Component {
         // Testing: load board
         if (e.metaKey && e.keyCode === 74) {
             this.loadBoard(this.state.savedBoard);
+        }
+
+        // Delete selected canvas object on press of delete
+        if (e.keyCode === 8 && this.state.selectedCanvasObjectId) {
+          let newObjectRefs = this.state.objectRefs, newObjectArray = this.state.objectArray;
+          newObjectArray[this.state.selectedCanvasObjectId] = null;
+          newObjectRefs[this.state.selectedCanvasObjectId] = null;
+          this.setState({objectArray: newObjectArray, objectRefs: newObjectRefs});
         }
     };
 
