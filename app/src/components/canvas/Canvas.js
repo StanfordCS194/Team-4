@@ -97,6 +97,8 @@ class Canvas extends React.Component {
             console.log('clicked transformer');
             return;
         }
+        console.log(e);
+        console.log(e.target.parent.attrs.id);
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
@@ -106,13 +108,15 @@ class Canvas extends React.Component {
         });
         if (sticky) {
             this.setState({
-                selectedCanvasObjectId: id
+                selectedCanvasObjectId: id,
             });
         } else {
             this.setState({
                 selectedCanvasObjectId: ''
             });
         }
+        console.log(this.state.selectedCanvasObjectId);
+        console.log(this.state.objectArray);
     }
 
     handleMouseDown(e) {
@@ -180,10 +184,10 @@ class Canvas extends React.Component {
         }
         this.setState({
             justOpenedApp: false,
-            objectRefs: this.state.objectRefs.concat([componentRef]),
-            objectArray: this.state.objectArray.concat([newComponent]),
-            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
-            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+            objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+            objectArray: this.state.objectArray.slice().concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
         });
         console.log('past arr', this.state.pastObjArray);
@@ -228,11 +232,10 @@ class Canvas extends React.Component {
     undo() {
       if (this.state.pastObjArray.length === 0) { return; }
         this.setState({
-            id: this.state.id - 1,
             objectArray: this.state.pastObjArray.pop(),
             objectRefs: this.state.pastObjRefs.pop(),
-            pastObjArray: this.state.pastObjArray,
-            pastObjRefs: this.state.pastObjRefs,
+            pastObjArray: this.state.pastObjArray.slice(),
+            pastObjRefs: this.state.pastObjRefs.slice(),
         });
         console.log('after undo: ', this.state.pastObjArray);
     }
@@ -260,10 +263,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.concat([componentRef]),
-          objectArray: this.state.objectArray.concat([newComponent]),
-          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
-          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+          objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+          objectArray: this.state.objectArray.slice().concat([newComponent]),
+          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
           id: this.state.id + 1,
         });
     }
@@ -284,10 +287,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-            objectRefs: this.state.objectRefs.concat([componentRef]),
-            objectArray: this.state.objectArray.concat([newComponent]),
-            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
-            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+            objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+            objectArray: this.state.objectArray.slice().concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
         });
     }
@@ -308,10 +311,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.concat([componentRef]),
-          objectArray: this.state.objectArray.concat([newComponent]),
-          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
-          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+          objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+          objectArray: this.state.objectArray.slice().concat([newComponent]),
+          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
           id: this.state.id + 1,
         });
     }
@@ -512,24 +515,32 @@ class Canvas extends React.Component {
 
             // Update object array, id, and object refs
             this.setState({
-                objectArray: newObjArray,
+                objectArray: newObjArray.slice(),
                 id: savedBoardState.id, // for some reason only works when I update this after creating the components
-                objectRefs: newObjectRefs,
+                objectRefs: newObjectRefs.slice(),
             });
         });
     }
 
     deleteSelectedObj() {
-      let newObjectRefs = this.state.objectRefs;
-      let newObjectArray = this.state.objectArray;
-      newObjectArray[this.state.selectedCanvasObjectId] = null;
-      newObjectRefs[this.state.selectedCanvasObjectId] = null;
+      // find index of sticky to delete
+      const sticky = this.state.objectArray.find(sticky => {
+        if (!sticky) { return false; }
+        else { return sticky.props.id.toString() === this.state.selectedCanvasObjectId.toString(); }
+      });
+      let index = this.state.objectArray.indexOf(sticky);
+      let newObjectRefs = this.state.objectRefs.slice();
+      let newObjectArray = this.state.objectArray.slice();
+      newObjectArray[index] = null;
+      newObjectRefs[index] = null;
+      console.log(this.state.pastObjArray);
       this.setState({
-        pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
-        pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
         objectArray: newObjectArray,
         objectRefs: newObjectRefs,
+        pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+        pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
       });
+      console.log(this.state.pastObjArray);
     }
 
     // handle keypresses
@@ -620,7 +631,7 @@ class Canvas extends React.Component {
                     <TransformerComponent
                         selectedCanvasObjectId={this.state.selectedCanvasObjectId}
                     />
-                    {this.state.objectArray.slice(0, this.state.id)}
+                    {this.state.objectArray.slice()}
                 </Layer>
             </Stage>
         );
