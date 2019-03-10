@@ -36,9 +36,7 @@ class Login extends React.Component {
     axios.post('/admin/login', args)
     .then((res) => {
       // On success, set state
-      console.log('result: ', res);
-      console.log(res.data.username, res.data._id)
-      this.props.logIn(res.data.username);
+      this.props.logIn(res.data.username, res.data._id);
     })
     .catch((error) => {
       // handle error

@@ -97,7 +97,6 @@ class Canvas extends React.Component {
             console.log('clicked transformer');
             return;
         }
-        console.log(e);
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
@@ -187,6 +186,7 @@ class Canvas extends React.Component {
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
             id: this.state.id + 1,
         });
+        console.log('past arr', this.state.pastObjArray);
     }
 
     handleOnWheel(e) {
@@ -230,10 +230,11 @@ class Canvas extends React.Component {
         this.setState({
             id: this.state.id - 1,
             objectArray: this.state.pastObjArray.pop(),
-            objectRegs: this.state.pastObjArray.pop(),
+            objectRefs: this.state.pastObjRefs.pop(),
             pastObjArray: this.state.pastObjArray,
             pastObjRefs: this.state.pastObjRefs,
         });
+        console.log('after undo: ', this.state.pastObjArray);
     }
 
     addCloudToBoard() {
@@ -524,10 +525,10 @@ class Canvas extends React.Component {
       newObjectArray[this.state.selectedCanvasObjectId] = null;
       newObjectRefs[this.state.selectedCanvasObjectId] = null;
       this.setState({
-        objectArray: newObjectArray,
-        objectRefs: newObjectRefs,
         pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
         pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+        objectArray: newObjectArray,
+        objectRefs: newObjectRefs,
       });
     }
 

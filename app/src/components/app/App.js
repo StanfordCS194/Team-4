@@ -184,7 +184,7 @@ class App extends Component {
         boardName.style.display = 'block';
     }
 
-    makeSideBarContent = (user) => {
+    makeSideBarContent = () => {
         if (!this.state.user_id) {
             return (
                 <LoginRegister
@@ -242,7 +242,7 @@ class App extends Component {
             return (
                 <Fragment>
                     <div className="sidebarContent" id="user">
-                        <h3><AccountIcon id="accountIcon"/><span id="userName">{user.name}</span></h3>
+                        <h3><AccountIcon id="accountIcon"/><span id="userName">{this.state.username}</span></h3>
                     </div>
                     <div className="sidebarContent">
                         <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
@@ -254,7 +254,10 @@ class App extends Component {
                         <a href='#'>Account Settings</a>
                     </div>
                     <div className="sidebarContent">
-                        <a href='#'>Log Out</a>
+                        <a href='#' onClick={() => {
+                          axios.post('/admin/logout').catch((error) => console.log(err));
+                          this.setState({username: null, user_id: null});
+                        }}>Log Out</a>
                     </div>
                 </Fragment>
             );
@@ -394,10 +397,11 @@ class App extends Component {
     }
 
     render() {
+      console.log(this.state.username);
         return (
             <Fragment>
                 <Sidebar
-                    sidebar={this.makeSideBarContent(this.state.user)}
+                    sidebar={this.makeSideBarContent()}
                     open={this.state.sidebarOpen}
                     onSetOpen={this.onSetSidebarOpen}
                     styles={{

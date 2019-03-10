@@ -22,29 +22,6 @@ class Register extends React.Component {
     this.setState({passwordValue: event.target.value});
   }
 
-  // login by using the username and password filled in
-  handleLogIn = () => {
-    event.preventDefault();
-    // POST to /admin/login
-    axios.post('/admin/login', {
-      login_name: this.state.loginValue,
-      password: this.state.passwordValue
-    })
-    .then((res) => {
-      // On success, set state
-      console.log('result: ', res);
-      console.log(res.data.username, res.data._id)
-      this.props.logIn(res.data.username);
-    })
-    .catch((error) => {
-      // handle error
-      this.setState({
-        logInMessage: 'You have entered an invalid user name or password, please try again',
-      });
-      console.log(error);
-    });
-  };
-
   // handle register creates a formData from registerForm
   // then it parses the entries in the dormData into args, which
   // acts as the args to a POST reqest to /user
@@ -73,9 +50,7 @@ class Register extends React.Component {
     axios.post('/user', args)
     .then((res) => {
       // on success, res.data is the newly created user obj
-      console.log('result: ', res);
-      console.log(res.username, res.data._id);
-      this.props.logIn(res.username, res.data._id);
+      this.props.logIn(res.data.username, res.data._id);
     })
     .catch((error) => {
       // handle error

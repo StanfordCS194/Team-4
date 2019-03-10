@@ -51,7 +51,7 @@ app.use(bodyParser.json());
 // XXX - Your submission should work without this line
 // var cs142models = require('./modelData/photoApp.js').cs142models;
 
-mongoose.connect('mongodb://localhost/cs142project6', { useMongoClient: true });
+mongoose.connect('mongodb://localhost/epiphanydb', { useMongoClient: true });
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
 // the work for us.
@@ -88,9 +88,9 @@ app.get('/user/list', function (request, response) {
 });
 
 app.post('/admin/login', function(req, res) {
-  let login_name = req.body.login_name;
+  let username = req.body.username;
   let password = req.body.password;
-  User.find({login_name: login_name}, function (err, info) {
+  User.findOne({username: username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
         // Error (500) error code.
@@ -105,7 +105,7 @@ app.post('/admin/login', function(req, res) {
         return;
     }
     // save session data
-    let loggedUser = JSON.parse(JSON.stringify(info))[0];
+    let loggedUser = JSON.parse(JSON.stringify(info));
     if (loggedUser.password !== password) {
       res.status(400).send('Incorrect Password');
     }
@@ -113,8 +113,27 @@ app.post('/admin/login', function(req, res) {
     req.session.loggedIn = true;
     req.session.user = loggedUser;
     delete loggedUser.__v;
+    delete loggedUser.password;
     res.end(JSON.stringify(loggedUser));
   });
+  // // Print everything in User database
+  // User.find({}, function (err, info) {
+  //   if (err) {
+  //       // Query returned an error.  We pass it back to the browser with an Internal Service
+  //       // Error (500) error code.
+  //       console.error('Doing /admin/login with login_name', login_name, ' received error:', err);
+  //       res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
+  //       return;
+  //   }
+  //   if (info.length === 0) {
+  //       // Query didn't return an error but didn't find the object - This
+  //       // is also an internal error return.
+  //       res.status(400).send('Login failed with login_name: ' + login_name);
+  //       return;
+  //   }
+  //   console.log('returned info: ', info);
+  //   res.end(JSON.stringify(info));
+  // });
 });
 
 // URL /admin/check - Check if the user is currently logged in
@@ -139,7 +158,7 @@ app.post('/user', function(req, res) {
     boards: [],
   };
   console.log(new_user);
-  User.find({login_name: new_user.username}, function (err, info) {
+  User.find({username: new_user.username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
         // Error (500) error code.
