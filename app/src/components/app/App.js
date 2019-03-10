@@ -7,6 +7,7 @@ import './App.css';
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
 import Toolbar from '../toolbar/Toolbar';
+import TimeAgo from 'react-timeago';
 import LoginRegister from '../sidebar/LoginRegister';
 
 
@@ -55,12 +56,14 @@ class App extends Component {
         let newBoard = this.canvas.current.saveBoard();
         let newBoards = [newBoard];
         let oldBoards = this.state.boards;
+        let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
+        newBoard.name = "New Board";
 
         // Move saved board to start of array since it is the most recently updated
         if (oldBoards.length > 0) {
-            let editingBoardIndex = this.state.editingBoardIndex;
-            newBoards = newBoards.concat(oldBoards.slice(0, editingBoardIndex), oldBoards.slice(editingBoardIndex+1));
+            newBoards = newBoards.concat(oldBoards.slice(0, editingBoardIndex), oldBoards.slice(editingBoardIndex + 1));
+            newBoard.name = oldBoards[editingBoardIndex].name;
         }
         this.setState({
             boards: newBoards,
@@ -75,7 +78,7 @@ class App extends Component {
     }
 
     makeNewBoard() { //Todo: warn user to save before switching, or just automatically save current board
-        let newBoards = [{lastUpdated: new Date()}];
+        let newBoards = [{lastUpdated: new Date(), name: "New Board"}];
         this.setState((state) => {
             return {
                 boards: newBoards.concat(state.boards),
@@ -83,6 +86,10 @@ class App extends Component {
             };
         }, () => {
             this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
+            // let boardNameInput = document.getElementById("input0");
+            // console.log("boardNameInput:");
+            // console.log(boardNameInput);
+            // boardNameInput.focus(); //todo focus new board name on create
         });
     }
 
@@ -146,27 +153,52 @@ class App extends Component {
         }, 350);
     }
 
+    handleBoardNameTextAreaKeyDown(e, board, i) {
+        if (e.keyCode === 13) { // Pressed enter
+            let changedBoard = board;
+            let newBoards = this.state.boards;
+            changedBoard.name = e.target.value;
+            newBoards[i] = changedBoard;
+            this.setState({boards: newBoards}, () => console.log(this.state.boards[i].name));
 
-//todo use position fixed for the top my boards part (or absolute or sticky)
-//todo hovering over elements styles them differently
-//todo list boards by date last modified
-//todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
+            let input = document.getElementById("input" + i);
+            let boardName = document.getElementById("boardName" + i);
+            boardName.style.display = 'block';
+            input.style.display = 'none';
+        }
+    }
+
+    handleClickOnBoardName(e, i, board) {
+        let input = document.getElementById("input" + i);
+        let boardName = document.getElementById("boardName" + i);
+        boardName.style.display = 'none';
+        input.style.display = 'block';
+        input.value = this.state.boards[i].name;
+        input.focus();
+    }
+
+    handleBoardNameInputBlur(i) {
+        let input = document.getElementById("input" + i);
+        let boardName = document.getElementById("boardName" + i);
+        input.style.display = 'none';
+        boardName.style.display = 'block';
+    }
+
     makeSideBarContent = (user) => {
         if (!this.state.user_id) {
-          return (
-            <LoginRegister
-              logIn={(username, id) => this.setState({username: username, user_id: id})}
-              />
-          );
+            return (
+                <LoginRegister
+                    logIn={(username, id) => this.setState({username: username, user_id: id})}
+                />
+            );
         }
         if (this.state.viewingMyBoards) {
-            return (
+            return ( //todo: this should probably be its own react component
                 <Fragment>
                     <div className="sidebarContent" id="my-boards-heading">
                         <h3>
                             <ArrowBackIcon
                                 id="arrow-back-icon"
-                                // onClick={() => this.setState({viewingMyBoards: false})}
                                 onClick={() => this.switchLeftSidebarView(false)}
                             />
                             <span id="userName">My Boards</span>
@@ -179,13 +211,27 @@ class App extends Component {
                          onClick={() => this.setState({viewingMyBoards: true})}>
                         <ul>
                             {this.state.boards.map((board, i) =>
-                                <li className="saved-board-elem" onClick={() => this.switchToBoard(i)}>
+                                <li className={i === this.state.editingBoardIndex ? "saved-board-elem-selected" : "saved-board-elem"} onClick={() => this.switchToBoard(i)}>
                                     <div>
                                         <img
                                             className={i === this.state.editingBoardIndex ? "board-thumbnail-selected" : "board-thumbnail"}
                                             src={board.imgUri}/>
                                     </div>
-                                    <div>{board.lastUpdated.toUTCString()}</div>
+
+                                    <div id="board-name-container">
+                                        <div
+                                            id={"boardName" + i}
+                                            className={"board-name"}
+                                            onClick={(e) => this.handleClickOnBoardName(e, i, board)}>{board.name}
+                                        </div>
+                                        <input
+                                            id={"input"+i} className="board-name-input"
+                                            onKeyDown={(e) => this.handleBoardNameTextAreaKeyDown(e, board, i)}
+                                            onBlur={() => this.handleBoardNameInputBlur(i)}
+                                        />
+                                    </div>
+
+                                    <div>Last saved <TimeAgo date={board.lastUpdated}/></div>
                                 </li>
                             )}
                         </ul>
@@ -334,17 +380,17 @@ class App extends Component {
 
     // on update, check if user is still logged in
     componentDidUpdate() {
-      axios.get('/admin/check')
-      .then((res) => {
-        console.log(res);
-        if (!res.data && this.state.user_id) {
-          this.setState({ user_id: null });
-        }
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
+        axios.get('/admin/check')
+            .then((res) => {
+                console.log(res);
+                if (!res.data && this.state.user_id) {
+                    this.setState({user_id: null});
+                }
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
     }
 
     render() {

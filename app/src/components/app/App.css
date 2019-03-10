@@ -122,7 +122,7 @@ ul {
   border: 5px solid black;
 }
 
-.saved-board-elem {
+.saved-board-elem, .saved-board-elem-selected {
   padding-bottom: 20px;
 }
 
@@ -166,3 +166,23 @@ ul {
   background-color: #2EC4B6;
   z-index: 4;
 }
+
+.saved-board-elem-selected .board-name, .saved-board-elem-selected .board-name-input {
+  font-weight: bold;
+}
+
+.board-name-input {
+  display: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Avenir', serif;
+  font-size: 24px;
+  color: white;
+  padding: 0px;
+}
+
+.board-name {
+  font-size: 24px;
+}
+
