@@ -58,10 +58,10 @@ class Canvas extends React.Component {
             activeSticky: null,
             selectedCanvasObjectId: '',
             imageSrc: '',
-
+            pastObjRefs: [],
+            pastObjArray: [],
             objectRefs: [],
             savedBoard: {}
-
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.loadBoard = this.loadBoard.bind(this);
@@ -181,8 +181,10 @@ class Canvas extends React.Component {
         }
         this.setState({
             justOpenedApp: false,
-            objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
-            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+            objectRefs: this.state.objectRefs.concat([componentRef]),
+            objectArray: this.state.objectArray.concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
             id: this.state.id + 1,
         });
     }
@@ -222,12 +224,15 @@ class Canvas extends React.Component {
         });
     }
 
+    // undoes the most recent change to the objectArray
     undo() {
-        if (this.state.id <= 0) {
-            return;
-        }
+      if (this.state.pastObjArray.length === 0) { return; }
         this.setState({
             id: this.state.id - 1,
+            objectArray: this.state.pastObjArray.pop(),
+            objectRegs: this.state.pastObjArray.pop(),
+            pastObjArray: this.state.pastObjArray,
+            pastObjRefs: this.state.pastObjRefs,
         });
     }
 
@@ -254,8 +259,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
-          objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+          objectRefs: this.state.objectRefs.concat([componentRef]),
+          objectArray: this.state.objectArray.concat([newComponent]),
+          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
+          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
           id: this.state.id + 1,
         });
     }
@@ -276,8 +283,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-            objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
-            objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+            objectRefs: this.state.objectRefs.concat([componentRef]),
+            objectArray: this.state.objectArray.concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
             id: this.state.id + 1,
         });
     }
@@ -298,8 +307,10 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.slice(0, this.state.id).concat([componentRef]),
-          objectArray: this.state.objectArray.slice(0, this.state.id).concat([newComponent]),
+          objectRefs: this.state.objectRefs.concat([componentRef]),
+          objectArray: this.state.objectArray.concat([newComponent]),
+          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
+          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
           id: this.state.id + 1,
         });
     }
@@ -308,7 +319,8 @@ class Canvas extends React.Component {
         // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
         this.state.objectRefs.slice(0, this.state.id).map(ref => {
-            savedComponents = savedComponents.concat(ref.current.getStateObj());
+          if (!ref) { return; }
+          savedComponents = savedComponents.concat(ref.current.getStateObj());
         });
 
         // save board state
@@ -357,6 +369,8 @@ class Canvas extends React.Component {
                 imageSrc: '',
 
                 objectRefs: [],
+                pastObjArray: [],
+                pastObjRefs: [],
                 savedBoard: {}
             }, () => { // Need to use a callback function to wait until board is cleared
                 if (newBoard) { // only loading a board if newBoard is not null
@@ -504,6 +518,19 @@ class Canvas extends React.Component {
         });
     }
 
+    deleteSelectedObj() {
+      let newObjectRefs = this.state.objectRefs;
+      let newObjectArray = this.state.objectArray;
+      newObjectArray[this.state.selectedCanvasObjectId] = null;
+      newObjectRefs[this.state.selectedCanvasObjectId] = null;
+      this.setState({
+        objectArray: newObjectArray,
+        objectRefs: newObjectRefs,
+        pastObjArray: this.state.pastObjArray.concat([this.state.objectArray]),
+        pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs]),
+      });
+    }
+
     // handle keypresses
     handleKeyPress = (e) => {
         // if command-z, undo previously added object
@@ -550,10 +577,7 @@ class Canvas extends React.Component {
 
         // Delete selected canvas object on press of delete
         if (e.keyCode === 8 && this.state.selectedCanvasObjectId) {
-          let newObjectRefs = this.state.objectRefs, newObjectArray = this.state.objectArray;
-          newObjectArray[this.state.selectedCanvasObjectId] = null;
-          newObjectRefs[this.state.selectedCanvasObjectId] = null;
-          this.setState({objectArray: newObjectArray, objectRefs: newObjectRefs});
+          this.deleteSelectedObj();
         }
     };
 
