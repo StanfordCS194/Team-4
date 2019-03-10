@@ -119,8 +119,9 @@ app.post('/admin/login', function(req, res) {
 
 // URL /admin/check - Check if the user is currently logged in
 app.get('/admin/check', function(req, res) {
-  console.log(req.session.loggedIn);
-  res.end(JSON.stringify(req.session.loggedIn));
+  console.log('logged in: ', req.session.loggedIn);
+  console.log('with user: ', req.session.user);
+  res.end(JSON.stringify(req.session.user));
 });
 
 // URL /admin/logout - Logout the current user
@@ -173,7 +174,16 @@ app.post('/user', function(req, res) {
             console.error('Doing /user, upload failed');
             return;
         }
-        res.end(JSON.stringify(new_user));
+    })
+    .then((data)=>{
+      console.log('created user: ', data);
+      req.session.loggedIn = true;
+      req.session.user = data;
+      res.end(JSON.stringify(data));
+    }).catch((err)=>{
+      res.status(400).send('Doing /user, upload failed');
+      console.error('Doing /user, upload failed');
+      return;
     });
   });
 });

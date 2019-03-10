@@ -14,6 +14,36 @@ class Register extends React.Component {
     };
   }
 
+  // handlers to watch for changes in the username and password field
+  handleLoginValueChange = (event) => {
+    this.setState({loginValue: event.target.value});
+  }
+  handlePasswordValueChange = (event) => {
+    this.setState({passwordValue: event.target.value});
+  }
+
+  // login by using the username and password filled in
+  handleLogIn = () => {
+    event.preventDefault();
+    // POST to /admin/login
+    axios.post('/admin/login', {
+      login_name: this.state.loginValue,
+      password: this.state.passwordValue
+    })
+    .then((res) => {
+      // On success, set state
+      console.log('result: ', res);
+      console.log(res.data.username, res.data._id)
+      this.props.logIn(res.data.username);
+    })
+    .catch((error) => {
+      // handle error
+      this.setState({
+        logInMessage: 'You have entered an invalid user name or password, please try again',
+      });
+      console.log(error);
+    });
+  };
 
   // handle register creates a formData from registerForm
   // then it parses the entries in the dormData into args, which
@@ -42,12 +72,10 @@ class Register extends React.Component {
     // make a user with arguments args
     axios.post('/user', args)
     .then((res) => {
-      // on success
-      console.log(res);
-      this.props.logIn({
-        username: res.data.username,
-        id: res.data._id,
-      });
+      // on success, res.data is the newly created user obj
+      console.log('result: ', res);
+      console.log(res.username, res.data._id);
+      this.props.logIn(res.username, res.data._id);
     })
     .catch((error) => {
       // handle error
@@ -61,8 +89,8 @@ class Register extends React.Component {
   // renders two forms, one for log in and one for register
   render() {
     return (
-      <div className="center-align col s7 details-container">
-        <h3 className="register">{this.state.registerMessage}</h3>
+      <div className="register">
+        <h3 className="registerTitle">{this.state.registerMessage}</h3>
         <form id="registerForm" className="form" name="registerForm" onSubmit={this.handleRegister}>
           <div>
             <label htmlFor="username">Enter login name:</label>

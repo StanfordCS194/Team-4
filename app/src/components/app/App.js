@@ -7,8 +7,8 @@ import './App.css';
 import Canvas from '../canvas/Canvas';
 import Sidebar from 'react-sidebar';
 import Toolbar from '../toolbar/Toolbar';
-import Register from '../sidebar/register/Register';
-import Login from '../sidebar/login/Login';
+import LoginRegister from '../sidebar/LoginRegister';
+
 
 import AddIcon from '@material-ui/icons/Add';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -153,20 +153,13 @@ class App extends Component {
     //todo list boards by date last modified
     //todo switching to my boards sidebar should be animated (as well as when going back to main sidebar)
     makeSideBarContent = (user) => {
-        if (!this.state.username) {
+        if (!this.state.user_id) {
           return (
-            <Register
-              logIn={(username) => this.setState({username: username})}
+            <LoginRegister
+              logIn={(username, id) => this.setState({username: username, user_id: id})}
               />
           );
         }
-        // if (!this.state.user_id) {
-        //   return (
-        //     <Login
-        //       logIn={(username, user_id) => this.setState({username: username, user_id: user_id})}
-        //       />
-        //   );
-        // }
         if (this.state.viewingMyBoards) {
             return (
                 <Fragment>

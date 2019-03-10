@@ -50,8 +50,8 @@ class Login extends React.Component {
   // renders two forms, one for log in and one for register
   render() {
     return (
-      <div className="center-align col s7 details-container">
-        <h3 className="pleaseLogIn">{this.state.logInMessage}</h3>
+      <div className="login">
+        <h3 className="loginTitle">{this.state.logInMessage}</h3>
         <form id="loginForm" className="form" onSubmit={this.handleLogIn}>
           <input
             type="text"
