@@ -12,7 +12,7 @@ class Login extends React.Component {
     this.state = {
       loginValue: '',
       passwordValue: '',
-      logInMessage: 'Please log in',
+      logInMessage: 'Log In',
     };
   }
 
@@ -26,12 +26,14 @@ class Login extends React.Component {
 
   // login by using the username and password filled in
   handleLogIn = () => {
-    event.preventDefault();
+    event.preventDefault(); // prevent reload of page
+    let args = {};
+    let formData = new FormData(document.getElementById('loginForm'));
+    for (var pair of formData.entries()) {
+      args[pair[0]] = pair[1];
+    }
     // POST to /admin/login
-    axios.post('/admin/login', {
-      login_name: this.state.loginValue,
-      password: this.state.passwordValue
-    })
+    axios.post('/admin/login', args)
     .then((res) => {
       // On success, set state
       console.log('result: ', res);
@@ -51,23 +53,15 @@ class Login extends React.Component {
   render() {
     return (
       <div className="login">
-        <h3 className="loginTitle">{this.state.logInMessage}</h3>
+        <div className="titleContainer">
+          <h3 className="loginTitle">{this.state.logInMessage}</h3>
+        </div>
         <form id="loginForm" className="form" onSubmit={this.handleLogIn}>
-          <input
-            type="text"
-            name="login_name"
-            value={this.state.loginNameValue}
-            placeholder="enter your login name"
-            onChange={this.handleLoginValueChange}
-            />
-          <input
-            type="password"
-            name="password"
-            value={this.state.passwordValue}
-            placeholder="enter your password"
-            onChange={this.handlePasswordValueChange}
-            />
-          <input type="submit" value="log in" />
+          <label htmlFor="username">Username</label>
+          <input type="text" id="username" name="username" />
+          <label htmlFor="password1">Password</label>
+          <input type="password" id="password" name="password" />
+          <input type="submit" value="Log In" />
         </form>
       </div>
     );

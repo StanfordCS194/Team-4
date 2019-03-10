@@ -1,0 +1,30 @@
+.login-register {
+  padding: 10px;
+  color: white;
+  text-align: left;
+  float: left;
+}
+
+.form label, .form input{
+  display: block;
+  padding-top: 4px;
+}
+
+.form input {
+  background-color: rgb(46, 196, 182);
+  border: 2px solid white;
+}
+
+.login-register .titleContainer {
+  width: 200px;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+input:-internal-autofill-selected {
+}

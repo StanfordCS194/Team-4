@@ -1,5 +1,5 @@
 import React from 'react';
-// import './LoginRegister.css';
+import './LoginRegister.css';
 import Login from './login/Login';
 import Register from './register/register';
 

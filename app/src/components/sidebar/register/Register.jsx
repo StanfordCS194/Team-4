@@ -10,7 +10,7 @@ class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      registerMessage: 'Register to make an account',
+      registerMessage: 'Register Account',
     };
   }
 
@@ -90,18 +90,20 @@ class Register extends React.Component {
   render() {
     return (
       <div className="register">
-        <h3 className="registerTitle">{this.state.registerMessage}</h3>
+        <div className="titleContainer">
+          <h3 className="registerTitle">{this.state.registerMessage}</h3>
+        </div>
         <form id="registerForm" className="form" name="registerForm" onSubmit={this.handleRegister}>
           <div>
-            <label htmlFor="username">Enter login name:</label>
+            <label htmlFor="username">Username</label>
             <input type="text" id="username" name="username" />
           </div>
           <div>
-            <label htmlFor="password1">Enter a password:</label>
+            <label htmlFor="password1">Password</label>
             <input type="password" id="password1" name="password1" />
           </div>
           <div>
-            <label htmlFor="password2">Enter your password again:</label>
+            <label htmlFor="password2">Enter Password Again</label>
             <input type="password" id="password2" name="password2" />
           </div>
           <input type="submit" value="register" />
