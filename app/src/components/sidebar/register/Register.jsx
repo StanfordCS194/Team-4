@@ -1,5 +1,7 @@
 import React from 'react';
 // import './LoginRegister.css';
+import AccountIcon from '@material-ui/icons/AccountCircle';
+
 
 import axios from 'axios';
 
@@ -10,7 +12,7 @@ class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      registerMessage: 'Register Account',
+      registerMessage: '',
     };
   }
 
@@ -34,15 +36,15 @@ class Register extends React.Component {
     }
     // check that form entries are valid and filled in
     if (args.password1 !== args.password2) {
-      this.setState({registerMessage: 'entered passwords do not match, please try again'});
+      this.setState({registerMessage: 'Entered passwords don\'t match'});
       return;
     }
     if (args.username.length === 0) {
-      this.setState({registerMessage: 'please fill our your first name'});
+      this.setState({registerMessage: 'Please type your first name'});
       return;
     }
     if (args.password1.length === 0) {
-      this.setState({registerMessage: 'please fill our your password'});
+      this.setState({registerMessage: 'Please type your password'});
       return;
     }
 
@@ -55,7 +57,7 @@ class Register extends React.Component {
     .catch((error) => {
       // handle error
       this.setState({
-        registerMessage: 'You have entered an invalid user name or password, please try again',
+        registerMessage: 'Invalid username or password',
       });
       console.log(error);
     });
@@ -66,7 +68,8 @@ class Register extends React.Component {
     return (
       <div className="register">
         <div className="titleContainer">
-          <h3 className="registerTitle">{this.state.registerMessage}</h3>
+          <h3 className="registerTitle"><AccountIcon id="accountIcon"/> Register Account</h3>
+          <div className="login-register-message"> {this.state.registerMessage}</div>
         </div>
         <form id="registerForm" className="form" name="registerForm" onSubmit={this.handleRegister}>
           <div>
@@ -78,10 +81,10 @@ class Register extends React.Component {
             <input type="password" id="password1" name="password1" />
           </div>
           <div>
-            <label htmlFor="password2">Enter Password Again</label>
+            <label htmlFor="password2">Confirm Password</label>
             <input type="password" id="password2" name="password2" />
           </div>
-          <input type="submit" value="register" />
+          <input id="submit" type="submit" value="Register" />
         </form>
       </div>
     );

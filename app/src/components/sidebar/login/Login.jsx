@@ -1,5 +1,6 @@
 import React from 'react';
 // import './LoginRegister.css';
+import AccountIcon from '@material-ui/icons/AccountCircle';
 
 import axios from 'axios';
 
@@ -12,7 +13,7 @@ class Login extends React.Component {
     this.state = {
       loginValue: '',
       passwordValue: '',
-      logInMessage: 'Log In',
+      logInMessage: '',
     };
   }
 
@@ -41,7 +42,7 @@ class Login extends React.Component {
     .catch((error) => {
       // handle error
       this.setState({
-        logInMessage: 'You have entered an invalid user name or password, please try again',
+        logInMessage: 'Invalid username or password',
       });
       console.log(error);
     });
@@ -52,14 +53,20 @@ class Login extends React.Component {
     return (
       <div className="login">
         <div className="titleContainer">
-          <h3 className="loginTitle">{this.state.logInMessage}</h3>
+          <h3 className="loginTitle"><AccountIcon id="accountIcon"/> Log In</h3>
+          <div
+              className="login-register-message"
+              style={{display: this.state.logInMessage ? 'block' : 'none'}}
+          >
+              {this.state.logInMessage}
+          </div>
         </div>
         <form id="loginForm" className="form" onSubmit={this.handleLogIn}>
           <label htmlFor="username">Username</label>
           <input type="text" id="username" name="username" />
           <label htmlFor="password1">Password</label>
           <input type="password" id="password" name="password" />
-          <input type="submit" value="Log In" />
+          <input id="submit" type="submit" value="Log In" />
         </form>
       </div>
     );
