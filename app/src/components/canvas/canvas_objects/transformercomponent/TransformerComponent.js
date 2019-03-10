@@ -39,6 +39,7 @@ class TransformerComponent extends React.Component {
                 ref={node => {
                     this.transformer = node;
                 }}
+                enabledAnchors={[]}
             />
         );
     }
