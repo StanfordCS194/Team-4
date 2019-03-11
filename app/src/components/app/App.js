@@ -155,6 +155,7 @@ class App extends Component {
 
     handleBoardNameTextAreaKeyDown(e, board, i) {
         if (e.keyCode === 13) { // Pressed enter
+            if (!e.target.value) return;
             let changedBoard = board;
             let newBoards = this.state.boards;
             changedBoard.name = e.target.value;
@@ -211,7 +212,8 @@ class App extends Component {
                          onClick={() => this.setState({viewingMyBoards: true})}>
                         <ul>
                             {this.state.boards.map((board, i) =>
-                                <li className={i === this.state.editingBoardIndex ? "saved-board-elem-selected" : "saved-board-elem"} onClick={() => this.switchToBoard(i)}>
+                                <li className={i === this.state.editingBoardIndex ? "saved-board-elem-selected" : "saved-board-elem"}
+                                    onClick={() => this.switchToBoard(i)}>
                                     <div>
                                         <img
                                             className={i === this.state.editingBoardIndex ? "board-thumbnail-selected" : "board-thumbnail"}
@@ -225,9 +227,10 @@ class App extends Component {
                                             onClick={(e) => this.handleClickOnBoardName(e, i, board)}>{board.name}
                                         </div>
                                         <input
-                                            id={"input"+i} className="board-name-input"
+                                            id={"input" + i} className="board-name-input"
                                             onKeyDown={(e) => this.handleBoardNameTextAreaKeyDown(e, board, i)}
                                             onBlur={() => this.handleBoardNameInputBlur(i)}
+                                            maxLength="25"
                                         />
                                     </div>
 
@@ -255,8 +258,8 @@ class App extends Component {
                     </div>
                     <div className="sidebarContent">
                         <a href='#' onClick={() => {
-                          axios.post('/admin/logout').catch((error) => console.log(err));
-                          this.setState({username: null, user_id: null});
+                            axios.post('/admin/logout').catch((error) => console.log(err));
+                            this.setState({username: null, user_id: null});
                         }}>Log Out</a>
                     </div>
                 </Fragment>
@@ -397,7 +400,7 @@ class App extends Component {
     }
 
     render() {
-      console.log(this.state.username);
+        console.log(this.state.username);
         return (
             <Fragment>
                 <Sidebar

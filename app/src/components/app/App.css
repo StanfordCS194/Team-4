@@ -1,89 +1,99 @@
 body {
-  font-family: 'Avenir', serif;
-  font-size: 20px;
+    font-family: 'Avenir', serif;
+    font-size: 20px;
 }
+
 .main {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .color-guide {
-  margin: 20px;
+    margin: 20px;
 }
 
 h5 {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 #user {
-  padding: 7px 15px;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  margin-top: 20px;
+    padding: 7px 15px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
 }
 
 #userName {
     display: inline-block;
     vertical-align: middle;
     margin-left: 10px;
+    max-width: 300px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .guest {
-  background: #FDFFFC;
-  color: white;
+    background: #FDFFFC;
+    color: white;
 }
 
 .sidebarContent {
-  padding: 10px;
-  color: white;
-  text-align: left;
+    padding: 10px;
+    color: white;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 400px;
+    min-width: 250px;
 }
 
 #handle {
-  background-color: #2EC4B6;
-  color: white;
-  text-align: center;
-  z-index: 1;
-  position: fixed;
-  padding: 20px 4px 15px 4px;
-  bottom: 50%;
-  box-shadow: 2px 3px 3px 1px rgba(0,0,0,0.2);
-  border-radius: 1px;
+    background-color: #2EC4B6;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    position: fixed;
+    padding: 20px 4px 15px 4px;
+    bottom: 50%;
+    box-shadow: 2px 3px 3px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 1px;
 }
 
 #rightHandle {
-  background-color: #2EC4B6;
-  color: white;
-  text-align: center;
-  z-index: 1;
-  position: fixed;
-  padding: 20px 4px 15px 4px;
-  bottom: 50%;
-  right: 0%;
-  box-shadow: 2px 3px 3px 1px rgba(0,0,0,0.2);
-  border-radius: 1px;
+    background-color: #2EC4B6;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    position: fixed;
+    padding: 20px 4px 15px 4px;
+    bottom: 50%;
+    right: 0%;
+    box-shadow: 2px 3px 3px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 1px;
 }
 
 .sidebarContent a {
-  margin: 10px;
-  color: white;
-  text-decoration: none;
+    margin: 10px;
+    color: white;
+    text-decoration: none;
 }
 
 .sidebarContent a:visited {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .sidebarContent img:hover {
-  transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 #accountIcon {
-  margin: 0;
-  width: 50px;
-  height: auto;
-  vertical-align: middle;
+    margin: 0;
+    width: 50px;
+    height: auto;
+    vertical-align: middle;
 }
 
 #logo {
@@ -92,97 +102,104 @@ h5 {
     bottom: 0;
     right: 0;
     padding: 0 30px 10px 0;
-  	position: fixed;
-  	z-index: 1;
+    position: fixed;
+    z-index: 1;
 }
+
 ul {
-  padding: 0;
-  list-style-type: none;
+    padding: 0;
+    list-style-type: none;
 }
 
 .sidebarContent li {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .sidebarContent img {
-  transition: all .05s ease-in-out;
+    transition: all .05s ease-in-out;
 }
 
 .board-thumbnail {
-  max-width: 350px;
-  max-height: 300px;
-  border: 5px solid #2EC4B6;
-  background-color: #FDFFFC;
+    max-width: 350px;
+    max-height: 300px;
+    border: 5px solid #2EC4B6;
+    background-color: #FDFFFC;
 }
 
 .board-thumbnail-selected {
-  max-width: 350px;
-  max-height: 300px;
-  background-color: #FDFFFC;
-  border: 5px solid black;
+    max-width: 350px;
+    max-height: 300px;
+    background-color: #FDFFFC;
+    border: 5px solid black;
 }
 
 .saved-board-elem, .saved-board-elem-selected {
-  padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 #arrow-back-icon {
-  transform: scale(2);
-  vertical-align: middle;
-  padding-right: 10px;
-  padding-left: 10px;
-  cursor: pointer;
+    transform: scale(2);
+    vertical-align: middle;
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
 }
 
 #new-board-button {
-  width: 350px;
-  height: 200px;
-  background-color: #FDFFFC;
-  padding: 0px;
-  margin: 10px;
-  cursor: pointer;
-  border: 5px solid #2EC4B6;
-  transition: all .05s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 350px;
+    height: 200px;
+    background-color: #FDFFFC;
+    padding: 0px;
+    margin: 10px;
+    cursor: pointer;
+    border: 5px solid #2EC4B6;
+    transition: all .05s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #new-board-button:hover {
-  transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 #new-board-button-addIcon {
-  color: #2EC4B6;
-  width: 100px;
-  height: auto;
+    color: #2EC4B6;
+    width: 100px;
+    height: auto;
 }
 
 #my-boards-heading {
-  position: sticky;
-  padding-top: 20px;
-  font-size: 24px;
-  top: 0;
-  background-color: #2EC4B6;
-  z-index: 4;
+    position: sticky;
+    padding-top: 20px;
+    font-size: 24px;
+    top: 0;
+    background-color: #2EC4B6;
+    z-index: 4;
 }
 
 .saved-board-elem-selected .board-name, .saved-board-elem-selected .board-name-input {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .board-name-input {
-  display: none;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: 'Avenir', serif;
-  font-size: 24px;
-  color: white;
-  padding: 0px;
+    display: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Avenir', serif;
+    font-size: 24px;
+    color: white;
+    padding: 0px;
+    margin: 0;
 }
 
 .board-name {
-  font-size: 24px;
+    font-size: 24px;
+    max-width: 360px;
+    max-height: 33px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 

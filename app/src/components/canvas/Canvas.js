@@ -1,5 +1,5 @@
 import React from 'react';
-import {Stage, Layer, Text} from 'react-konva';
+import {Stage, Layer, Text, Group} from 'react-konva';
 
 import './Canvas.css';
 
@@ -97,8 +97,6 @@ class Canvas extends React.Component {
             console.log('clicked transformer');
             return;
         }
-        console.log(e);
-        console.log(e.target.parent.attrs.id);
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
@@ -523,24 +521,41 @@ class Canvas extends React.Component {
     }
 
     deleteSelectedObj() {
-      // find index of sticky to delete
-      const sticky = this.state.objectArray.find(sticky => {
-        if (!sticky) { return false; }
-        else { return sticky.props.id.toString() === this.state.selectedCanvasObjectId.toString(); }
-      });
-      let index = this.state.objectArray.indexOf(sticky);
-      let newObjectRefs = this.state.objectRefs.slice();
-      let newObjectArray = this.state.objectArray.slice();
-      newObjectArray[index] = null;
-      newObjectRefs[index] = null;
-      console.log(this.state.pastObjArray);
-      this.setState({
-        objectArray: newObjectArray,
-        objectRefs: newObjectRefs,
-        pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
-        pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
-      });
-      console.log(this.state.pastObjArray);
+        // Add CSS sprite animation of cloud poof
+        let textarea = document.getElementById(this.state.selectedCanvasObjectId);
+
+        if (textarea) {
+            textarea.style.display = '';
+            let rect = textarea.getBoundingClientRect();
+            let x = rect.x + rect.width/2;
+            let y = rect.y;
+
+            let poof = document.createElement("div");
+            poof.className = "poof";
+            poof.style.display = 'block';
+            poof.style.position = 'absolute';
+            poof.style.top = y + 'px';
+            poof.style.left = x + 'px';
+            document.body.appendChild(poof);
+        }
+
+        // find index of sticky to delete
+          const sticky = this.state.objectArray.find(sticky => {
+            if (!sticky) { return false; }
+            else { return sticky.props.id.toString() === this.state.selectedCanvasObjectId.toString(); }
+          });
+          let index = this.state.objectArray.indexOf(sticky);
+          let newObjectRefs = this.state.objectRefs.slice();
+          let newObjectArray = this.state.objectArray.slice();
+          newObjectArray[index] = null;
+          newObjectRefs[index] = null;
+          console.log(this.state.pastObjArray);
+          this.setState({
+            objectArray: newObjectArray,
+            objectRefs: newObjectRefs,
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
+          });
     }
 
     // handle keypresses

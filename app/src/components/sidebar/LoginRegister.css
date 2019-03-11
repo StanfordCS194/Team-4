@@ -1,28 +1,58 @@
 .login-register {
-  padding: 10px;
+  padding: 20px;
   color: white;
   text-align: left;
   float: left;
+  margin-top: 20px;
+  font-family: 'Avenir', serif
+}
+
+.titleContainer {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.login-register-message {
+  font-size: 22px;
+  font-weight: bold;
 }
 
 .form label, .form input{
   display: block;
-  padding-top: 4px;
+  font-family: 'Avenir', serif;
 }
 
 input {
   color: white;
+  display: block;
   background-color: rgb(46, 196, 182);
-  border: 2px solid white;
+  border: 1px solid white;
+  width: 350px;
+  font-weight: normal;
+  margin: 0 auto 10px;
+  font-size: 18px;
+  padding: 10px;
+}
+
+#submit {
+  width: 100%;
+  margin-top: 15px;
+  color: #2EC4B6;
+  background-color: white;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .login-register .titleContainer {
-  width: 200px;
+  width: 350px;
 }
 
 .switchLogin {
-  background-color: rgb(46, 196, 182);
-  border: 2px solid white;
+  width: 100%;
+  color: white;
+  background-color: #2EC4B6;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 input:focus,
