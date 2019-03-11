@@ -197,7 +197,7 @@ class App extends Component {
                 }
                 this.setState({
                     username: res.data.username,
-                    boards: JSON.parse(res.data.boards),
+                    boards: res.data.boards ? JSON.parse(res.data.boards) : [],
                     user_id: res.data._id
                 });
             })
@@ -209,7 +209,9 @@ class App extends Component {
 
     postBoardListUpdate(newBoards) {
         let req = {boards: JSON.stringify(newBoards), id: this.state.user_id};
-        axios.post('/user/'+this.state.user_id+'/board', req).catch((error) => console.log(err));
+        axios.post('/user/board', req)
+            .then((res) => console.log(res))
+            .catch((error) => console.log(error));
     }
 
     makeSideBarContent = () => {
@@ -222,6 +224,8 @@ class App extends Component {
             );
         }
         if (this.state.viewingMyBoards) {
+            console.log("this.state.boards:");
+            console.log(this.state.boards);
             return ( //todo: this should probably be its own react component
                 <Fragment>
                     <div className="sidebarContent" id="my-boards-heading">

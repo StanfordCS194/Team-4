@@ -267,14 +267,14 @@ app.get('/user/:id', function (request, response) {
 //  boards - a JSON string representing the boards of the user
 // returns:
 //  a short messages and a 200 status
-app.post('/user/:id/board', function(req, res) {
-  let id = request.params.id;
-  if (!request.session.loggedIn) {
+app.post('/user/board', function(req, res) {
+  let id = req.params.id;
+  if (!req.session.loggedIn) {
     console.error('must log in before accessing user content');
     response.status(401).send('must log in before accessing user content with /user/:id');
     return;
   }
-  if (!request.session.user._id == id) {
+  if (!req.session.user._id === id) {
     console.error('cannot access account details of other users');
     response.status(401).send('cannot access account details of other users');
     return;
