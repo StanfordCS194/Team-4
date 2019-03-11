@@ -26,10 +26,7 @@
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-// Load the Mongoose schema for Konva-Canvas and Image
-var Canvas = require('./schema/canvas.js');
-var Img = require('./schema/img.js');
-var Board = require('./schema/board.js');
+// Load the Mongoose schema for a User
 var User = require('./schema/user.js');
 
 var express = require('express');
@@ -98,7 +95,7 @@ app.post('/admin/login', function(req, res) {
         res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
         return;
     }
-    if (info.length === 0) {
+    if (!info) {
         // Query didn't return an error but didn't find the object - This
         // is also an internal error return.
         res.status(400).send('Login failed with login_name: ' + login_name);
