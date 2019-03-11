@@ -131,7 +131,7 @@ class Sticky extends React.Component {
             shadowOffsetY: 15,
         });
         e.target.moveToTop();
-        e.target.getStage().findOne('Transformer').moveToTop();
+
     }
 
     onDragEnd(e) {

@@ -61,7 +61,10 @@ class Canvas extends React.Component {
             pastObjRefs: [],
             pastObjArray: [],
             objectRefs: [],
-            savedBoard: {}
+            savedBoard: {},
+
+            selectedCanvasObjectIds: [],
+            transformers: []
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.loadBoard = this.loadBoard.bind(this);
@@ -86,35 +89,53 @@ class Canvas extends React.Component {
         // clicked on stage - clear selection
         if (e.target === e.target.getStage()) {
             this.setState({
-                selectedCanvasObjectId: ''
+                selectedCanvasObjectId: '',
+                selectedCanvasObjectIds: [],
+                transformers: []
             });
             return;
         }
+
         // clicked on transformer - do nothing
-        const clickedOnTransformer =
-            e.target.getParent().className === 'Transformer';
-        if (clickedOnTransformer) {
-            console.log('clicked transformer');
-            return;
-        }
+        const clickedOnTransformer = e.target.getParent().className === 'Transformer';
+        if (clickedOnTransformer) { return; }
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
         const sticky = this.state.objectArray.find(sticky => {
-          if (!sticky) { return false; }
-          else { return sticky.props.id.toString() === id.toString(); }
+            if (!sticky ) { return false; }
+            else { return sticky.props.id.toString() === id.toString(); }
         });
+
         if (sticky) {
+            // Draw a transformer around the newly selected sticky
+            let newTransformer = (
+                <TransformerComponent
+                    selectedCanvasObjectId={id}
+                />);
+
+            // If cmd + click, concat new selection, otherwise make sole selection
+            let newTransformersArray = [newTransformer];
+            let newSelectedObjectIds = [id];
+            if (window.event.metaKey) {
+                newTransformersArray = this.state.transformers.slice().concat([newTransformer]);
+                newSelectedObjectIds = this.state.selectedCanvasObjectIds.slice().concat([id]);
+            }
+
             this.setState({
                 selectedCanvasObjectId: id,
+                selectedCanvasObjectIds: newSelectedObjectIds,
+                transformers: newTransformersArray,
             });
         } else {
+            // Nothing selected
             this.setState({
-                selectedCanvasObjectId: ''
+                selectedCanvasObjectId: '',
+                selectedCanvasObjectIds: [],
+                transformers: []
             });
         }
-        console.log(this.state.selectedCanvasObjectId);
-        console.log(this.state.objectArray);
+
     }
 
     handleMouseDown(e) {
@@ -126,8 +147,13 @@ class Canvas extends React.Component {
             if (clickedOnTransformer) {
                 return;
             } else {
+                let newTransformersArray = [];
+                if (window.event.metaKey) {
+                    newTransformersArray = this.state.transformers;
+                }
                 this.setState({
-                    selectedCanvasObjectId: ''
+                    selectedCanvasObjectId: '',
+                    transformers: newTransformersArray
                 });
             }
         }
@@ -369,6 +395,8 @@ class Canvas extends React.Component {
                 activeSticky: null,
                 selectedCanvasObjectId: '',
                 imageSrc: '',
+                selectedCanvasObjectIds: [],
+                transformers: [],
 
                 objectRefs: [],
                 pastObjArray: [],
@@ -412,6 +440,8 @@ class Canvas extends React.Component {
             activeSticky: savedBoardState.activeSticky,
             selectedCanvasObjectId: savedBoardState.selectedCanvasObjectId,
             imageSrc: savedBoardState.imageSrc,
+            selectedCanvasObjectIds: [],
+            transformers: []
         }, () => {
             // For each component state object, create a new object
             savedComponentStates.map(state => {
@@ -520,9 +550,10 @@ class Canvas extends React.Component {
         });
     }
 
-    deleteSelectedObj() {
+    deleteSelectedObj(selectedObjectId) {
         // Add CSS sprite animation of cloud poof
-        let textarea = document.getElementById(this.state.selectedCanvasObjectId);
+
+        let textarea = document.getElementById(selectedObjectId);
 
         if (textarea) {
             textarea.style.display = '';
@@ -540,22 +571,23 @@ class Canvas extends React.Component {
         }
 
         // find index of sticky to delete
-          const sticky = this.state.objectArray.find(sticky => {
+        const sticky = this.state.objectArray.find(sticky => {
             if (!sticky) { return false; }
-            else { return sticky.props.id.toString() === this.state.selectedCanvasObjectId.toString(); }
-          });
-          let index = this.state.objectArray.indexOf(sticky);
-          let newObjectRefs = this.state.objectRefs.slice();
-          let newObjectArray = this.state.objectArray.slice();
-          newObjectArray[index] = null;
-          newObjectRefs[index] = null;
-          console.log(this.state.pastObjArray);
-          this.setState({
+            else { return sticky.props.id.toString() === selectedObjectId.toString(); }
+        });
+        let index = this.state.objectArray.indexOf(sticky);
+        let newObjectRefs = this.state.objectRefs.slice();
+        let newObjectArray = this.state.objectArray.slice();
+        newObjectArray[index] = null;
+        newObjectRefs[index] = null;
+        console.log(this.state.pastObjArray);
+        this.setState({
             objectArray: newObjectArray,
             objectRefs: newObjectRefs,
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
-          });
+            transformers: []
+        });
     }
 
     // handle keypresses
@@ -604,7 +636,11 @@ class Canvas extends React.Component {
 
         // Delete selected canvas object on press of delete
         if (e.keyCode === 8 && this.state.selectedCanvasObjectId) {
-          this.deleteSelectedObj();
+            let i = 0;
+            for (i ; i < this.state.selectedCanvasObjectIds.length; i++) {
+                let selectedObjectId = this.state.selectedCanvasObjectIds[i];
+                this.deleteSelectedObj(selectedObjectId);
+            }
         }
     };
 
@@ -643,10 +679,8 @@ class Canvas extends React.Component {
                     <OpeningGreeting
                         justOpenedApp={this.state.justOpenedApp}
                     />}
-                    <TransformerComponent
-                        selectedCanvasObjectId={this.state.selectedCanvasObjectId}
-                    />
                     {this.state.objectArray.slice()}
+                    {this.state.transformers}
                 </Layer>
             </Stage>
         );

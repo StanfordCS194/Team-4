@@ -17,6 +17,8 @@ class TransformerComponent extends React.Component {
         const { selectedCanvasObjectId } = this.props;
         const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
 
+        console.log("selectedNode in transformer", selectedNode);
+
         // do nothing if selected node is already attached
         if (selectedNode === this.transformer.node()) {
             return;
@@ -31,6 +33,16 @@ class TransformerComponent extends React.Component {
         }
         this.transformer.moveToTop();
         this.transformer.getLayer().batchDraw();
+    }
+
+    getAnchors() {
+        const stage = this.transformer.getStage();
+        const { selectedCanvasObjectId } = this.props;
+        const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
+
+        // if (selectedNode.getType() === 'Sticky') {
+        //
+        // }
     }
 
     render() {
