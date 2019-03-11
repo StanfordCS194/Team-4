@@ -387,7 +387,7 @@ class Canvas extends React.Component {
     Loading a board occurs in the callback function of setState to
     ensure the board is entirely cleared first.
      */
-    clearBoardAndLoadNewBoard(newBoard, saveBoardToBoardList) {
+    clearBoardAndLoadNewBoard(newBoard, callback) {
         console.log("clearing board");
         this.setState({
                 justOpenedApp: true,
@@ -418,7 +418,7 @@ class Canvas extends React.Component {
                     this.loadBoard(newBoard);
                 } else {
                     console.log("null board");
-                    saveBoardToBoardList();
+                    if (callback) callback();
                 }
             }
         );

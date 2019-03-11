@@ -308,7 +308,7 @@ class App extends Component {
                         <a href='#' onClick={() => {
                             axios.post('/admin/logout').catch((error) => console.log(err));
                             this.setState({username: null, user_id: null});
-                            this.canvas.clearBoardAndLoadNewBoard();
+                            this.canvas.current.clearBoardAndLoadNewBoard();
                         }}>Log Out</a>
                     </div>
                 </Fragment>
