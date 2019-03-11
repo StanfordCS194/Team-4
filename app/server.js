@@ -228,6 +228,7 @@ app.post('/user', function(req, res) {
  */
 app.get('/user/:id', function (request, response) {
     let id = request.params.id;
+    console.log(id);
     if (!request.session.loggedIn) {
       console.error('must log in before accessing user content');
       response.status(401).send('must log in before accessing user content with /user/:id');
@@ -268,7 +269,8 @@ app.get('/user/:id', function (request, response) {
 // returns:
 //  a short messages and a 200 status
 app.post('/user/board', function(req, res) {
-  let id = req.params.id;
+  let id = req.body.id;
+  console.log('params', req.body);
   if (!req.session.loggedIn) {
     console.error('must log in before accessing user content');
     response.status(401).send('must log in before accessing user content with /user/:id');
@@ -281,7 +283,7 @@ app.post('/user/board', function(req, res) {
   }
   User.updateOne(
     {_id: id},
-    {$set: { boards: req.params.board_representation}},
+    {$set: { boards: req.body.board_representation}},
     (err, response) => {
       console.log('result', response);
       if (err) {
@@ -297,7 +299,26 @@ app.post('/user/board', function(req, res) {
           res.status(400).send('Nothing with id ' + id + ' found');
           return;
       }
-      res.end('saved boards');
+      // res.end('saved boards');
+      // Print everything in User database
+      User.find({}, function (err, info) {
+        if (err) {
+            // Query returned an error.  We pass it back to the browser with an Internal Service
+            // Error (500) error code.
+            console.error('Doing /admin/login with login_name', login_name, ' received error:', err);
+            res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
+            return;
+        }
+        if (info.length === 0) {
+            // Query didn't return an error but didn't find the object - This
+            // is also an internal error return.
+            res.status(400).send('Login failed with login_name: ' + login_name);
+            return;
+        }
+        console.log('returned info: ', info);
+        // res.end(JSON.stringify(info));
+        res.end('saved boards');
+      });
     }
   );
 });

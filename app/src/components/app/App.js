@@ -189,7 +189,7 @@ class App extends Component {
     }
 
     handleLogin(username, id) {
-        axios.get('/user/'+JSON.stringify(id))
+        axios.get('/user/'+id)
             .then((res) => {
                 console.log(res);
                 if (!res.data && this.state.user_id) {
@@ -308,6 +308,7 @@ class App extends Component {
                         <a href='#' onClick={() => {
                             axios.post('/admin/logout').catch((error) => console.log(err));
                             this.setState({username: null, user_id: null});
+                            this.canvas.clearBoardAndLoadNewBoard();
                         }}>Log Out</a>
                     </div>
                 </Fragment>
