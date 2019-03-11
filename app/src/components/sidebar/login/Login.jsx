@@ -63,7 +63,7 @@ class Login extends React.Component {
         </div>
         <form id="loginForm" className="form" onSubmit={this.handleLogIn}>
           <label htmlFor="username">Username</label>
-          <input type="text" id="username" name="username" />
+          <input type="text" id="username" maxLength="20" name="username" />
           <label htmlFor="password1">Password</label>
           <input type="password" id="password" name="password" />
           <input id="submit" type="submit" value="Log In" />

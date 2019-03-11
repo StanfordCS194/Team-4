@@ -40,7 +40,7 @@ class Register extends React.Component {
       return;
     }
     if (args.username.length === 0) {
-      this.setState({registerMessage: 'Please type your first name'});
+      this.setState({registerMessage: 'Please type your desired username'});
       return;
     }
     if (args.password1.length === 0) {
@@ -74,7 +74,7 @@ class Register extends React.Component {
         <form id="registerForm" className="form" name="registerForm" onSubmit={this.handleRegister}>
           <div>
             <label htmlFor="username">Username</label>
-            <input type="text" id="username" name="username" />
+            <input type="text" id="username" maxLength="20" name="username" />
           </div>
           <div>
             <label htmlFor="password1">Password</label>
