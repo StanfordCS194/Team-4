@@ -11,8 +11,6 @@ class Sticky extends React.Component {
             id: this.props.id,
             scaleX: this.props.scaleX,
             scaleY: this.props.scaleY,
-            stageX: this.props.stageX,
-            stageY: this.props.stageY,
             height: this.props.height,
             width: this.props.width,
             fontSize: this.props.fontSize,
