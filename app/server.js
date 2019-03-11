@@ -107,10 +107,10 @@ app.post('/admin/login', function(req, res) {
       res.status(400).send('Incorrect Password');
     }
     console.log('loggin in', loggedUser);
-    req.session.loggedIn = true;
-    req.session.user = loggedUser;
     delete loggedUser.__v;
     delete loggedUser.password;
+    req.session.loggedIn = true;
+    req.session.user = loggedUser;
     res.end(JSON.stringify(loggedUser));
   });
   // // Print everything in User database
@@ -134,6 +134,11 @@ app.post('/admin/login', function(req, res) {
 });
 
 // URL /admin/check - Check if the user is currently logged in
+// returned data:
+//  if logged in:
+//    returns string representing logged in user
+//  else:
+//    returns undefined
 app.get('/admin/check', function(req, res) {
   console.log('logged in: ', req.session.loggedIn);
   console.log('with user: ', req.session.user);
@@ -141,6 +146,7 @@ app.get('/admin/check', function(req, res) {
 });
 
 // URL /admin/logout - Logout the current user
+// set session cookie to null and logged in to false
 app.post('/admin/logout', function(req, res) {
   req.session.loggedIn = false;
   req.session.user = null;
@@ -148,6 +154,13 @@ app.post('/admin/logout', function(req, res) {
 });
 
 // URL /user - create a user with username, password and an empty boards list
+// parameters:
+//  username - username of user to be created
+//  password - password of created user
+// returned data:
+//  _id - the id of the new user
+//  username - the username of the user
+//  boards - a string representing the boards of the user, this is initialized to ''
 app.post('/user', function(req, res) {
   let new_user = {
     username: req.body.username,
@@ -192,9 +205,12 @@ app.post('/user', function(req, res) {
     })
     .then((data)=>{
       console.log('created user: ', data);
+      let userDetails = JSON.parse(JSON.stringify(data));
+      delete userDetails.__v;
+      delete userDetails.password;
       req.session.loggedIn = true;
-      req.session.user = data;
-      res.end(JSON.stringify(data));
+      req.session.user = userDetails;
+      res.end(JSON.stringify(userDetails));
     }).catch((err)=>{
       res.status(400).send('Doing /user, upload failed');
       console.error('Doing /user, upload failed');
@@ -204,7 +220,11 @@ app.post('/user', function(req, res) {
 });
 
 /*
- * URL /user/:id - Returns the boards for user :id
+ * URL /user/:id - Returns the user details for user :id
+ * returned data are:
+ *  - _id - the id of the found user
+ *  - username - the username of the user
+ *  - boards - the boards of the user, represented as list that is JSON.stringify()ed
  */
 app.get('/user/:id', function (request, response) {
     let id = request.params.id;
@@ -242,17 +262,26 @@ app.get('/user/:id', function (request, response) {
 });
 
 // URL: /user/:id/board saves the boards for user :id
+// parameters:
+//  id - the id of the user that is saving. Should be the same as :id
+//  boards - a JSON string representing the boards of the user
+// returns:
+//  a short messages and a 200 status
 app.post('/user/:id/board', function(req, res) {
-  // console.log(req.session.user, id, comment, new Date());
-  Photo.updateOne(
+  let id = request.params.id;
+  if (!request.session.loggedIn) {
+    console.error('must log in before accessing user content');
+    response.status(401).send('must log in before accessing user content with /user/:id');
+    return;
+  }
+  if (!request.session.user._id == id) {
+    console.error('cannot access account details of other users');
+    response.status(401).send('cannot access account details of other users');
+    return;
+  }
+  User.updateOne(
     {_id: id},
-    {$push: {
-      comments: {
-        comment: comment,
-        date_time: new Date(),
-        user_id: req.session.user._id
-      }
-    }},
+    {$set: { boards: req.params.boards}},
     (err, response) => {
       console.log('result', response);
       if (err) {
@@ -268,7 +297,7 @@ app.post('/user/:id/board', function(req, res) {
           res.status(400).send('Nothing with id ' + id + ' found');
           return;
       }
-      res.end('added comment');
+      res.end('saved boards');
     }
   );
 });
