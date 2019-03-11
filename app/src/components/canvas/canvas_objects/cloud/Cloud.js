@@ -108,7 +108,15 @@ class Cloud extends React.Component {
     }
 
     componentDidMount() {
-        if (!this.props.isBeingLoaded) this.animateDrop();
+        // Need setTimeout because getElementById must occur after render
+        setTimeout(() => {
+            let textarea = document.getElementById(this.props.id.toString());
+            if (!this.props.isBeingLoaded) {
+                this.animateDrop();
+                textarea.focus();
+            }
+        });
+
     }
 
     render() {

@@ -65,8 +65,7 @@ class Sticky extends React.Component {
 
     // focus on sticky text after mounting
     componentDidMount() {
-        // need to put code within a setTimeout because
-        // getElementById must happen after render
+        // Need setTimeout because getElementById must occur after render
         setTimeout(() => {
             let textarea = document.getElementById(this.props.id.toString());
             if (!this.props.isBeingLoaded) textarea.focus();

@@ -113,6 +113,7 @@ class Textarea extends React.Component {
                 />
                 <Portal>
                   <textarea
+                      className={'textarea'}
                       value={this.state.textAreaValue}
                       id={this.props.id.toString()}
                       placeholder={"Start typing!"}

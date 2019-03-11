@@ -561,10 +561,14 @@ class Canvas extends React.Component {
     }
 
     deleteSelectedObj(selectedObjectId) {
+        /**
+         * Delete the object with given selectedObjectId from the board display
+         * and create a CSS sprite 'poof in the object's place.
+         * @param {string} selectedObjectId Unique ID linked to a single canvas object.
+         */
         // Add CSS sprite animation of cloud poof
 
         let textarea = document.getElementById(selectedObjectId);
-
         if (textarea) {
             textarea.style.display = '';
             let rect = textarea.getBoundingClientRect();
@@ -590,7 +594,6 @@ class Canvas extends React.Component {
         let newObjectArray = this.state.objectArray.slice();
         newObjectArray[index] = null;
         newObjectRefs[index] = null;
-        console.log(this.state.pastObjArray);
         this.setState({
             objectArray: newObjectArray,
             objectRefs: newObjectRefs,
@@ -600,8 +603,29 @@ class Canvas extends React.Component {
         });
     }
 
-    // handle keypresses
+    isEditingText() {
+        /**
+         * Returns true if a textarea on the current canvas is open.
+         * @return {boolean}
+         */
+
+        let textareas = document.getElementsByClassName('textarea');
+        let i = 0
+        for (i ; i < textareas.length ; i++) {
+            let textarea = textareas[i];
+            if (textarea.style.display !== 'none') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     handleKeyPress = (e) => {
+        /**
+         * Handles key presses to create new shapes, save/load boards, and delete selected
+         * shapes.
+         */
         // if command-z, undo previously added object
         if (e.metaKey && e.keyCode === 90) {
             this.undo();
@@ -615,22 +639,22 @@ class Canvas extends React.Component {
          */
 
         // Make arrow
-        if (e.shiftKey && e.keyCode === 65) {
+        if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
             this.addArrowToBoard();
         }
 
         // Make cloud
-        if (e.shiftKey && e.keyCode === 67) {
+        if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
             this.addCloudToBoard();
         }
 
         // Make venn diagram
-        if (e.shiftKey && e.keyCode === 86) {
+        if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
             this.addVennDiagramToBoard();
         }
 
         // Save board
-        if (e.shiftKey && e.keyCode === 83) {
+        if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
             this.props.saveBoardToBoardList();
         }
 
@@ -645,7 +669,7 @@ class Canvas extends React.Component {
         }
 
         // Delete selected canvas object on press of delete
-        if (e.keyCode === 8 && this.state.selectedCanvasObjectId) {
+        if (e.keyCode === 8 && !this.isEditingText()) {
             let i = 0;
             for (i ; i < this.state.selectedCanvasObjectIds.length; i++) {
                 let selectedObjectId = this.state.selectedCanvasObjectIds[i];
@@ -654,13 +678,18 @@ class Canvas extends React.Component {
         }
     };
 
-    // add document level keydown listeners
     componentDidMount() {
+        /**
+         * Add document level keydown listeners
+         */
         document.addEventListener("keydown", this.handleKeyPress, false);
 
     }
 
     componentWillUnmount() {
+        /**
+         * Remove document level keydown listeners when un-mounting
+         */
         document.removeEventListener("keydown", this.handleKeyPress, false);
     }
 
