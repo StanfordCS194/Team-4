@@ -108,11 +108,16 @@ class Canvas extends React.Component {
         });
 
         if (canvasObject) {
+            // Allow diagonal resizing for non-stickies and all resizing for arrow
             let objectType = canvasObject.ref.current.state.className;
             let enabledAnchors = [];
             if (objectType !== 'sticky') {
                 enabledAnchors = ['top-right', 'top-left', 'bottom-right', 'bottom-left'];
+                if (objectType.toString() === 'arrow') {
+                    enabledAnchors = enabledAnchors.concat(['middle-right', 'middle-left', 'bottom-center']);
+                }
             }
+
             // Draw a transformer around the newly selected sticky
             let newTransformer = (
                 <TransformerComponent
