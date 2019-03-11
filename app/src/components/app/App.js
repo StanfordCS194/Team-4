@@ -72,6 +72,21 @@ class App extends Component {
         this.postBoardListUpdate(newBoards);
     }
 
+    deleteBoard(boardIndex) {
+        if (this.state.boards.length > 1) {
+            console.log("board "+boardIndex+" deleted");
+            let newBoards = this.state.boards.slice();
+            newBoards.splice(boardIndex, 1);
+            this.setState({
+                boards: newBoards,
+                editingBoardIndex: 0,
+            }, () => { // After board is deleted, switch view to most recently updated board
+                this.switchToBoard(0);
+                this.postBoardListUpdate(newBoards);
+            });
+        }
+    }
+
     switchToBoard(boardIndex) {
         this.setState({editingBoardIndex: boardIndex});
         this.canvas.current.clearBoardAndLoadNewBoard(this.state.boards[boardIndex]);
@@ -199,9 +214,20 @@ class App extends Component {
         boardName.style.display = 'block';
     }
 
+    handleKeyPress = (e) => {
+        /**
+         * Delete a board by pressing delete when viewing my boards bar
+         */
+        if (this.state.viewingMyBoards && this.state.sidebarOpen) {
+            this.deleteBoard(this.state.editingBoardIndex);
+        }
+    };
+
     handleLogin(username, id) {
+        document.addEventListener("keydown", this.handleKeyPress, false);
+
         let currentlyEditingBoard = this.canvas.current.saveBoard();
-        axios.get('/user/'+id)
+        axios.get('/user/' + id)
             .then((res) => {
                 console.log(res);
                 if (!res.data && this.state.user_id) {
@@ -221,7 +247,7 @@ class App extends Component {
 
     postBoardListUpdate(newBoards) {
         let cache = [];
-        let newBoardsJson = JSON.stringify(newBoards, function(key, value) {
+        let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
             if (typeof value === 'object' && value !== null) {
                 if (cache.indexOf(value) !== -1) {
                     try {
