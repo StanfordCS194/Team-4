@@ -2,6 +2,9 @@ import React from 'react';
 import { Transformer } from 'react-konva';
 
 class TransformerComponent extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
     componentDidMount() {
         this.checkNode();
@@ -14,10 +17,8 @@ class TransformerComponent extends React.Component {
     checkNode() {
         // here we need to manually attach or detach Transformer node
         const stage = this.transformer.getStage();
-        const { selectedCanvasObjectId } = this.props;
+        const selectedCanvasObjectId  = this.props.selectedCanvasObjectId;
         const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
-
-        console.log("selectedNode in transformer", selectedNode);
 
         // do nothing if selected node is already attached
         if (selectedNode === this.transformer.node()) {
@@ -35,23 +36,13 @@ class TransformerComponent extends React.Component {
         this.transformer.getLayer().batchDraw();
     }
 
-    getAnchors() {
-        const stage = this.transformer.getStage();
-        const { selectedCanvasObjectId } = this.props;
-        const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
-
-        // if (selectedNode.getType() === 'Sticky') {
-        //
-        // }
-    }
-
     render() {
         return (
             <Transformer
                 ref={node => {
                     this.transformer = node;
                 }}
-                enabledAnchors={[]}
+                enabledAnchors={this.props.enabledAnchors}
             />
         );
     }

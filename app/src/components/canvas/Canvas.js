@@ -102,16 +102,22 @@ class Canvas extends React.Component {
 
         // find clicked sticky (group) by its id
         const id = e.target.parent.attrs.id;
-        const sticky = this.state.objectArray.find(sticky => {
-            if (!sticky ) { return false; }
-            else { return sticky.props.id.toString() === id.toString(); }
+        const canvasObject = this.state.objectArray.find(canvasObject => {
+            if (!canvasObject ) { return false; }
+            else { return canvasObject.props.id.toString() === id.toString(); }
         });
 
-        if (sticky) {
+        if (canvasObject) {
+            let objectType = canvasObject.ref.current.state.className;
+            let enabledAnchors = [];
+            if (objectType !== 'sticky') {
+                enabledAnchors = ['top-right', 'top-left', 'bottom-right', 'bottom-left'];
+            }
             // Draw a transformer around the newly selected sticky
             let newTransformer = (
                 <TransformerComponent
                     selectedCanvasObjectId={id}
+                    enabledAnchors={enabledAnchors}
                 />);
 
             // If cmd + click, concat new selection, otherwise make sole selection
