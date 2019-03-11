@@ -150,18 +150,17 @@ app.post('/admin/logout', function(req, res) {
   res.end('logged out');
 });
 
-// create a
+// URL /user - create a user with username, password and an empty boards list
 app.post('/user', function(req, res) {
   let new_user = {
     username: req.body.username,
     password: req.body.password1,
-    boards: [],
+    boards: '',
   };
   console.log(new_user);
   User.find({username: new_user.username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
-        // Error (500) error code.
         console.error('Doing /user received error:', err);
         res.status(400).send('Doing /user received error:' + JSON.stringify(err));
         return;
@@ -175,7 +174,7 @@ app.post('/user', function(req, res) {
     User.create({
       username: req.body.username,
       password: req.body.password1,
-      boards: [],
+      boards: '',
     },
       (err, response) => {
         console.log('result', response);
@@ -208,13 +207,18 @@ app.post('/user', function(req, res) {
 });
 
 /*
- * URL /user/:id - Return the information for User (id)
+ * URL /user/:id - Returns the boards for user :id
  */
 app.get('/user/:id', function (request, response) {
     let id = request.params.id;
     if (!request.session.loggedIn) {
       console.error('must log in before accessing user content');
       response.status(401).send('must log in before accessing user content with /user/:id');
+      return;
+    }
+    if (!request.session.user._id == id) {
+      console.error('cannot access account details of other users');
+      response.status(401).send('cannot access account details of other users');
       return;
     }
     User.findById(id, function (err, info) {
@@ -240,8 +244,8 @@ app.get('/user/:id', function (request, response) {
     });
 });
 
-// URL: /user/:uid/board create a new board for user :uid
-app.post('/user/:uid/board', function(req, res) {
+// URL: /user/:id/board saves the boards for user :id
+app.post('/user/:id/board', function(req, res) {
   // console.log(req.session.user, id, comment, new Date());
   Photo.updateOne(
     {_id: id},
