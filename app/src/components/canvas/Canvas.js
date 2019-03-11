@@ -373,6 +373,7 @@ class Canvas extends React.Component {
         savedBoard.componentStates = savedComponents;
         savedBoard.imgUri = this.getImageURI(); // thumbnail image
 
+        // todo get rid of set state below, shouldn't affect anything but be check to be sure
         // for testing purposes: save state objects to canvas state to load later
         this.setState({
             savedBoard: savedBoard,

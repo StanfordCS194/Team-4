@@ -78,15 +78,26 @@ class App extends Component {
         console.log("switched to board " + boardIndex);
     }
 
-    makeNewBoard() { //Todo: warn user to save before switching, or just automatically save current board
-        let newBoards = [{lastUpdated: new Date(), name: "New Board"}];
+    makeNewBoard(board) { //Todo: warn user to save before switching, or just automatically save current board
+        let newBoards = [];
+        if (board) {
+            newBoards = [board];
+        } else {
+            newBoards = [{}];
+        }
+        newBoards[0].lastUpdated = new Date();
+        newBoards[0].name = "New Board";
+        console.log("newBoards[0].uri");
+        console.log(newBoards[0]);
+        // let newBoards = [{lastUpdated: new Date(), name: "New Board"}];
         this.setState((state) => {
             return {
                 boards: newBoards.concat(state.boards),
                 editingBoardIndex: 0
             };
         }, () => {
-            this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
+            // this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
+            this.canvas.current.clearBoardAndLoadNewBoard(board, this.saveBoardToBoardList);
             this.postBoardListUpdate(this.state.boards);
             // let boardNameInput = document.getElementById("input0");
             // console.log("boardNameInput:");
@@ -189,6 +200,7 @@ class App extends Component {
     }
 
     handleLogin(username, id) {
+        let currentlyEditingBoard = this.canvas.current.saveBoard();
         axios.get('/user/'+id)
             .then((res) => {
                 console.log(res);
@@ -199,7 +211,7 @@ class App extends Component {
                     username: res.data.username,
                     boards: res.data.boards ? JSON.parse(res.data.boards) : [],
                     user_id: res.data._id
-                });
+                }, () => this.makeNewBoard(currentlyEditingBoard)); // after loading saved boards, add board currently editing to user's board list
             })
             .catch(function (error) {
                 // handle error
