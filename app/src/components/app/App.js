@@ -217,7 +217,7 @@ class App extends Component {
             return (
                 <LoginRegister
                     // logIn={(username, id) => this.setState({username: username, user_id: id})}
-                    logIn={this.handleLogin(username, id)}
+                    logIn={(username, id) => this.handleLogin(username, id)}
                 />
             );
         }
