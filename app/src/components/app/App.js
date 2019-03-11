@@ -69,6 +69,7 @@ class App extends Component {
             boards: newBoards,
             editingBoardIndex: 0,
         });
+        this.postBoardListUpdate(newBoards);
     }
 
     switchToBoard(boardIndex) {
@@ -86,6 +87,7 @@ class App extends Component {
             };
         }, () => {
             this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
+            this.postBoardListUpdate(this.state.boards);
             // let boardNameInput = document.getElementById("input0");
             // console.log("boardNameInput:");
             // console.log(boardNameInput);
@@ -161,6 +163,7 @@ class App extends Component {
             changedBoard.name = e.target.value;
             newBoards[i] = changedBoard;
             this.setState({boards: newBoards}, () => console.log(this.state.boards[i].name));
+            this.postBoardListUpdate(newBoards);
 
             let input = document.getElementById("input" + i);
             let boardName = document.getElementById("boardName" + i);
@@ -185,11 +188,36 @@ class App extends Component {
         boardName.style.display = 'block';
     }
 
+    handleLogin(username, id) {
+        axios.get('/user/'+id)
+            .then((res) => {
+                console.log(res);
+                if (!res.data && this.state.user_id) {
+                    this.setState({user_id: null});
+                }
+                this.setState({
+                    username: res.data.username,
+                    boards: JSON.parse(res.data.boards),
+                    user_id: res.data._id
+                });
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
+    }
+
+    postBoardListUpdate(newBoards) {
+        let req = {boards: JSON.stringify(newBoards), id: this.state.user_id};
+        axios.post('/user/'+this.state.user_id+'/board', req).catch((error) => console.log(err));
+    }
+
     makeSideBarContent = () => {
         if (!this.state.user_id) {
             return (
                 <LoginRegister
-                    logIn={(username, id) => this.setState({username: username, user_id: id})}
+                    // logIn={(username, id) => this.setState({username: username, user_id: id})}
+                    logIn={this.handleLogin(username, id)}
                 />
             );
         }
