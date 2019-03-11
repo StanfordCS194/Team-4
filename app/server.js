@@ -40,7 +40,7 @@ var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
 
 app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 
 // ##############################################
 
@@ -264,7 +264,7 @@ app.get('/user/:id', function (request, response) {
 // URL: /user/:id/board saves the boards for user :id
 // parameters:
 //  id - the id of the user that is saving. Should be the same as :id
-//  boards - a JSON string representing the boards of the user
+//  board_representation - a JSON string representing the boards of the user
 // returns:
 //  a short messages and a 200 status
 app.post('/user/board', function(req, res) {
@@ -281,7 +281,7 @@ app.post('/user/board', function(req, res) {
   }
   User.updateOne(
     {_id: id},
-    {$set: { boards: req.params.boards}},
+    {$set: { boards: req.params.board_representation}},
     (err, response) => {
       console.log('result', response);
       if (err) {

@@ -189,7 +189,7 @@ class App extends Component {
     }
 
     handleLogin(username, id) {
-        axios.get('/user/'+id)
+        axios.get('/user/'+JSON.stringify(id))
             .then((res) => {
                 console.log(res);
                 if (!res.data && this.state.user_id) {
@@ -208,7 +208,23 @@ class App extends Component {
     }
 
     postBoardListUpdate(newBoards) {
-        let req = {boards: JSON.stringify(newBoards), id: this.state.user_id};
+        let cache = [];
+        let newBoardsJson = JSON.stringify(newBoards, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    try {
+                        return JSON.parse(JSON.stringify(value));
+                    } catch (error) {
+                        return;
+                    }
+                }
+                cache.push(value);
+            }
+            return value;
+        });
+        cache = null;
+        // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
+        let req = {board_representation: newBoardsJson, id: this.state.user_id};
         axios.post('/user/board', req)
             .then((res) => console.log(res))
             .catch((error) => console.log(error));
