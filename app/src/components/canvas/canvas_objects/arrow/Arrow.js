@@ -72,7 +72,6 @@ class Arrow extends React.Component {
             easing: Konva.Easings.ElasticEaseOut,
         });
         e.target.moveToTop();
-        e.target.getStage().findOne('Transformer').moveToTop();
     }
 
     onDragEnd(e) {

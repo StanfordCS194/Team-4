@@ -214,7 +214,6 @@ class Canvas extends React.Component {
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
         });
-        console.log('past arr', this.state.pastObjArray);
     }
 
     handleOnWheel(e) {
@@ -558,7 +557,7 @@ class Canvas extends React.Component {
         if (textarea) {
             textarea.style.display = '';
             let rect = textarea.getBoundingClientRect();
-            let x = rect.x + rect.width/2;
+            let x = rect.x;
             let y = rect.y;
 
             let poof = document.createElement("div");

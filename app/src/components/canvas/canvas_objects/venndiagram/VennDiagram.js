@@ -75,8 +75,7 @@ class VennDiagram extends React.Component {
             scaleY: 1.1 * e.target.attrs.scaleY,
             easing: Konva.Easings.ElasticEaseOut,
         });
-        e.target.moveToTop();
-        e.target.getStage().findOne('Transformer').moveToTop();
+        e.target.moveToBottom();
     }
 
     onDragEnd(e) {

@@ -145,7 +145,7 @@ class Sticky extends React.Component {
             position: {
                 x: e.target.x(),
                 y: e.target.y()
-            }
+            },
         });
 
         // remove shadow
@@ -154,6 +154,10 @@ class Sticky extends React.Component {
             shadowOffsetX: 0,
             shadowOffsetY: 0,
         });
+
+        let textarea = document.getElementById(this.props.id);
+        textarea.style.top = e.evt.clientY + 'px';
+        textarea.style.left = e.evt.clientX + 'px';
     }
 
     render() {
@@ -171,6 +175,7 @@ class Sticky extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
+                onDrop={(e) => this.onDrop(e)}
                 scaleX={this.state.scale}
                 scaleY={this.state.scale}
             >

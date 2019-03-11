@@ -88,7 +88,6 @@ class Cloud extends React.Component {
             easing: Konva.Easings.ElasticEaseOut,
         });
         e.target.moveToTop();
-        e.target.getStage().findOne('Transformer').moveToTop();
     }
 
     onDragEnd(e) {
@@ -102,6 +101,10 @@ class Cloud extends React.Component {
             x: e.target.x(),
             y: e.target.y()
         });
+
+        let textarea = document.getElementById(this.props.id);
+        textarea.style.top = e.evt.clientY + 'px';
+        textarea.style.left = e.evt.clientX + 'px';
     }
 
     componentDidMount() {
