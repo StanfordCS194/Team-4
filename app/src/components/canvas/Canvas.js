@@ -69,6 +69,7 @@ class Canvas extends React.Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.loadBoard = this.loadBoard.bind(this);
         this.clearBoardAndLoadNewBoard = this.clearBoardAndLoadNewBoard.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     getImageURI() {
@@ -622,40 +623,45 @@ class Canvas extends React.Component {
         });
     }
 
-    deleteSelectedObj(selectedObjectId) {
+    delete() {
         /**
-         * Deletes the object with given selectedObjectId from the board display
-         * and creates a CSS sprite 'poof in the object's place.
-         * @param {string} selectedObjectId Unique ID linked to a single canvas object.
+         * Deletes the selected canvas objects by ID and
+         * creates a CSS sprite 'poof' in the object's place.
          */
-        // Add CSS sprite animation of cloud poof
-
-        let textarea = document.getElementById(selectedObjectId);
-        if (textarea) {
-            textarea.style.display = '';
-            let rect = textarea.getBoundingClientRect();
-            let x = rect.x;
-            let y = rect.y;
-
-            let poof = document.createElement("div");
-            poof.className = "poof";
-            poof.style.display = 'block';
-            poof.style.position = 'absolute';
-            poof.style.top = y + 'px';
-            poof.style.left = x + 'px';
-            document.body.appendChild(poof);
-        }
-
-        // find index of sticky to delete
-        const sticky = this.state.objectArray.find(sticky => {
-            if (!sticky) { return false; }
-            else { return sticky.props.id.toString() === selectedObjectId.toString(); }
-        });
-        let index = this.state.objectArray.indexOf(sticky);
         let newObjectRefs = this.state.objectRefs.slice();
         let newObjectArray = this.state.objectArray.slice();
-        newObjectArray[index] = null;
-        newObjectRefs[index] = null;
+
+        let i = 0;
+        for (i ; i < this.state.selectedCanvasObjectIds.length; i++) {
+            let selectedObjectId = this.state.selectedCanvasObjectIds[i];
+
+            // Add CSS sprite animation of cloud poof
+            let textarea = document.getElementById(selectedObjectId);
+            if (textarea) {
+                textarea.style.display = '';
+                let rect = textarea.getBoundingClientRect();
+                let x = rect.x;
+                let y = rect.y;
+
+                let poof = document.createElement("div");
+                poof.className = "poof";
+                poof.style.display = 'block';
+                poof.style.position = 'absolute';
+                poof.style.top = y + 'px';
+                poof.style.left = x + 'px';
+                document.body.appendChild(poof);
+            }
+
+            // find index of canvasObject to delete
+            const canvasObject = this.state.objectArray.find(canvasObject => {
+                if (!canvasObject) { return false; }
+                else { return canvasObject.props.id.toString() === selectedObjectId.toString(); }
+            });
+            let index = this.state.objectArray.indexOf(canvasObject);
+            newObjectArray[index] = null;
+            newObjectRefs[index] = null;
+        }
+
         this.setState({
             objectArray: newObjectArray,
             objectRefs: newObjectRefs,
@@ -730,13 +736,9 @@ class Canvas extends React.Component {
             this.loadBoard(this.state.savedBoard);
         }
 
-        // Delete selected canvas object on press of delete
+        // Delete selected canvas object on press of delete key on mac
         if (e.keyCode === 8 && !this.isEditingText()) {
-            let i = 0;
-            for (i ; i < this.state.selectedCanvasObjectIds.length; i++) {
-                let selectedObjectId = this.state.selectedCanvasObjectIds[i];
-                this.deleteSelectedObj(selectedObjectId);
-            }
+            this.delete();
         }
     };
 

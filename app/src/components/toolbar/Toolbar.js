@@ -17,7 +17,7 @@ class Toolbar extends Component {
             tools: ['undo', 'save', 'delete', 'color'],
             openColorPicker: false,
             icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon/>, null],
-            onClicks: [this.props.undo, this.props.saveBoard, null, null]
+            onClicks: [this.props.undo, this.props.saveBoard, this.props.delete, null]
         };
     }
 

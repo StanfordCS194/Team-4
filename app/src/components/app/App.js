@@ -51,6 +51,7 @@ class App extends Component {
         this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
         this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
         this.saveBoardToBoardList = this.saveBoardToBoardList.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
     saveBoardToBoardList() {
@@ -125,6 +126,10 @@ class App extends Component {
 
     onColorChange(color) {
         this.setState({nextColor: color.hex})
+    }
+
+    onDelete() {
+        this.canvas.current.delete();
     }
 
     onUndo() {
@@ -520,6 +525,7 @@ class App extends Component {
                     onColorChange={this.onColorChange}
                     nextColor={this.state.nextColor}
                     undo={this.onUndo}
+                    delete={this.onDelete}
                     saveBoard={this.saveBoardToBoardList}
                 />
 
