@@ -56,7 +56,7 @@ class App extends Component {
     saveBoardToBoardList() {
         let newBoard = this.canvas.current.saveBoard();
         let newBoards = [newBoard];
-        let oldBoards = this.state.boards;
+        let oldBoards = this.state.boards.slice();
         let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
         newBoard.name = "New Board";
@@ -88,7 +88,8 @@ class App extends Component {
         }
     }
 
-    switchToBoard(boardIndex) {
+    switchToBoard(boardIndex, shouldSavePrevious) {
+        if (boardIndex === this.state.editingBoardIndex) return;
         this.setState({editingBoardIndex: boardIndex});
         this.canvas.current.clearBoardAndLoadNewBoard(this.state.boards[boardIndex]);
         console.log("switched to board " + boardIndex);
@@ -186,8 +187,9 @@ class App extends Component {
         if (e.keyCode === 13) { // Pressed enter
             if (!e.target.value) return;
             let changedBoard = board;
-            let newBoards = this.state.boards;
             changedBoard.name = e.target.value;
+            let newBoards = this.state.boards.slice();
+
             newBoards[i] = changedBoard;
             this.setState({boards: newBoards}, () => console.log(this.state.boards[i].name));
             this.postBoardListUpdate(newBoards);
@@ -249,6 +251,7 @@ class App extends Component {
     }
 
     postBoardListUpdate(newBoards) {
+        // Handle circular references
         let cache = [];
         let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
             if (typeof value === 'object' && value !== null) {
@@ -302,11 +305,13 @@ class App extends Component {
                         <ul>
                             {this.state.boards.map((board, i) =>
                                 <li className={i === this.state.editingBoardIndex ? "saved-board-elem-selected" : "saved-board-elem"}
-                                    onClick={() => this.switchToBoard(i)}>
+                                    >
                                     <div>
                                         <img
                                             className={i === this.state.editingBoardIndex ? "board-thumbnail-selected" : "board-thumbnail"}
-                                            src={board.imgUri}/>
+                                            src={board.imgUri}
+                                            onClick={() => this.switchToBoard(i, true)}
+                                        />
                                     </div>
 
                                     <div id="board-name-container">

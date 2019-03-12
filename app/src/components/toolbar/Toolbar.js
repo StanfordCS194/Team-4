@@ -16,7 +16,7 @@ class Toolbar extends Component {
         this.state = {
             tools: ['undo', 'save', 'delete', 'color'],
             openColorPicker: false,
-            icons: [<UndoIcon onClick={this.props.undo}/>, <SaveIcon onClick={this.props.saveBoard}/>, <DeleteIcon/>, null],
+            icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon/>, null],
             onClicks: [this.props.undo, this.props.saveBoard, null, null]
         };
     }
@@ -33,7 +33,7 @@ class Toolbar extends Component {
                 key={this.state.tools[i]}
                 color="primary"
                 className="tools"
-                onClick={this.state.onClicks[i]}
+                onClick={() => this.state.onClicks[i]()}
             >
                 {this.state.icons[i]}
                 {this.state.tools[i] === 'color' &&
