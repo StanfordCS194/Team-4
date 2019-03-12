@@ -551,7 +551,7 @@ class App extends Component {
                     />
                 </div>
 
-                <div className="logo"><img src="./public/media/logo.png" id="logo"/>hi there</div>
+                <div className="logo"><img src="./public/media/logo.png" id="logo"/></div>
             </Fragment>
         );
     }

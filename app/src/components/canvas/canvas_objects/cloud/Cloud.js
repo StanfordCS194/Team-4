@@ -32,6 +32,10 @@ class Cloud extends React.Component {
     }
 
     getStateObj() {
+        /**
+         * Returns an object representing the current state of the cloud component.
+         * @return {object} state An object containing the current state of the Cloud component.
+         */
         let state = this.state;
         state.finalTextValue = this.textarea.current.getTextValue(); // need to get final text value which is a level deeper in textarea component
         state.fontSize = this.textarea.current.getFontSize(); // need final font size
@@ -39,7 +43,10 @@ class Cloud extends React.Component {
     }
 
     handleTransform(e) {
-        // Update the scaleX and scaleY of sticky after transforming
+        /**
+         * Updates the scale, rotation, and position of the Cloud after transforming.
+         * @param {object} e An onTransform event object.
+         */
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
             scaleY: e.currentTarget.attrs.scaleY,
@@ -50,6 +57,10 @@ class Cloud extends React.Component {
     }
 
     animateRaise() {
+        /**
+         * Animates Cloud with magnification to appear as
+         * if it were being "lifted" from the board.
+         */
         this.group.current.to({
             scaleX: 1.1 * this.state.scaleX,
             scaleY: 1.1 * this.state.scaleY,
@@ -58,6 +69,10 @@ class Cloud extends React.Component {
     }
 
     animateDrop() {
+        /**
+         * Animates Cloud by returning to normal size
+         * to appear as if it were being "placed" on the board.
+         */
         this.group.current.to({
             scaleX: this.state.scaleX / 1.1,
             scaleY: this.state.scaleX / 1.1,
@@ -65,8 +80,11 @@ class Cloud extends React.Component {
         });
     }
 
-    // Add cursor styling
     onMouseOver() {
+        /**
+         * Adds cursor styling to pointer on hover and animates
+         * Cloud if it is a button.
+         */
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
@@ -74,29 +92,31 @@ class Cloud extends React.Component {
     }
 
     onMouseOut() {
+        /**
+         * Adds cursor styling to default when not hovered over
+         * and animates Cloud if it is a button.
+         */
         document.body.style.cursor = 'default';
         if (this.props.isButton) {
             this.animateDrop();
         }
     }
 
-    // Raising and lowering animations
     onDragStart(e) {
-        e.target.to({ // Todo just call animateRaise()
-            scaleX: 1.1 * e.target.attrs.scaleX,
-            scaleY: 1.1 * e.target.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
+        /**
+         * Animates Cloud to "lift" from board on drag start.
+         * @param: {object} e An onDragStart event object.
+         */
+        this.animateRaise();
         e.target.moveToTop();
     }
 
     onDragEnd(e) {
-        e.target.to({ // Todo just call animateDrop()
-            scaleX: e.target.attrs.scaleX / 1.1,
-            scaleY: e.target.attrs.scaleY / 1.1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-
+        /**
+         * Animates Cloud to "place" on board on drag end.
+         * @param: {object} e An onDragEnd event object.
+         */
+        this.animateDrop();
         this.setState({
             x: e.target.x(),
             y: e.target.y()
@@ -108,6 +128,9 @@ class Cloud extends React.Component {
     }
 
     componentDidMount() {
+        /**
+         * Focuses on Cloud textarea after mounting to enable immediate text editing on creation.
+         */
         // Need setTimeout because getElementById must occur after render
         setTimeout(() => {
             let textarea = document.getElementById(this.props.id.toString());
@@ -176,7 +199,7 @@ class Cloud extends React.Component {
                     y={this.state.textY}
                 />
             </Group>
-        )
+        );
     }
 }
 

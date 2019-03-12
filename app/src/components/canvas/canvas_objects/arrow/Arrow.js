@@ -20,10 +20,18 @@ class Arrow extends React.Component {
     }
 
     getStateObj() {
+        /**
+         * Returns an object representing the current state of the Arrow component.
+         * @return {object} state An object containing the current state of the Arrow component.
+         */
         return this.state;
     }
 
     animateRaise() {
+        /**
+         * Animates Arrow with magnification to appear as
+         * if it were being "lifted" from the board.
+         */
         this.group.current.to({
             scaleX: 1.1 * this.state.scaleX,
             scaleY: 1.1 * this.state.scaleY,
@@ -32,6 +40,10 @@ class Arrow extends React.Component {
     }
 
     animateDrop() {
+        /**
+         * Animates Arrow by returning to normal size
+         * to appear as if it were being "placed" on the board.
+         */
         this.group.current.to({
             scaleX: this.state.scaleX / 1.1,
             scaleY: this.state.scaleY / 1.1,
@@ -40,7 +52,10 @@ class Arrow extends React.Component {
     }
 
     handleTransform(e) {
-        // Update the scaleX and scaleY after transforming
+        /**
+         * Updates the scale, rotation, and position of the Arrow after transforming.
+         * @param {object} e An onTransform event object.
+         */
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
             scaleY: e.currentTarget.attrs.scaleY,
@@ -50,14 +65,22 @@ class Arrow extends React.Component {
         });
     }
 
-    // Add cursor styling
     onMouseOver() {
+        /**
+         * Adds cursor styling to pointer on hover and animates
+         * Arrow if it is a button.
+         */
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
         }
     }
+
     onMouseOut() {
+        /**
+         * Adds cursor styling to default when not hovered over
+         * and animates Arrow if it is a button.
+         */
         document.body.style.cursor = 'default';
         if (this.props.isButton) {
             this.animateDrop();
@@ -66,21 +89,20 @@ class Arrow extends React.Component {
 
     // Raising and lowering animations
     onDragStart(e) {
-        e.target.to({
-            scaleX: 1.1 * e.target.attrs.scaleX,
-            scaleY: 1.1 * e.target.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
+        /**
+         * Animates Arrow to "lift" from board on drag start.
+         * @param: {object} e An onDragStart event object.
+         */
+        this.animateRaise();
         e.target.moveToTop();
     }
 
     onDragEnd(e) {
-        e.target.to({
-            scaleX: e.target.attrs.scaleX / 1.1,
-            scaleY: e.target.attrs.scaleY / 1.1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-
+        /**
+         * Animates Arrow to "place" on board on drag end.
+         * @param: {object} e An onDragEnd event object.
+         */
+        this.animateDrop();
         this.setState({
             x: e.target.x(),
             y: e.target.y()
@@ -88,6 +110,9 @@ class Arrow extends React.Component {
     }
 
     componentDidMount() {
+        /**
+         * Animates Arrow being "dropped" on board on creation.
+         */
         if (this.props.isBeingLoaded) return;
         this.animateDrop();
     }
@@ -128,7 +153,7 @@ class Arrow extends React.Component {
                     rotation={-90}
                 />
             </Group>
-        )
+        );
     }
 }
 

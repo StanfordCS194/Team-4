@@ -18,21 +18,36 @@ class Textarea extends React.Component {
     }
 
     getTextValue() {
+        /**
+         * Returns the current finalTextValue stored in the state.
+         */
         return this.state.finalTextValue;
     }
 
     getFontSize() {
+        /**
+         * Returns the current fontSize stored in the state.
+         */
         return this.state.fontSize;
     }
 
     handleTextEdit(e) {
+        /**
+         * Updates the state textAreaValue variable to hold the
+         * new value after the current textarea has been changed.
+         * @param: {object} e An onChange event object.
+         */
       this.setState({
         textAreaValue: e.target.value
       });
     }
 
-    // on pressing enter, exit text edit and reset font size so text fits in textarea
     handleTextareaKeyDown(e) {
+        /**
+         * On pressing enter, exits the textarea and resets the font
+         * size so that overflow text fits within the Konva Text component.
+         * @param {object} e An onKeyDown event object from the textarea.
+         */
         const KEY_CODE_ENTER = 13;
         if (e.keyCode === KEY_CODE_ENTER) {
 
@@ -48,7 +63,7 @@ class Textarea extends React.Component {
                 fontSizeNum -= 1;
                 textarea.style.fontSize = fontSizeNum + "px";
 
-                // Adjust the line height when the difference between text box and text area is noticeable
+                // Adjust  line height when the difference between text box and text area is noticeable
                 if (fontSizeNum < 33) {
                     textarea.style.lineHeight = '25pt'
                 } else if (fontSizeNum > 50) {
@@ -66,8 +81,12 @@ class Textarea extends React.Component {
         }
     }
 
-    // On dbl click, set make text editor visible and focus on textedit
     handleTextDblClick(e) {
+        /**
+         * Sets textarea as visible and focuses on textarea for immediate editing
+         * on double click.
+         * @param: {object} e An onDblClick event object from the Konva Text component.
+         */
         const absPos = e.target.getAbsolutePosition();
         this.setState({
             finalTextValue: '', //hide the current sticky text
@@ -80,8 +99,10 @@ class Textarea extends React.Component {
         textarea.focus();
     }
 
-    // On focus out/ blur of text area, leave editing mode
     handleBlur() {
+        /**
+         * Exits textarea and enables dragging when textarea is no longer in focus.
+         */
         let textarea = document.getElementById(this.props.id.toString());
         this.setState({
             finalTextValue: textarea.value,
@@ -133,7 +154,6 @@ class Textarea extends React.Component {
                   />
                 </Portal>
             </Group>
-
         );
     }
 }

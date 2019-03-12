@@ -23,11 +23,18 @@ class VennDiagram extends React.Component {
     }
 
     getStateObj() {
+        /**
+         * Returns an object representing the current state of the VennDiagram component.
+         * @return {object} state An object containing the current state of the VennDiagram component.
+         */
         return this.state;
     }
 
     handleTransform(e) {
-        // Update the scaleX and scaleY after transforming
+        /**
+         * Updates the scale, rotation, and position of the VennDiagram after transforming.
+         * @param {object} e An onTransform event object.
+         */
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
             scaleY: e.currentTarget.attrs.scaleY,
@@ -38,6 +45,10 @@ class VennDiagram extends React.Component {
     }
 
     animateRaise() {
+        /**
+         * Animates VennDiagram with magnification to appear as
+         * if it were being "lifted" from the board.
+         */
         this.group.current.to({
             scaleX: 1.1 * this.state.scaleX,
             scaleY: 1.1 * this.state.scaleY,
@@ -46,6 +57,10 @@ class VennDiagram extends React.Component {
     }
 
     animateDrop() {
+        /**
+         * Animates VennDiagram by returning to normal size
+         * to appear as if it were being "placed" on the board.
+         */
         this.group.current.to({
             scaleX: this.state.scaleX / 1.1,
             scaleY: this.state.scaleY / 1.1,
@@ -53,8 +68,11 @@ class VennDiagram extends React.Component {
         });
     }
 
-    // Add cursor styling
     onMouseOver() {
+        /**
+         * Adds cursor styling to pointer on hover and animates
+         * VennDiagram if it is a button.
+         */
         document.body.style.cursor = 'pointer';
         if (this.props.isButton) {
             this.animateRaise();
@@ -62,29 +80,31 @@ class VennDiagram extends React.Component {
     }
 
     onMouseOut() {
+        /**
+         * Adds cursor styling to default when not hovered over
+         * and animates VennDiagram if it is a button.
+         */
         document.body.style.cursor = 'default';
         if (this.props.isButton) {
             this.animateDrop();
         }
     }
 
-    // Raising and lowering animations
     onDragStart(e) {
-        e.target.to({
-            scaleX: 1.1 * e.target.attrs.scaleX,
-            scaleY: 1.1 * e.target.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
+        /**
+         * Animates VennDiagram to "lift" from board on drag start.
+         * @param: {object} e An onDragStart event object.
+         */
+        this.animateRaise();
         e.target.moveToBottom();
     }
 
     onDragEnd(e) {
-        e.target.to({
-            scaleX: e.target.attrs.scaleX / 1.1,
-            scaleY: e.target.attrs.scaleY / 1.1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-
+        /**
+         * Animates VennDiagram to "place" on board on drag end.
+         * @param: {object} e An onDragEnd event object.
+         */
+        this.animateDrop();
         this.setState({
             x: e.target.x(),
             y: e.target.y()
@@ -92,6 +112,9 @@ class VennDiagram extends React.Component {
     }
 
     componentDidMount() {
+        /**
+         * Animates VennDiagram being "dropped" on board on creation.
+         */
         if (!this.props.isBeingLoaded) this.animateDrop();
     }
 
@@ -129,7 +152,7 @@ class VennDiagram extends React.Component {
                     strokeWidth={5}
                 />
             </Group>
-        )
+        );
     }
 }
 
