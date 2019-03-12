@@ -40,6 +40,7 @@ class App extends Component {
             editingBoardIndex: 0,
             username: null,
             user_id: null,
+            editingBoardName: false,
         };
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
         this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
@@ -199,6 +200,7 @@ class App extends Component {
     }
 
     handleClickOnBoardName(e, i, board) {
+        this.setState({editingBoardName: true});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
         boardName.style.display = 'none';
@@ -208,6 +210,7 @@ class App extends Component {
     }
 
     handleBoardNameInputBlur(i) {
+        this.setState({editingBoardName: false});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
         input.style.display = 'none';
@@ -218,7 +221,7 @@ class App extends Component {
         /**
          * Delete a board by pressing delete when viewing my boards bar
          */
-        if (this.state.viewingMyBoards && this.state.sidebarOpen) {
+        if (this.state.viewingMyBoards && this.state.sidebarOpen && e.keyCode === 8 && !this.state.editingBoardName) {
             this.deleteBoard(this.state.editingBoardIndex);
         }
     };
