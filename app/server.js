@@ -308,16 +308,16 @@ app.get('/boardsOfUser/:id', function (req, res) {
             res.status(400).send('Could not find photos of user with id: ' + JSON.stringify(id));
             return;
         }
-        let userDetails = JSON.parse(JSON.stringify(info)), res = [];
+        let userDetails = JSON.parse(JSON.stringify(info)), result = [];
         for (let i = 0; i < userDetails.boards.length; i++) {
-          res.push({
+          result.push({
             _id: userDetails.boards[i]._id,
             name: userDetails.boards[i].name,
             date_time: userDetails.boards[i].date_time,
             thumnail: userDetails.boards[i].thumbnail,
           });
         }
-        res.end(JSON.stringify(res));
+        res.end(JSON.stringify(result));
     });
 });
 
@@ -418,6 +418,7 @@ app.get('/delete/:board_id', function (req, res) {
  *  name - desired name for board
  *  content - content for the board
  *  thumbnail - thumbnail representing the board
+ *  date_time - date of last edit for board
  * returns:
  *  'board saved'
  *
@@ -434,7 +435,7 @@ app.post('/saveBoard/:board_id', function (req, res) {
     {$set: {
       boards: {
         _id: req.params.board_id,
-        date_time: new Date(),
+        date_time: req.body.date_time,
         name: req.body.name,
         content: req.body.content,
         thumbnail: req.body.thumbnail,
@@ -464,6 +465,7 @@ app.post('/saveBoard/:board_id', function (req, res) {
  *  name - desired name for board
  *  content - content for the board
  *  thumbnail - a thumbnail(png or jpeg file) for the board
+ *  date_time - date time of last edit of board
  * returns:
  *  _id: automatically generated id for the new board
  *
@@ -478,7 +480,7 @@ app.post('/createdBoard', function (req, res) {
     {_id: req.session.logged_in_user._id},
     {$push: {
       boards: {
-        date_time: new Date(),
+        date_time: req.body.name,
         name: req.body.name,
         content: req.body.content,
         thumbnail: req.body.thumbnail

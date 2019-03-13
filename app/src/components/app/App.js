@@ -65,7 +65,7 @@ class App extends Component {
          */
         let newBoard = this.canvas.current.saveBoard();
         let newBoards = [];
-        let oldBoards = this.state.boards.slice();
+        let oldBoards = this.state.boardList;
         let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
         newBoard.name = oldBoards[editingBoardIndex].name; // keep name from before
@@ -330,7 +330,7 @@ class App extends Component {
                                 // load board list from server
                                 axios.get('/boardsOfUser/' + this.state.user_id)
                                     .then((res) => {
-                                        this.setState({boardList: JSON.parse(res.data)});
+                                        this.setState({boardList: res.data});
                                     })
                                     .catch((error) => console.log(error))
                             })
