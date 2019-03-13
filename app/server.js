@@ -43,10 +43,6 @@ app.use(express.static(__dirname));
 // usful installs
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: '50mb', extended: true}));
-var fs = require("fs");
-// multer is for download of large files
-var multer = require('multer');
-var processFormBody = multer({storage: multer.memoryStorage()}).single('upload');
 
 // default to port 3000 if no port specified
 let port = process.argv[2] || 3000;
@@ -166,8 +162,8 @@ app.post('/user', function(req, res) {
         if (err) {
             // Query returned an error.  We pass it back to the browser with an Internal Service
             // Error (500) error code.
-            res.status(400).send('Doing /user, upload failed');
-            console.error('Doing /user, upload failed');
+            res.status(400).send('Doing /user, upload failed', JSON.stringify(err));
+            console.error('Doing /user, upload failed', err);
             return;
         }
         if (!response) {
@@ -246,7 +242,7 @@ app.get('/user/:id', function (req, res) {
 app.post('/user/board', function(req, res) {
   if (!req.session.loggedIn) {
     console.error('must log in before accessing user content');
-    response.status(401).send('must log in before accessing user content with /user/:id');
+    res.status(401).send('must log in before accessing user content with /user/:id');
     return;
   }
   User.updateOne(
@@ -367,7 +363,7 @@ app.get('/getBoard/:board_id', function (req, res) {
           return board._id === board_id;
         });
         if (foundBoard) {
-          res.end(JSON.stringify(foundBaord));
+          res.end(JSON.stringify(foundBoard));
         } else {
           res.status(400).send('Could not find board with id: ' + JSON.stringify(board_id));
         }
@@ -409,7 +405,7 @@ app.get('/delete/:board_id', function (req, res) {
         if (!info) {
             // Query didn't return an error but didn't find the SchemaInfo object - This
             // is also an internal error return.
-            res.status(400).send('Could not find user with id: ' + JSON.stringify(id));
+            res.status(400).send('Could not find user with id: ' + JSON.stringify(req.session.logged_in_user._id));
             return;
         }
         res.end(`deleted board ${board_id}`);
@@ -507,7 +503,6 @@ app.post('/createdBoard', function (req, res) {
 });
 
 // ##################################################################### //
-
-var server = app.listen(port, function () {
+app.listen(port, function () {
     console.log('Listening at http://localhost:' + port + ' exporting the directory ' + __dirname);
 });
