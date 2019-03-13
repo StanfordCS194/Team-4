@@ -65,7 +65,8 @@ class App extends Component {
          */
         let newBoard = this.canvas.current.saveBoard();
         let newBoards = [];
-        let oldBoards = this.state.boards.slice();
+        // let oldBoards = this.state.boards.slice();
+        let oldBoards = this.state.boardList;
         let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
         newBoard.name = oldBoards[editingBoardIndex].name; // keep name from before
@@ -401,32 +402,32 @@ class App extends Component {
         });
     }
 
-    // postBoardListUpdate(newBoards, callback) {
-    //     // Handle circular references
-    //     let cache = [];
-    //     let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
-    //         if (typeof value === 'object' && value !== null) {
-    //             if (cache.indexOf(value) !== -1) {
-    //                 try {
-    //                     return JSON.parse(JSON.stringify(value));
-    //                 } catch (error) {
-    //                     return;
-    //                 }
-    //             }
-    //             cache.push(value);
-    //         }
-    //         return value;
-    //     });
-    //     cache = null;
-    //     // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
-    //     let req = {board_representation: newBoardsJson, id: this.state.user_id};
-    //     axios.post('/user/board', req)
-    //         .then((res) => {
-    //             console.log(res);
-    //             if (callback) callback();
-    //         })
-    //         .catch((error) => console.log(error));
-    // }
+    postBoardListUpdate(newBoards, callback) {
+        // Handle circular references
+        let cache = [];
+        let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    try {
+                        return JSON.parse(JSON.stringify(value));
+                    } catch (error) {
+                        return;
+                    }
+                }
+                cache.push(value);
+            }
+            return value;
+        });
+        cache = null;
+        // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
+        let req = {board_representation: newBoardsJson, id: this.state.user_id};
+        axios.post('/user/board', req)
+            .then((res) => {
+                console.log(res);
+                if (callback) callback();
+            })
+            .catch((error) => console.log(error));
+    }
 
     handleSaveButtonPressed() {
         /**
