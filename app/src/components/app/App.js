@@ -65,7 +65,7 @@ class App extends Component {
          */
         let newBoard = this.canvas.current.saveBoard();
         let newBoards = [];
-        let oldBoards = this.state.boardList;
+        let oldBoards = this.state.boards.slice();
         let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
         newBoard.name = oldBoards[editingBoardIndex].name; // keep name from before
@@ -316,23 +316,33 @@ class App extends Component {
                         currentBoard: this.canvas.current.saveBoard(),
                     }, () => {
                         // this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
-
+                        let content = {
+                            boardState: this.state.currentBoard.boardState,
+                            componentStates: this.state.currentBoard.componentStates
+                        };
                         let req = {
                             name: "New Board",
-                            content: JSON.stringify(this.state.currentBoard),
+                            content: JSON.stringify(content),
                             thumbnail: JSON.stringify(this.state.currentBoard.imgUri),
-                        };
+                        }; //todo get rid of double uri
 
                         // post board creation to server
                         axios.post('/createdBoard', req)
-                            .then(() => {
+                            .then((createdBoardRes) => {
+                                let currentBoard = {...this.state.currentBoard};
+                                currentBoard._id = createdBoardRes.data._id;
+                                currentBoard.name = "New Board";
+                                this.setState({
+                                    currentBoard: currentBoard,
+                                }); // assign returned id to current board
 
                                 // load board list from server
-                                axios.get('/boardsOfUser/' + this.state.user_id)
-                                    .then((res) => {
-                                        this.setState({boardList: res.data});
-                                    })
-                                    .catch((error) => console.log(error))
+                                this.updateBoardListFromServer();
+                                // axios.get('/boardsOfUser/' + this.state.user_id)
+                                //     .then((res) => {
+                                //         this.setState({boardList: JSON.parse(res.data)});
+                                //     })
+                                //     .catch((error) => console.log(error))
                             })
                             .catch((error) => console.log(error));
                     }
@@ -391,31 +401,70 @@ class App extends Component {
         });
     }
 
-    postBoardListUpdate(newBoards, callback) {
-        // Handle circular references
-        let cache = [];
-        let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
-            if (typeof value === 'object' && value !== null) {
-                if (cache.indexOf(value) !== -1) {
-                    try {
-                        return JSON.parse(JSON.stringify(value));
-                    } catch (error) {
-                        return;
-                    }
-                }
-                cache.push(value);
-            }
-            return value;
+    // postBoardListUpdate(newBoards, callback) {
+    //     // Handle circular references
+    //     let cache = [];
+    //     let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
+    //         if (typeof value === 'object' && value !== null) {
+    //             if (cache.indexOf(value) !== -1) {
+    //                 try {
+    //                     return JSON.parse(JSON.stringify(value));
+    //                 } catch (error) {
+    //                     return;
+    //                 }
+    //             }
+    //             cache.push(value);
+    //         }
+    //         return value;
+    //     });
+    //     cache = null;
+    //     // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
+    //     let req = {board_representation: newBoardsJson, id: this.state.user_id};
+    //     axios.post('/user/board', req)
+    //         .then((res) => {
+    //             console.log(res);
+    //             if (callback) callback();
+    //         })
+    //         .catch((error) => console.log(error));
+    // }
+
+    handleSaveButtonPressed() {
+        /**
+         * Updates current board state var to reflect what's currently on canvas,
+         * then posts updated board to server.
+         */
+        let savedBoard = this.canvas.current.saveBoard();
+        savedBoard._id = this.state.currentBoard._id;
+        savedBoard.name = this.state.currentBoard.name;
+        savedBoard.thumbnail = savedBoard.imgUri;
+        this.setState({
+            currentBoard: savedBoard,
         });
-        cache = null;
-        // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
-        let req = {board_representation: newBoardsJson, id: this.state.user_id};
-        axios.post('/user/board', req)
+        this.postBoardUpdate(savedBoard, this.updateBoardListFromServer);
+        // todo: update date last updated
+
+    }
+
+    postBoardUpdate(newBoard, callback) {
+        let content = {
+            boardState: newBoard.boardState,
+            componentStates: newBoard.componentStates
+        };
+        this.setState({currentBoard: newBoard});
+        let req = {
+            name: newBoard.name,
+            content: content,
+            thumbnail: newBoard.thumbnail
+        };
+        axios.post('/saveBoard/' + this.state.currentBoard._id, )
+    }
+
+    updateBoardListFromServer() {
+        axios.get('/boardsOfUser/' + this.state.user_id)
             .then((res) => {
-                console.log(res);
-                if (callback) callback();
+                this.setState({boardList: res.data});
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log(error))
     }
 
     makeSideBarContent = () => {
