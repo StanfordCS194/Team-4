@@ -1,7 +1,7 @@
 'use strict';
 /* jshint node: true */
 
-/*
+/**
 * This builds a server for the epiphany app and
 * establishes a connection to the MongoDB named ''.
 *

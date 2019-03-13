@@ -172,14 +172,17 @@ class App extends Component {
     }
 
     onVennDiagramButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addVennDiagramToBoard();
     }
 
     onCloudButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addCloudToBoard();
     }
 
     onArrowButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addArrowToBoard();
     }
 
@@ -443,6 +446,7 @@ class App extends Component {
                                     smallSelected: true,
                                     medSelected: false,
                                     largeSelected: false,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.smallSelected ? 'black' : null}
                                 strokeWidth={3}
@@ -464,6 +468,7 @@ class App extends Component {
                                     smallSelected: false,
                                     medSelected: true,
                                     largeSelected: false,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.medSelected ? 'black' : null}
                                 strokeWidth={3}
@@ -486,6 +491,7 @@ class App extends Component {
                                     smallSelected: false,
                                     medSelected: false,
                                     largeSelected: true,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.largeSelected ? 'black' : null}
                                 strokeWidth={3}

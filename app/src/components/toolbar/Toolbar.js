@@ -11,14 +11,21 @@ import UndoIcon from '@material-ui/icons/Undo';
 
 class Toolbar extends Component {
     constructor(props) {
-        console.log(props);
         super(props);
         this.state = {
             tools: ['undo', 'save', 'delete', 'color'],
             openColorPicker: false,
             icons: [<UndoIcon />, <SaveIcon />, <DeleteIcon/>, null],
-            onClicks: [this.props.undo, this.props.saveBoard, this.props.delete, null]
+            onClicks: [this.props.undo, this.props.saveBoard, this.props.delete, this.nullFunction]
         };
+    }
+
+    nullFunction() {
+        /**
+         * For lack of a better way to deal with having no onClick function defined for the
+         * color picker in createToolIcons
+         */
+        console.log("nullFunction does nothing");
     }
 
     componentWillMount() {

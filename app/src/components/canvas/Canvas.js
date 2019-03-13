@@ -123,10 +123,10 @@ class Canvas extends React.Component {
             // Allow diagonal resizing for non-stickies and all resizing for arrow
             let objectType = canvasObject.ref.current.state.className;
             let enabledAnchors = [];
-            if (objectType !== 'sticky') {
+            if (objectType !== 'sticky' && objectType !== 'plaintext') {
                 enabledAnchors = ['top-right', 'top-left', 'bottom-right', 'bottom-left'];
                 if (objectType.toString() === 'arrow') {
-                    enabledAnchors = enabledAnchors.concat(['middle-right', 'middle-left', 'bottom-center']);
+                    enabledAnchors = enabledAnchors.concat(['middle-right', 'middle-left', 'bottom-center', 'top-center']);
                 }
             }
 
@@ -340,7 +340,7 @@ class Canvas extends React.Component {
                 height={600}
                 fill={'#7EC0EE'}
                 scale={1}
-                fontSize={80}
+                fontSize={100}
                 textEditVisible={true}
                 isButton={false}
             />
