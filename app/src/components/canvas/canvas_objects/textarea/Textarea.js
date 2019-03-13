@@ -64,12 +64,16 @@ class Textarea extends React.Component {
                 textarea.style.fontSize = fontSizeNum + "px";
 
                 // Adjust  line height when the difference between text box and text area is noticeable
-                if (fontSizeNum < 33) {
+                if (fontSizeNum < 30) {
                     textarea.style.lineHeight = '25pt'
-                } else if (fontSizeNum > 50) {
-                  textarea.style.lineHeight = '70pt'
-                } else {
+                } else if (fontSizeNum < 40) {
                     textarea.style.lineHeight = '35pt'
+                } else if (fontSizeNum < 50) {
+                    textarea.style.lineHeight = '45pt'
+                } else if (fontSizeNum < 60) {
+                    textarea.style.lineHeight = '55pt'
+                } else {
+                  textarea.style.lineHeight = '65pt'
                 }
             }
             this.setState({

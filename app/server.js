@@ -91,14 +91,14 @@ app.post('/admin/login', function(req, res) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
         // Error (500) error code.
-        console.error('Doing /admin/login with login_name', login_name, ' received error:', err);
-        res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
+        console.error('Doing /admin/login with login_name', username, ' received error:', err);
+        res.status(400).send('Invalid login_name ' + username + ' received error ' + JSON.stringify(err));
         return;
     }
     if (!info) {
         // Query didn't return an error but didn't find the object - This
         // is also an internal error return.
-        res.status(400).send('Login failed with login_name: ' + login_name);
+        res.status(400).send('Login failed with login_name: ' + username);
         return;
     }
     // save session data
