@@ -285,7 +285,7 @@ class App extends Component {
                 }
                 this.setState({
                     username: res.data.username,
-                    boards: res.data.boards ? JSON.parse(res.data.boards) : [],
+                    boards: res.data.boards.length ? JSON.parse(res.data.boards) : [],
                     user_id: res.data._id,
                     editingBoardIndex: 0,
                 }, () => {

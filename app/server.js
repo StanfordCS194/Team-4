@@ -106,13 +106,13 @@ app.post('/admin/login', function(req, res) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
         // Error (500) error code.
         console.error('Doing /admin/login with login_name', username, ' received error:', err);
-        res.status(400).send('Invalid login_name ' + username + ' received error ' + JSON.stringify(err));
+        res.status(400).send('Invalid login_name ' + JSON.stringify(username)+ ' received error ' + JSON.stringify(err));
         return;
     }
     if (!info) {
         // Query didn't return an error but didn't find the object - This
         // is also an internal error return.
-        res.status(400).send('Login failed with login_name: ' + username);
+        res.status(400).send('Login failed with login_name: ' + JSON.stringify(username));
         return;
     }
     // save session data
@@ -157,8 +157,9 @@ app.get('/admin/check', function(req, res) {
   console.log('logged in: ', req.session.loggedIn);
   if (req.session.loggedIn) {
     console.log('with user: ', req.session.user.username);
+    res.end(JSON.stringify(req.session.user._id));
   }
-  res.end(JSON.stringify(req.session.user));
+  res.end();
 });
 
 // URL /admin/logout - Logout the current user
@@ -194,7 +195,7 @@ app.post('/user', function(req, res) {
     if (info.length !== 0) {
         // Query didn't return an error but didn't find the object - This
         // is also an internal error return.
-        res.status(400).send('Someone already has login name: ' + req.body.loginName);
+        res.status(400).send('Someone already has login name: ' + JSON.stringify(req.body.loginName));
         return;
     }
     User.create({
@@ -285,59 +286,30 @@ app.get('/user/:id', function (request, response) {
 // returns:
 //  a short messages and a 200 status
 app.post('/user/board', function(req, res) {
-  let id = req.body.id;
-  console.log('params', req.body);
   if (!req.session.loggedIn) {
     console.error('must log in before accessing user content');
     response.status(401).send('must log in before accessing user content with /user/:id');
     return;
   }
-  if (req.session.user._id !== id) {
-    console.error('cannot access account details of other users');
-    response.status(401).send('cannot access account details of other users');
-    return;
-  }
   User.updateOne(
-    {_id: id},
+    {_id: req.session.user._id},
     {$set: { boards: req.body.board_representation}},
     (err, response) => {
-      console.log('result', response);
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
-          console.error('Doing /commentsOfPhoto/:photo_id with id', id, ' received error:', err);
-          res.status(400).send('Invalid id ' + id + ' received error ' + JSON.stringify(err));
+          console.error('Doing /commentsOfPhoto/:photo_id with id', req.session.user._id, ' received error:', err);
+          res.status(400).send('Invalid id ' + JSON.stringify(req.session.user._id) + ' received error ' + JSON.stringify(err));
           return;
       }
       if (!response) {
           // Query didn't return an error but didn't find the object - This
           // is also an internal error return.
-          res.status(400).send('Nothing with id ' + id + ' found');
+          res.status(400).send('Nothing with id ' + JSON.stringify(req.session.user._id) + ' found');
           return;
       }
-      // res.end('saved boards');
-      // Print everything in User database
-      User.find({}, function (err, info) {
-        if (err) {
-            // Query returned an error.  We pass it back to the browser with an Internal Service
-            // Error (500) error code.
-            console.error('Doing /admin/login with login_name', login_name, ' received error:', err);
-            res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
-            return;
-        }
-        if (info.length === 0) {
-            // Query didn't return an error but didn't find the object - This
-            // is also an internal error return.
-            res.status(400).send('Login failed with login_name: ' + login_name);
-            return;
-        }
-        // preints representation of board
-        // console.log('returned info: ', info);
-        // res.end(JSON.stringify(info));
-        res.end('saved boards');
-      });
-    }
-  );
+      res.end('saved boards');
+  });
 });
 
 
@@ -348,8 +320,13 @@ app.post('/user/board', function(req, res) {
  *
  * parameters:
  *   none
- * returns:
- *   a list of boards of user without content attached
+ * returns: a list of the user boards, without content attached
+ *  board = {
+ *    name: set to name given in parameters
+ *    thumnail: set to thumbnail specified
+ *    date_time: set to the date and time that the board was added to the database
+ *    _id: automatically generated id for the new board
+ *  }
  */
 app.get('/boardsOfUser/:id', function (req, res) {
     let id = req.params.id;
@@ -377,8 +354,16 @@ app.get('/boardsOfUser/:id', function (req, res) {
             res.status(400).send('Could not find photos of user with id: ' + JSON.stringify(id));
             return;
         }
-        let userBoards = JSON.parse(JSON.stringify(info));
-        res.end(userBoards);
+        let userDetails = JSON.parse(JSON.stringify(info)), res = [];
+        for (let i = 0; i < userDetails.boards.length; i++) {
+          res.push({
+            _id: userDetails.boards[i]._id,
+            name: userDetails.boards[i].name,
+            date_time: userDetails.boards[i].date_time,
+            thumnail: userDetails.boards[i].thumbnail,
+          });
+        }
+        res.end(JSON.stringify(res));
     });
 });
 
@@ -439,7 +424,7 @@ app.get('/getBoard/:board_id', function (req, res) {
  * parameters:
  *   none
  * returns:
- *  'deleted board ' + :board_id
+ *  `deleted board ${board_id}`
  */
 app.get('/delete/:board_id', function (req, res) {
     let board_id = req.params.board_id;
@@ -526,13 +511,7 @@ app.post('/saveBoard/:board_id', function (req, res) {
  *  content - content for the board
  *  thumbnail - a thumbnail(png or jpeg file) for the board
  * returns:
- *  board = {
- *    name: set to name given in parameters
- *    content: set to content given in parameters
- *    thumnail: set to thumbnail specified
- *    date_time: set to the date and time that the board was added to the database
- *    _id: automatically generated id for the new board
- *  }
+ *  _id: automatically generated id for the new board
  *
  */
 app.post('/createdBoard', function (req, res) {
@@ -565,7 +544,7 @@ app.post('/createdBoard', function (req, res) {
           return;
       }
       let userDetails = JSON.parse(JSON.stringify(document));
-      res.end(JSON.stringify(userDetails.boards[userDetails.boards.length - 1]));
+      res.end(JSON.stringify(userDetails.boards[userDetails.boards.length - 1]._id));
   });
 });
 
