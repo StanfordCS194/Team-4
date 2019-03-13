@@ -13,36 +13,44 @@
 *
 *
 * This webServer exports the following URLs:
-* /              -  Returns a text status message.  And index.html
-* /api/test     -  Returns the SchemaInfo object from the database (JSON format).  Good
-*
-*.
-* /user/list     -  Returns an array containing all the User objects from the database.
-*                   (JSON format)
-* /user/:id      -  Returns the User object with the _id of :id. (JSON format).
-* /boards//:id' - Returns a Board Object with _id :id.(JSON format)
-*
+* /admin/login          -  Login to account with username and password
+* /admin/logout         -  Logout currently logged in user
+* /admin/check          -  Check if someone is logged in, returns id of loggedin usr
+* /user                 -  Creates a new user
+* /user/:id             -  Returns the User object with the _id of :id. (JSON format).
+* /user/board           -  Saves the boards of logged in user
+* /boardsOfUser/:id     -  Returns previews (thumbnail, date_time, _id, name) of boards of user with id :id
+* /getBoard/:board_id   -  Returns board object of board with id :board_id
+* /delete/:board_id     -  Deletes board with id :board_id
+* /save/:board_id       -  Saves the board with id :board_id
+* /createdBoard         -  Creates and saves new board and returns the board's _id
 */
 
+// ############################## Set Up ###################################
 //set up mongodb
-
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+// connnect to epiphanydb
+mongoose.connect('mongodb://localhost/epiphanydb', { useMongoClient: true });
 
-// Load the Mongoose schema for a User
+// Load the Mongoose schema for a User, check ./schema/user.js for details
 var User = require('./schema/user.js');
 
 var express = require('express');
 var app = express();
+app.use(express.static(__dirname));
+
+// usful installs
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '50mb', extended: true}));
+var fs = require("fs");
+// multer is for download of large files
+var multer = require('multer');
+var processFormBody = multer({storage: multer.memoryStorage()}).single('upload');
+
 // default to port 3000 if no port specified
 let port = process.argv[2] || 3000;
-
-// #################### New for proj7 ##########################
-var bodyParser = require('body-parser');
-var fs = require("fs");
-var multer = require('multer');
-var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
-
+// create a session using express-session
 var session = require('express-session');
 app.use(session({
   name: port,
@@ -53,51 +61,20 @@ app.use(session({
     path: "/",
   }
 }));
+// ######################### Set Up Complete #####################
 
-app.use(bodyParser.json({limit: '50mb', extended: true}));
-
-// ##############################################
-
-
-// XXX - Your submission should work without this line
-// var cs142models = require('./modelData/photoApp.js').cs142models;
-
-mongoose.connect('mongodb://localhost/epiphanydb', { useMongoClient: true });
-
-// We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
-// the work for us.
-app.use(express.static(__dirname));
 
 // ################################# Server API #################################### //
-app.get('/user/list', function (request, response) {
-  User.find({}, function (err, info) {
-      if (err) {
-          // Query returned an error.  We pass it back to the browser with an Internal Service
-          // Error (500) error code.
-          console.error('Doing /user/list error:', err);
-          response.status(500).send(JSON.stringify(err));
-          return;
-      }
-      if (info.length === 0) {
-          // Query didn't return an error but didn't find the SchemaInfo object - This
-          // is also an internal error return.
-          response.status(500).send('Missing SchemaInfo');
-          return;
-      }
-      let parsedInfo = JSON.parse(JSON.stringify(info)), res = [];
-      for (let i = 0; i < parsedInfo.length; i++) {
-        res.push({
-          _id: parsedInfo[i]['_id'],
-          first_name: parsedInfo[i]['first_name'],
-          last_name: parsedInfo[i]['last_name'],
-        });
-      }
-      // We got the object - return it in JSON format.
-      console.log('User List:', res);
-      response.end(JSON.stringify(res));
-  });
-});
 
+// URL /admin/check - Login as a User
+// parameters:
+//    username - username of user to be logged in
+  //  password
+// returned data:
+//  if logged in:
+//    returns user object with username and _id
+//  else:
+//    returns undefined
 app.post('/admin/login', function(req, res) {
   let username = req.body.username;
   let password = req.body.password;
@@ -120,44 +97,26 @@ app.post('/admin/login', function(req, res) {
     if (loggedUser.password !== password) {
       res.status(400).send('Incorrect Password');
     }
-    console.log('loggin in', loggedUser);
     delete loggedUser.__v;
     delete loggedUser.password;
-    req.session.loggedIn = true;
-    req.session.user = loggedUser;
+    delete loggedUser.boards;
+    console.log('loggin in', loggedUser._id);
+    req.session.logged_in_user = loggedUser;
     res.end(JSON.stringify(loggedUser));
   });
-  // // Print everything in User database
-  // User.find({}, function (err, info) {
-  //   if (err) {
-  //       // Query returned an error.  We pass it back to the browser with an Internal Service
-  //       // Error (500) error code.
-  //       console.error('Doing /admin/login with login_name', login_name, ' received error:', err);
-  //       res.status(400).send('Invalid login_name ' + login_name + ' received error ' + JSON.stringify(err));
-  //       return;
-  //   }
-  //   if (info.length === 0) {
-  //       // Query didn't return an error but didn't find the object - This
-  //       // is also an internal error return.
-  //       res.status(400).send('Login failed with login_name: ' + login_name);
-  //       return;
-  //   }
-  //   console.log('returned info: ', info);
-  //   res.end(JSON.stringify(info));
-  // });
 });
 
 // URL /admin/check - Check if the user is currently logged in
 // returned data:
 //  if logged in:
-//    returns string representing logged in user
+//    returns user_id of logged in user
 //  else:
 //    returns undefined
 app.get('/admin/check', function(req, res) {
-  console.log('logged in: ', req.session.loggedIn);
-  if (req.session.loggedIn) {
-    console.log('with user: ', req.session.user.username);
-    res.end(JSON.stringify(req.session.user._id));
+  console.log('logged in: ', req.session.logged_in_user);
+  if (req.session.logged_in_user) {
+    console.log('with user: ', req.session.logged_in_user.username);
+    res.end(JSON.stringify(req.session.logged_in_user._id));
   }
   res.end();
 });
@@ -165,8 +124,7 @@ app.get('/admin/check', function(req, res) {
 // URL /admin/logout - Logout the current user
 // set session cookie to null and logged in to false
 app.post('/admin/logout', function(req, res) {
-  req.session.loggedIn = false;
-  req.session.user = null;
+  req.session.logged_in_user = null;
   res.end('logged out');
 });
 
@@ -225,8 +183,8 @@ app.post('/user', function(req, res) {
       let userDetails = JSON.parse(JSON.stringify(data));
       delete userDetails.__v;
       delete userDetails.password;
-      req.session.loggedIn = true;
-      req.session.user = userDetails;
+      delete userDetails.boards;
+      req.session.logged_in_user = userDetails;
       res.end(JSON.stringify(userDetails));
     }).catch((err)=>{
       res.status(400).send('Doing /user, upload failed');
@@ -238,22 +196,22 @@ app.post('/user', function(req, res) {
 
 /*
  * URL /user/:id - Returns the user details for user :id
- * returned data are:
+ * return:
  *  - _id - the id of the found user
  *  - username - the username of the user
  *  - boards - the boards of the user, represented as list that is JSON.stringify()ed
  */
-app.get('/user/:id', function (request, response) {
-    let id = request.params.id;
+app.get('/user/:id', function (req, res) {
+    let id = req.params.id;
     console.log(id);
-    if (!request.session.loggedIn) {
+    if (!req.session.logged_in_user) {
       console.error('must log in before accessing user content');
-      response.status(401).send('must log in before accessing user content with /user/:id');
+      res.status(401).send('must log in before accessing user content with /user/:id');
       return;
     }
-    if (!request.session.user._id == id) {
+    if (!req.session.logged_in_user._id == id) {
       console.error('cannot access account details of other users');
-      response.status(401).send('cannot access account details of other users');
+      res.status(401).send('cannot access account details of other users');
       return;
     }
     User.findById(id, function (err, info) {
@@ -261,13 +219,13 @@ app.get('/user/:id', function (request, response) {
             // Query returned an error.  We pass it back to the browser with an Internal Service
             // Error (500) error code.
             console.error('Doing /user/:id with id', id, ' received error:', err);
-            response.status(400).send('Invalid ID ' + JSON.stringify(id) + ' received error ' + JSON.stringify(err));
+            res.status(400).send('Invalid ID ' + JSON.stringify(id) + ' received error ' + JSON.stringify(err));
             return;
         }
         if (!info) {
             // Query didn't return an error but didn't find the SchemaInfo object - This
             // is also an internal error return.
-            response.status(400).send('Could not find user with id: ' + JSON.stringify(id));
+            res.status(400).send('Could not find user with id: ' + JSON.stringify(id));
             return;
         }
         let userDetails = JSON.parse(JSON.stringify(info));
@@ -275,7 +233,7 @@ app.get('/user/:id', function (request, response) {
         delete userDetails.__v;
         delete userDetails.password;
         // console.log('User with id', id, 'has info', info);
-        response.end(JSON.stringify(userDetails));
+        res.end(JSON.stringify(userDetails));
     });
 });
 
@@ -292,20 +250,20 @@ app.post('/user/board', function(req, res) {
     return;
   }
   User.updateOne(
-    {_id: req.session.user._id},
+    {_id: req.session.logged_in_user._id},
     {$set: { boards: req.body.board_representation}},
     (err, response) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
-          console.error('Doing /commentsOfPhoto/:photo_id with id', req.session.user._id, ' received error:', err);
-          res.status(400).send('Invalid id ' + JSON.stringify(req.session.user._id) + ' received error ' + JSON.stringify(err));
+          console.error('Doing /commentsOfPhoto/:photo_id with id', req.session.logged_in_user._id, ' received error:', err);
+          res.status(400).send('Invalid id ' + JSON.stringify(req.session.logged_in_user._id) + ' received error ' + JSON.stringify(err));
           return;
       }
       if (!response) {
           // Query didn't return an error but didn't find the object - This
           // is also an internal error return.
-          res.status(400).send('Nothing with id ' + JSON.stringify(req.session.user._id) + ' found');
+          res.status(400).send('Nothing with id ' + JSON.stringify(req.session.logged_in_user._id) + ' found');
           return;
       }
       res.end('saved boards');
@@ -330,12 +288,12 @@ app.post('/user/board', function(req, res) {
  */
 app.get('/boardsOfUser/:id', function (req, res) {
     let id = req.params.id;
-    if (!req.session.loggedIn) {
+    if (!req.session.logged_in_user) {
       console.error('must log in before accessing boards');
       res.status(401).send('must log in before accessing boards with /boardsOfUser/:id');
       return;
     }
-    if (req.session.user._id !== id) {
+    if (req.session.logged_in_user._id !== id) {
       console.error('cannot access account details of other users');
       res.status(401).send('cannot access account details of other users');
       return;
@@ -384,8 +342,8 @@ app.get('/boardsOfUser/:id', function (req, res) {
  */
 app.get('/getBoard/:board_id', function (req, res) {
     let board_id = req.params.board_id;
-    let id = req.session.user._id
-    if (!req.session.loggedIn) {
+    let id = req.session.logged_in_user._id
+    if (!req.session.logged_in_user) {
       console.error('must log in before accessing boards');
       res.status(401).send('must log in before accessing boards with /boardsOfUser/:id');
       return;
@@ -428,13 +386,13 @@ app.get('/getBoard/:board_id', function (req, res) {
  */
 app.get('/delete/:board_id', function (req, res) {
     let board_id = req.params.board_id;
-    if (!req.session.loggedIn) {
+    if (!req.session.logged_in_user) {
       console.error('must log in before accessing boards');
       res.status(401).send('must log in before accessing boards with /boardsOfUser/:id');
       return;
     }
     User.update(
-      {_id: req.session.user._id},
+      {_id: req.session.logged_in_user._id},
       {$pull: {
         board: {
           _id: board_id
@@ -470,13 +428,13 @@ app.get('/delete/:board_id', function (req, res) {
  */
 app.post('/saveBoard/:board_id', function (req, res) {
   let board_id = req.params.board_id;
-  if (!req.session.loggedIn) {
+  if (!req.session.logged_in_user) {
     console.error('must log in before accessing photos');
     res.status(401).send('must log in before accessing photos with /saveBoard/:board_id');
     return;
   }
   User.update(
-    {_id: req.session.user._id},
+    {_id: req.session.logged_in_user._id},
     {$set: {
       boards: {
         _id: req.params.board_id,
@@ -515,13 +473,13 @@ app.post('/saveBoard/:board_id', function (req, res) {
  *
  */
 app.post('/createdBoard', function (req, res) {
-  if (!req.session.loggedIn) {
+  if (!req.session.logged_in_user) {
     console.error('must log in before saving a board');
     res.status(401).send('must log in before accessing photos with /createdBoard');
     return;
   }
   User.findOneAndUpdate(
-    {_id: req.session.user._id},
+    {_id: req.session.logged_in_user._id},
     {$push: {
       boards: {
         date_time: new Date(),
