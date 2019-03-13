@@ -11,8 +11,6 @@ class Sticky extends React.Component {
             id: this.props.id,
             scaleX: this.props.scaleX,
             scaleY: this.props.scaleY,
-            stageX: this.props.stageX,
-            stageY: this.props.stageY,
             height: this.props.height,
             width: this.props.width,
             fontSize: this.props.fontSize,
@@ -37,6 +35,10 @@ class Sticky extends React.Component {
     }
 
     getStateObj() {
+        /**
+         * Returns an object representing the current state of the Sticky component.
+         * @return {object} state An object containing the current state of the Sticky component.
+         */
         let state = this.state;
         state.finalTextValue = this.textarea.current.getTextValue(); // need to get final text value which is a level deeper in textarea component
         state.fontSize = this.textarea.current.getFontSize(); // need final font size
@@ -44,7 +46,10 @@ class Sticky extends React.Component {
     }
 
     handleTransform(e) {
-        // Update the scaleX and scaleY of sticky after transforming
+        /**
+         * Updates the scale, rotation, and position of the Sticky after transforming.
+         * @param {object} e An onTransform event object.
+         */
         this.setState({
             scaleX: e.currentTarget.attrs.scaleX,
             scaleY: e.currentTarget.attrs.scaleY,
@@ -56,17 +61,11 @@ class Sticky extends React.Component {
         });
     }
 
-    addTransformerToComponent() {
-        const stage = this.transformer.getStage();
-        const rectangle = stage.findOne('.' + this.props.id.toString());
-        this.transformer.attachTo(rectangle);
-        this.transformer.getLayer().batchDraw();
-    }
-
-    // focus on sticky text after mounting
     componentDidMount() {
-        // need to put code within a setTimeout because
-        // getElementById must happen after render
+        /**
+         * Focuses on Sticky textarea after mounting to enable immediate text editing on creation.
+         */
+        // Need setTimeout because getElementById must occur after render
         setTimeout(() => {
             let textarea = document.getElementById(this.props.id.toString());
             if (!this.props.isBeingLoaded) textarea.focus();
@@ -78,8 +77,12 @@ class Sticky extends React.Component {
         });
     }
 
-    // Cursor styling
     onMouseOver(e) {
+        /**
+         * Styles the cursor to pointer when hovering over Sticky,
+         * cmd + mouse over magnifies small stickies for readability.
+         * @param {object} e An onMouseOver event object.
+         */
         document.body.style.cursor = 'pointer';
 
         if (window.event.metaKey) {
@@ -91,7 +94,7 @@ class Sticky extends React.Component {
                 return;
             }
 
-            // Magnify unreadable stickies to generic 'small' sticky size
+            // Magnify unreadable stickies to pre-set 'small' sticky size
             e.target.parent.parent.to({
                 scaleX: maxStickyScale / stage.attrs.scaleX,
                 scaleY: maxStickyScale / stage.attrs.scaleY,
@@ -102,22 +105,29 @@ class Sticky extends React.Component {
         }
     }
 
-    // Cursor styling
     onMouseOut(e) {
+        /**
+         * Styles to cursor to default when not hovering over Sticky,
+         * returns Sticky to original size after sticky magnification.
+         * @type {string} e An onMouseOut event object.
+         */
         document.body.style.cursor = 'default';
 
         // Return to original size after sticky magnification
         e.target.parent.parent.to({
             scaleX: this.props.scale,
             scaleY: this.props.scale,
-            // easing: Konva.Easings.ElasticEaseOut,
             easing: Konva.Easings.Linear,
             duration: 0.2
         });
     }
 
-    // Raising and lowering animations
     onDragStart(e) {
+        /**
+         * Animates Sticky with magnification and shadow to appear as
+         * if it were being "lifted" from the board.
+         * @param: {object} e An onDragStart event object.
+         */
         e.target.to({
             scaleX: 1.1 * e.target.attrs.scaleX,
             scaleY: 1.1 * e.target.attrs.scaleY,
@@ -131,10 +141,16 @@ class Sticky extends React.Component {
             shadowOffsetY: 15,
         });
         e.target.moveToTop();
-        e.target.getStage().findOne('Transformer').moveToTop();
+
     }
 
     onDragEnd(e) {
+        /**
+         * Animates Sticky by returning to normal size and removing shadow
+         * to appear as if it were being "placed" on the board. Also repositions
+         * text area to appear at the new position after drag.
+         * @param: {object} e An onDragEnd event object.
+         */
         e.target.to({
             scaleX: e.target.attrs.scaleX / 1.1,
             scaleY: e.target.attrs.scaleY / 1.1,
@@ -145,7 +161,7 @@ class Sticky extends React.Component {
             position: {
                 x: e.target.x(),
                 y: e.target.y()
-            }
+            },
         });
 
         // remove shadow
@@ -154,6 +170,10 @@ class Sticky extends React.Component {
             shadowOffsetX: 0,
             shadowOffsetY: 0,
         });
+
+        let textarea = document.getElementById(this.props.id);
+        textarea.style.top = e.evt.clientY + 'px';
+        textarea.style.left = e.evt.clientX + 'px';
     }
 
     render() {
@@ -171,6 +191,7 @@ class Sticky extends React.Component {
                 onMouseOut={(e) => this.onMouseOut(e)}
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
+                onDrop={(e) => this.onDrop(e)}
                 scaleX={this.state.scale}
                 scaleY={this.state.scale}
             >

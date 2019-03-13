@@ -40,6 +40,7 @@ class App extends Component {
             editingBoardIndex: 0,
             username: null,
             user_id: null,
+            editingBoardName: false,
         };
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
         this.onSetRightSidebarOpen = this.onSetRightSidebarOpen.bind(this);
@@ -50,48 +51,111 @@ class App extends Component {
         this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
         this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
         this.saveBoardToBoardList = this.saveBoardToBoardList.bind(this);
+        this.onSaveButtonClicked = this.onSaveButtonClicked.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
-    saveBoardToBoardList() {
+    saveBoardToBoardList(keepOrder, callback) {
+        /**
+         * Updates board in board list to match what is currently on canvas
+         * @param: keepOrder: whether or not to retain the original order of the boards
+         * or to instead place the newly saved board to the top of the list
+         * @param: callback: optional callback function to execute after board has been saved
+         */
         let newBoard = this.canvas.current.saveBoard();
-        let newBoards = [newBoard];
-        let oldBoards = this.state.boards;
+        let newBoards = [];
+        let oldBoards = this.state.boards.slice();
         let editingBoardIndex = this.state.editingBoardIndex;
         newBoard.lastUpdated = new Date();
-        newBoard.name = "New Board";
+        newBoard.name = oldBoards[editingBoardIndex].name; // keep name from before
 
-        // Move saved board to start of array since it is the most recently updated
-        if (oldBoards.length > 0) {
+        if (keepOrder) {
+            // Update board at editingBoardIndex to be new board
+            newBoards = oldBoards;
+            newBoards[editingBoardIndex] = newBoard;
+        } else {
+            // Move saved board to start of array since it is the most recently updated
+            newBoards = [newBoard];
             newBoards = newBoards.concat(oldBoards.slice(0, editingBoardIndex), oldBoards.slice(editingBoardIndex + 1));
-            newBoard.name = oldBoards[editingBoardIndex].name;
         }
-        this.setState({
-            boards: newBoards,
-            editingBoardIndex: 0,
+        // Update state to reflect boards list change
+        this.setState((state) => {
+            return {
+                boards: newBoards,
+                editingBoardIndex: keepOrder ? state.editingBoardIndex : 0,
+            }
+        }, () => {
+            if (callback) callback();
         });
+        return newBoards;
+    }
+
+    onSaveButtonClicked() {
+        let newBoards = this.saveBoardToBoardList(false, null);
         this.postBoardListUpdate(newBoards);
     }
 
-    switchToBoard(boardIndex) {
+    deleteBoard(boardIndex) {
+        if (this.state.boards.length > 1) {
+            let newBoards = this.state.boards.slice();
+            newBoards.splice(boardIndex, 1);
+            this.setState({
+                boards: newBoards,
+            }, () => { // After board is deleted, switch view to most recently updated board
+                this.switchToBoard(0, false);
+                // this.postBoardListUpdate(newBoards);
+            });
+        }
+    }
+
+    switchToBoard(boardIndex, shouldSavePreviousBoard) {
+        console.log("board name switched to: " + this.state.boards[boardIndex].name);
+        if (shouldSavePreviousBoard) {
+            // delay loading board until after saving current board
+            this.saveBoardToBoardList(true, this.loadBoardAndUpdateBoardIndex(boardIndex));
+        } else {
+            this.loadBoardAndUpdateBoardIndex(boardIndex);
+        }
+    }
+
+    loadBoardAndUpdateBoardIndex(boardIndex) {
         this.setState({editingBoardIndex: boardIndex});
         this.canvas.current.clearBoardAndLoadNewBoard(this.state.boards[boardIndex]);
         console.log("switched to board " + boardIndex);
     }
 
-    makeNewBoard() { //Todo: warn user to save before switching, or just automatically save current board
-        let newBoards = [{lastUpdated: new Date(), name: "New Board"}];
+    insertNewBoardObjectInBoardsList(callback) { //Todo: warn user to save before switching, or just automatically save current board
+        /**
+         * Puts a new board at the front of the user's board list.
+         */
+        let newBoard = {};
+        let newBoards = [newBoard];
+
+        newBoard.lastUpdated = new Date();
+        newBoard.name = "New Board";
         this.setState((state) => {
             return {
                 boards: newBoards.concat(state.boards),
-                editingBoardIndex: 0
             };
         }, () => {
-            this.canvas.current.clearBoardAndLoadNewBoard(null, this.saveBoardToBoardList);
-            this.postBoardListUpdate(this.state.boards);
-            // let boardNameInput = document.getElementById("input0");
-            // console.log("boardNameInput:");
-            // console.log(boardNameInput);
-            // boardNameInput.focus(); //todo focus new board name on create
+            if (callback) callback()
+        });
+    }
+
+    handleNewBoardButtonClicked() {
+        // Create new board object in boards list
+        // this.insertNewBoardObjectInBoardsList(() => {
+        this.saveBoardToBoardList(true, () => {
+            // Save board currently editing
+            // this.saveBoardToBoardList(true, () => {
+            this.insertNewBoardObjectInBoardsList(() => {
+
+                // Clear canvas and save empty board to newly created object in boards list
+                this.canvas.current.clearBoardAndLoadNewBoard(null, () => {
+                    this.setState({editingBoardIndex: 0}, () => this.saveBoardToBoardList(true, null));
+                });
+            });
+
         });
     }
 
@@ -99,19 +163,26 @@ class App extends Component {
         this.setState({nextColor: color.hex})
     }
 
+    onDelete() {
+        this.canvas.current.delete();
+    }
+
     onUndo() {
         this.canvas.current.undo();
     }
 
     onVennDiagramButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addVennDiagramToBoard();
     }
 
     onCloudButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addCloudToBoard();
     }
 
     onArrowButtonClicked() {
+        this.setState({rightSidebarOpen: false});
         this.canvas.current.addArrowToBoard();
     }
 
@@ -139,7 +210,10 @@ class App extends Component {
     }
 
     onSetSidebarOpen(open) {
-        if (open) this.onSetRightSidebarOpen(false);
+        if (open) {
+            this.onSetRightSidebarOpen(false);
+            // this.saveBoardToBoardList(true); //todo get rid of this, makes too much lag
+        }
         this.setState({sidebarOpen: open});
     }
 
@@ -158,21 +232,12 @@ class App extends Component {
     handleBoardNameTextAreaKeyDown(e, board, i) {
         if (e.keyCode === 13) { // Pressed enter
             if (!e.target.value) return;
-            let changedBoard = board;
-            let newBoards = this.state.boards;
-            changedBoard.name = e.target.value;
-            newBoards[i] = changedBoard;
-            this.setState({boards: newBoards}, () => console.log(this.state.boards[i].name));
-            this.postBoardListUpdate(newBoards);
-
-            let input = document.getElementById("input" + i);
-            let boardName = document.getElementById("boardName" + i);
-            boardName.style.display = 'block';
-            input.style.display = 'none';
+            this.handleBoardNameInputBlur(i);
         }
     }
 
     handleClickOnBoardName(e, i, board) {
+        this.setState({editingBoardName: true});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
         boardName.style.display = 'none';
@@ -182,14 +247,37 @@ class App extends Component {
     }
 
     handleBoardNameInputBlur(i) {
+        this.setState({editingBoardName: false});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
+
+        this.onBoardNameChanged(i, input.value);
         input.style.display = 'none';
         boardName.style.display = 'block';
     }
 
+    onBoardNameChanged(boardIndex, newName) {
+        let changedBoard = this.state.boards[boardIndex];
+        changedBoard.name = newName;
+        let newBoards = this.state.boards.slice();
+
+        newBoards[boardIndex] = changedBoard;
+        this.setState({boards: newBoards}, () => console.log(this.state.boards[boardIndex].name));
+    }
+
+    handleKeyPress = (e) => {
+        /**
+         * Delete a board by pressing delete when viewing my boards bar
+         */
+        if (this.state.viewingMyBoards && this.state.sidebarOpen && e.keyCode === 8 && !this.state.editingBoardName) {
+            this.deleteBoard(this.state.editingBoardIndex);
+        }
+    };
+
     handleLogin(username, id) {
-        axios.get('/user/'+id)
+        document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
+
+        axios.get('/user/' + id)
             .then((res) => {
                 console.log(res);
                 if (!res.data && this.state.user_id) {
@@ -198,8 +286,11 @@ class App extends Component {
                 this.setState({
                     username: res.data.username,
                     boards: res.data.boards ? JSON.parse(res.data.boards) : [],
-                    user_id: res.data._id
-                });
+                    user_id: res.data._id,
+                    editingBoardIndex: 0,
+                }, () => {
+                    this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
+                }); // after loading saved boards, add board currently editing to user's board list
             })
             .catch(function (error) {
                 // handle error
@@ -207,9 +298,20 @@ class App extends Component {
             });
     }
 
-    postBoardListUpdate(newBoards) {
+    handleLogout() {
+        this.saveBoardToBoardList(true, () => {
+            this.postBoardListUpdate(this.state.boards, () => {
+                axios.post('/admin/logout').catch((error) => console.log(err));
+                this.setState({username: null, user_id: null});
+                this.canvas.current.clearBoardAndLoadNewBoard();
+            });
+        });
+    }
+
+    postBoardListUpdate(newBoards, callback) {
+        // Handle circular references
         let cache = [];
-        let newBoardsJson = JSON.stringify(newBoards, function(key, value) {
+        let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
             if (typeof value === 'object' && value !== null) {
                 if (cache.indexOf(value) !== -1) {
                     try {
@@ -226,7 +328,10 @@ class App extends Component {
         // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
         let req = {board_representation: newBoardsJson, id: this.state.user_id};
         axios.post('/user/board', req)
-            .then((res) => console.log(res))
+            .then((res) => {
+                console.log(res);
+                if (callback) callback();
+            })
             .catch((error) => console.log(error));
     }
 
@@ -253,7 +358,7 @@ class App extends Component {
                             <span id="userName">My Boards</span>
                         </h3>
                     </div>
-                    <div id="new-board-button" onClick={() => this.makeNewBoard()}>
+                    <div id="new-board-button" onClick={() => this.handleNewBoardButtonClicked()}>
                         <AddCircleIcon id="new-board-button-addIcon"/>
                     </div>
                     <div className="sidebarContent" id="savedBoards"
@@ -261,11 +366,13 @@ class App extends Component {
                         <ul>
                             {this.state.boards.map((board, i) =>
                                 <li className={i === this.state.editingBoardIndex ? "saved-board-elem-selected" : "saved-board-elem"}
-                                    onClick={() => this.switchToBoard(i)}>
+                                >
                                     <div>
                                         <img
                                             className={i === this.state.editingBoardIndex ? "board-thumbnail-selected" : "board-thumbnail"}
-                                            src={board.imgUri}/>
+                                            src={board.imgUri}
+                                            onClick={() => this.switchToBoard(i, true)}
+                                        />
                                     </div>
 
                                     <div id="board-name-container">
@@ -305,11 +412,7 @@ class App extends Component {
                         <a href='#'>Account Settings</a>
                     </div>
                     <div className="sidebarContent">
-                        <a href='#' onClick={() => {
-                            axios.post('/admin/logout').catch((error) => console.log(err));
-                            this.setState({username: null, user_id: null});
-                            this.canvas.clearBoardAndLoadNewBoard();
-                        }}>Log Out</a>
+                        <a href='#' onClick={() => this.handleLogout()}>Log Out</a>
                     </div>
                 </Fragment>
             );
@@ -343,6 +446,7 @@ class App extends Component {
                                     smallSelected: true,
                                     medSelected: false,
                                     largeSelected: false,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.smallSelected ? 'black' : null}
                                 strokeWidth={3}
@@ -364,6 +468,7 @@ class App extends Component {
                                     smallSelected: false,
                                     medSelected: true,
                                     largeSelected: false,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.medSelected ? 'black' : null}
                                 strokeWidth={3}
@@ -386,6 +491,7 @@ class App extends Component {
                                     smallSelected: false,
                                     medSelected: false,
                                     largeSelected: true,
+                                    rightSidebarOpen: false
                                 })}
                                 stroke={this.state.largeSelected ? 'black' : null}
                                 strokeWidth={3}
@@ -474,7 +580,8 @@ class App extends Component {
                     onColorChange={this.onColorChange}
                     nextColor={this.state.nextColor}
                     undo={this.onUndo}
-                    saveBoard={this.saveBoardToBoardList}
+                    delete={this.onDelete}
+                    saveBoard={this.onSaveButtonClicked}
                 />
 
                 <Sidebar
@@ -501,11 +608,11 @@ class App extends Component {
                         ref={this.canvas}
                         nextColor={this.state.nextColor}
                         nextStickyScale={this.state.nextStickyScale}
-                        saveBoardToBoardList={this.saveBoardToBoardList}
+                        saveBoardToBoardList={this.onSaveButtonClicked}
                     />
                 </div>
 
-                <div className="logo"><img src="./public/media/logo.png" id="logo"/>hi there</div>
+                <div className="logo"><img src="./public/media/logo.png" id="logo"/></div>
             </Fragment>
         );
     }

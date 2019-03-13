@@ -2,6 +2,9 @@ import React from 'react';
 import { Transformer } from 'react-konva';
 
 class TransformerComponent extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
     componentDidMount() {
         this.checkNode();
@@ -12,21 +15,23 @@ class TransformerComponent extends React.Component {
     }
 
     checkNode() {
-        // here we need to manually attach or detach Transformer node
+        /**
+         * If a node with this.props.selectedCanvasObjectId exists, attaches
+         * a Transformer node to it. Otherwise, detaches the Transformer.
+         *
+         */
         const stage = this.transformer.getStage();
-        const { selectedCanvasObjectId } = this.props;
+        const selectedCanvasObjectId  = this.props.selectedCanvasObjectId;
         const selectedNode = stage.findOne('#' + selectedCanvasObjectId.toString());
 
-        // do nothing if selected node is already attached
+        // Do nothing if selected node is already attached
         if (selectedNode === this.transformer.node()) {
             return;
         }
 
         if (selectedNode) {
-            // attach to another node
             this.transformer.attachTo(selectedNode);
         } else {
-            // remove transformer
             this.transformer.detach();
         }
         this.transformer.moveToTop();
@@ -39,7 +44,7 @@ class TransformerComponent extends React.Component {
                 ref={node => {
                     this.transformer = node;
                 }}
-                enabledAnchors={[]}
+                enabledAnchors={this.props.enabledAnchors}
             />
         );
     }

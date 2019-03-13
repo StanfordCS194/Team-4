@@ -1,5 +1,5 @@
 import React from 'react';
-import {Stage, Layer, Text, Group} from 'react-konva';
+import {Stage, Layer, Text} from 'react-konva';
 
 import './Canvas.css';
 
@@ -61,18 +61,28 @@ class Canvas extends React.Component {
             pastObjRefs: [],
             pastObjArray: [],
             objectRefs: [],
-            savedBoard: {}
+            savedBoard: {},
+
+            selectedCanvasObjectIds: [],
+            transformers: []
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.loadBoard = this.loadBoard.bind(this);
         this.clearBoardAndLoadNewBoard = this.clearBoardAndLoadNewBoard.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     getImageURI() {
+        /**
+         * Returns the URI of the image of the currently displayed board.
+         */
         return this.stage.current.getStage().toDataURL({pixelRatio: 1}); // Todo: Dynamically change this number based on stage scale for optimal image quality
     }
 
     saveToImage() {
+        /**
+         * Saves the current board to a .png file which is downloaded locally.
+         */
         let uri = this.stage.current.getStage().toDataURL({pixelRatio: 3}); // Todo: Dynamically change this number based on stage scale for optimal image quality
         let link = document.createElement('a');
         link.download = "stage.png"; // Todo: dynamically name stage
@@ -83,57 +93,101 @@ class Canvas extends React.Component {
     }
 
     handleStageClick(e) {
+        /**
+         * Draws transformers around selected canvas objects and hides transformers.
+         * when stage is clicked, then updates the state variables.
+         * @param: {object} e Event object.
+         */
         // clicked on stage - clear selection
         if (e.target === e.target.getStage()) {
             this.setState({
-                selectedCanvasObjectId: ''
+                selectedCanvasObjectId: '',
+                selectedCanvasObjectIds: [],
+                transformers: []
             });
-            return;
-        }
-        // clicked on transformer - do nothing
-        const clickedOnTransformer =
-            e.target.getParent().className === 'Transformer';
-        if (clickedOnTransformer) {
-            console.log('clicked transformer');
             return;
         }
 
-        // find clicked sticky (group) by its id
+        // clicked on transformer - do nothing
+        const clickedOnTransformer = e.target.getParent().className === 'Transformer';
+        if (clickedOnTransformer) { return; }
+
+        // find clicked canvas object by its id
         const id = e.target.parent.attrs.id;
-        const sticky = this.state.objectArray.find(sticky => {
-          if (!sticky) { return false; }
-          else { return sticky.props.id.toString() === id.toString(); }
+        const canvasObject = this.state.objectArray.find(canvasObject => {
+            if (!canvasObject ) { return false; }
+            else { return canvasObject.props.id.toString() === id.toString(); }
         });
-        if (sticky) {
+
+        if (canvasObject) {
+            // Allow diagonal resizing for non-stickies and all resizing for arrow
+            let objectType = canvasObject.ref.current.state.className;
+            let enabledAnchors = [];
+            if (objectType !== 'sticky' && objectType !== 'plaintext') {
+                enabledAnchors = ['top-right', 'top-left', 'bottom-right', 'bottom-left'];
+                if (objectType.toString() === 'arrow') {
+                    enabledAnchors = enabledAnchors.concat(['middle-right', 'middle-left', 'bottom-center', 'top-center']);
+                }
+            }
+
+            // Draw a transformer around the newly selected canvas object
+            let newTransformer = (
+                <TransformerComponent
+                    selectedCanvasObjectId={id}
+                    enabledAnchors={enabledAnchors}
+                />);
+
+            // If cmd + click, concat new selection, otherwise make sole selection
+            let newTransformersArray = [newTransformer];
+            let newSelectedObjectIds = [id];
+            if (window.event.metaKey) {
+                newTransformersArray = this.state.transformers.slice().concat([newTransformer]);
+                newSelectedObjectIds = this.state.selectedCanvasObjectIds.slice().concat([id]);
+            }
+
             this.setState({
                 selectedCanvasObjectId: id,
+                selectedCanvasObjectIds: newSelectedObjectIds,
+                transformers: newTransformersArray,
             });
         } else {
+            // Nothing selected
             this.setState({
-                selectedCanvasObjectId: ''
+                selectedCanvasObjectId: '',
+                selectedCanvasObjectIds: [],
+                transformers: []
             });
         }
-        console.log(this.state.selectedCanvasObjectId);
-        console.log(this.state.objectArray);
     }
 
     handleMouseDown(e) {
-        // Remove transformer if you drag another sticky
-        // Only keep transformer if you click it directly
+        /**
+         * Removes transformer if another canvas object is dragged, unless cmd key is pressed.
+         * @param: {object} e An onMouseDown event object.
+         */
+
         if (e.target.getParent()) {
-            const clickedOnTransformer =
-                e.target.getParent().className === 'Transformer';
-            if (clickedOnTransformer) {
-                return;
-            } else {
+            const clickedOnTransformer = e.target.getParent().className === 'Transformer';
+            if (clickedOnTransformer) { return; }
+            else {
+                // If cmd is pressed, keep the current transformers
+                let newTransformersArray = [];
+                if (window.event.metaKey) {
+                    newTransformersArray = this.state.transformers;
+                }
                 this.setState({
-                    selectedCanvasObjectId: ''
+                    selectedCanvasObjectId: '',
+                    transformers: newTransformersArray
                 });
             }
         }
     }
 
     handleDblClick(e) {
+        /**
+         * Create a new canvas object at the position of the given double click event.
+         * @param: {object} e An onDblClick event object.
+         */
         // Removes greeting text when justOpenedApp
         if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
             return;
@@ -142,44 +196,12 @@ class Canvas extends React.Component {
         let newComponent = null;
         let componentRef = React.createRef();
 
-        // Add plain text
         if (window.event.metaKey) {
-            newComponent = (
-                <Plaintext
-                    ref={componentRef}
-                    id={this.state.id}
-                    className={'plaintext'}
-                    scaleX={this.state.scaleX}
-                    scaleY={this.state.scaleY}
-                    x={e.evt.clientX}
-                    y={e.evt.clientY}
-                    stageX={this.state.stageX}
-                    stageY={this.state.stageY}
-                    height={200}
-                    width={800}
-                    fontSize={80}
-                    scale={1}
-                />
-            );
+            newComponent = this.createPlainText(e, componentRef);
         } else {
-            newComponent = (
-                <Sticky
-                    ref={componentRef}
-                    id={this.state.id}
-                    scaleX={this.state.scaleX}
-                    scaleY={this.state.scaleY}
-                    x={e.evt.clientX}
-                    y={e.evt.clientY}
-                    stageX={this.state.stageX}
-                    stageY={this.state.stageY}
-                    nextColor={this.props.nextColor}
-                    height={250}
-                    width={250}
-                    fontSize={50}
-                    scale={this.props.nextStickyScale}
-                />
-            );
+            newComponent = this.createSticky(e, componentRef);
         }
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -188,11 +210,67 @@ class Canvas extends React.Component {
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
         });
-        console.log('past arr', this.state.pastObjArray);
+
+    }
+
+    createPlainText(e, componentRef) {
+        /**
+         * Creates a new Plaintext object with given event e and React reference componentRef.
+         * @param {object} e An onDblClick event object.
+         * @param {object} componentRef A React reference for the created Plaintext.
+         * @return {Plaintext} A new Plaintext object.
+         */
+        return (
+            <Plaintext
+                ref={componentRef}
+                id={this.state.id}
+                className={'plaintext'}
+                scaleX={this.state.scaleX}
+                scaleY={this.state.scaleY}
+                x={e.evt.clientX}
+                y={e.evt.clientY}
+                stageX={this.state.stageX}
+                stageY={this.state.stageY}
+                height={200}
+                width={800}
+                fontSize={80}
+                scale={1}
+            />
+        );
+
+    }
+
+    createSticky(e, componentRef) {
+        /**
+         * Creates a new Sticky object at position of the given event with given React reference.
+         * @param {object} e An onDblClick event object.
+         * @param {object} componentRef A React reference for the created Sticky.
+         * @return {Sticky} A new Sticky object.
+         */
+        return (
+            <Sticky
+                ref={componentRef}
+                id={this.state.id}
+                scaleX={this.state.scaleX}
+                scaleY={this.state.scaleY}
+                x={e.evt.clientX}
+                y={e.evt.clientY}
+                stageX={this.state.stageX}
+                stageY={this.state.stageY}
+                nextColor={this.props.nextColor}
+                height={250}
+                width={250}
+                fontSize={50}
+                scale={this.props.nextStickyScale}
+            />
+        );
     }
 
     handleOnWheel(e) {
-        // Handle zooming by mouse point and scrolling
+        /**
+         * Handles zooming by mouse point and two-finger scrolling.
+         * @param {object} e An onWheel event object.
+         */
         let oldScale = this.state.scaleX;
 
         const stage = e.target.getStage();
@@ -209,14 +287,16 @@ class Canvas extends React.Component {
         this.setState({
             scaleX: newScale,
             scaleY: newScale,
-            stageX: -(mousePointTo.x - e.evt.x / newScale) *
-            newScale,
-            stageY: -(mousePointTo.y - e.evt.y / newScale) *
-            newScale
+            stageX: -(mousePointTo.x - e.evt.x / newScale) * newScale,
+            stageY: -(mousePointTo.y - e.evt.y / newScale) * newScale
         });
     }
 
     onDragEnd(e) {
+        /**
+         * Updates the stage position after the stage has been dragged.
+         * @param {object} e An onDragEnd event object.
+         */
         if (e.target.nodeType != "Stage") {
             return;
         }
@@ -226,8 +306,10 @@ class Canvas extends React.Component {
         });
     }
 
-    // undoes the most recent change to the objectArray
     undo() {
+        /**
+         * Undoes the most recent change to the objectArray.
+         */
       if (this.state.pastObjArray.length === 0) { return; }
         this.setState({
             objectArray: this.state.pastObjArray.pop(),
@@ -239,6 +321,9 @@ class Canvas extends React.Component {
     }
 
     addCloudToBoard() {
+        /**
+         * Adds a new Cloud object to the current board.
+         */
         let componentRef = React.createRef();
         this.setState({});
 
@@ -255,7 +340,7 @@ class Canvas extends React.Component {
                 height={600}
                 fill={'#7EC0EE'}
                 scale={1}
-                fontSize={80}
+                fontSize={100}
                 textEditVisible={true}
                 isButton={false}
             />
@@ -270,6 +355,9 @@ class Canvas extends React.Component {
     }
 
     addArrowToBoard() {
+        /**
+         * Adds a new Arrow object to the current board.
+         */
         let componentRef = React.createRef();
 
         let newComponent = (
@@ -294,6 +382,9 @@ class Canvas extends React.Component {
     }
 
     addVennDiagramToBoard() {
+        /**
+         * Adds a new VennDiagram object to the current board.
+         */
         let componentRef = React.createRef();
 
         let newComponent = (
@@ -318,6 +409,10 @@ class Canvas extends React.Component {
     }
 
     saveBoard() {
+        /**
+         * Saves the currently displayed board into a single object.
+         * #TODO: more specific description
+         */
         // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
         this.state.objectRefs.slice(0, this.state.id).map(ref => {
@@ -337,6 +432,7 @@ class Canvas extends React.Component {
         savedBoard.componentStates = savedComponents;
         savedBoard.imgUri = this.getImageURI(); // thumbnail image
 
+        // todo get rid of set state below, shouldn't affect anything but be check to be sure
         // for testing purposes: save state objects to canvas state to load later
         this.setState({
             savedBoard: savedBoard,
@@ -346,12 +442,14 @@ class Canvas extends React.Component {
         return savedBoard;
     }
 
-    /*
-    Loading a new board requires clearing the current one first.
-    Loading a board occurs in the callback function of setState to
-    ensure the board is entirely cleared first.
-     */
-    clearBoardAndLoadNewBoard(newBoard, saveBoardToBoardList) {
+    clearBoardAndLoadNewBoard(newBoard, callback) {
+        /**
+         * Loads a new board by first clearing the current one.
+         * Loading a board occurs in the callback function of setState to
+         * ensure the board is entirely cleared first.
+         * @param: {type} newBoard TODO description
+         * @param: {type} callback TODO description
+         */
         console.log("clearing board");
         this.setState({
                 justOpenedApp: true,
@@ -369,6 +467,8 @@ class Canvas extends React.Component {
                 activeSticky: null,
                 selectedCanvasObjectId: '',
                 imageSrc: '',
+                selectedCanvasObjectIds: [],
+                transformers: [],
 
                 objectRefs: [],
                 pastObjArray: [],
@@ -380,16 +480,17 @@ class Canvas extends React.Component {
                     this.loadBoard(newBoard);
                 } else {
                     console.log("null board");
-                    saveBoardToBoardList();
+                    if (callback) callback();
                 }
             }
         );
     }
 
-
-    // Given a JSON string representing an array of object states and a board state,
-    // recreate a board by making a new object from each state object and setting board vals
     loadBoard(board) {
+        /**
+         * Recreates a board by making a new object from each state object and setting board values
+         * @param: {object} board A JSON string representing an array of object states and a board state
+         */
         console.log("Loading board");
 
         let savedComponentStates = board.componentStates;
@@ -412,6 +513,8 @@ class Canvas extends React.Component {
             activeSticky: savedBoardState.activeSticky,
             selectedCanvasObjectId: savedBoardState.selectedCanvasObjectId,
             imageSrc: savedBoardState.imageSrc,
+            selectedCanvasObjectIds: [],
+            transformers: []
         }, () => {
             // For each component state object, create a new object
             savedComponentStates.map(state => {
@@ -520,46 +623,77 @@ class Canvas extends React.Component {
         });
     }
 
-    deleteSelectedObj() {
-        // Add CSS sprite animation of cloud poof
-        let textarea = document.getElementById(this.state.selectedCanvasObjectId);
+    delete() {
+        /**
+         * Deletes the selected canvas objects by ID and
+         * creates a CSS sprite 'poof' in the object's place.
+         */
+        let newObjectRefs = this.state.objectRefs.slice();
+        let newObjectArray = this.state.objectArray.slice();
 
-        if (textarea) {
-            textarea.style.display = '';
-            let rect = textarea.getBoundingClientRect();
-            let x = rect.x + rect.width/2;
-            let y = rect.y;
+        let i = 0;
+        for (i ; i < this.state.selectedCanvasObjectIds.length; i++) {
+            let selectedObjectId = this.state.selectedCanvasObjectIds[i];
 
-            let poof = document.createElement("div");
-            poof.className = "poof";
-            poof.style.display = 'block';
-            poof.style.position = 'absolute';
-            poof.style.top = y + 'px';
-            poof.style.left = x + 'px';
-            document.body.appendChild(poof);
+            // Add CSS sprite animation of cloud poof
+            let textarea = document.getElementById(selectedObjectId);
+            if (textarea) {
+                textarea.style.display = '';
+                let rect = textarea.getBoundingClientRect();
+                let x = rect.x;
+                let y = rect.y;
+
+                let poof = document.createElement("div");
+                poof.className = "poof";
+                poof.style.display = 'block';
+                poof.style.position = 'absolute';
+                poof.style.top = y + 'px';
+                poof.style.left = x + 'px';
+                document.body.appendChild(poof);
+            }
+
+            // find index of canvasObject to delete
+            const canvasObject = this.state.objectArray.find(canvasObject => {
+                if (!canvasObject) { return false; }
+                else { return canvasObject.props.id.toString() === selectedObjectId.toString(); }
+            });
+            let index = this.state.objectArray.indexOf(canvasObject);
+            newObjectArray[index] = null;
+            newObjectRefs[index] = null;
         }
 
-        // find index of sticky to delete
-          const sticky = this.state.objectArray.find(sticky => {
-            if (!sticky) { return false; }
-            else { return sticky.props.id.toString() === this.state.selectedCanvasObjectId.toString(); }
-          });
-          let index = this.state.objectArray.indexOf(sticky);
-          let newObjectRefs = this.state.objectRefs.slice();
-          let newObjectArray = this.state.objectArray.slice();
-          newObjectArray[index] = null;
-          newObjectRefs[index] = null;
-          console.log(this.state.pastObjArray);
-          this.setState({
+        this.setState({
             objectArray: newObjectArray,
             objectRefs: newObjectRefs,
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
-          });
+            transformers: []
+        });
     }
 
-    // handle keypresses
+    isEditingText() {
+        /**
+         * Returns true if a textarea on the current canvas is open.
+         * @return {boolean}
+         */
+
+        let textareas = document.getElementsByClassName('textarea');
+        let i = 0
+        for (i ; i < textareas.length ; i++) {
+            let textarea = textareas[i];
+            if (textarea.style.display !== 'none') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     handleKeyPress = (e) => {
+        /**
+         * Handles key presses to create new shapes, save/load boards, and delete selected
+         * shapes.
+         */
         // if command-z, undo previously added object
         if (e.metaKey && e.keyCode === 90) {
             this.undo();
@@ -573,22 +707,22 @@ class Canvas extends React.Component {
          */
 
         // Make arrow
-        if (e.shiftKey && e.keyCode === 65) {
+        if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
             this.addArrowToBoard();
         }
 
         // Make cloud
-        if (e.shiftKey && e.keyCode === 67) {
+        if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
             this.addCloudToBoard();
         }
 
         // Make venn diagram
-        if (e.shiftKey && e.keyCode === 86) {
+        if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
             this.addVennDiagramToBoard();
         }
 
         // Save board
-        if (e.shiftKey && e.keyCode === 83) {
+        if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
             this.props.saveBoardToBoardList();
         }
 
@@ -602,19 +736,24 @@ class Canvas extends React.Component {
             this.loadBoard(this.state.savedBoard);
         }
 
-        // Delete selected canvas object on press of delete
-        if (e.keyCode === 8 && this.state.selectedCanvasObjectId) {
-          this.deleteSelectedObj();
+        // Delete selected canvas object on press of delete key on mac
+        if (e.keyCode === 8 && !this.isEditingText()) {
+            this.delete();
         }
     };
 
-    // add document level keydown listeners
     componentDidMount() {
+        /**
+         * Adds document level keydown listeners
+         */
         document.addEventListener("keydown", this.handleKeyPress, false);
 
     }
 
     componentWillUnmount() {
+        /**
+         * Removes document level keydown listeners when un-mounting
+         */
         document.removeEventListener("keydown", this.handleKeyPress, false);
     }
 
@@ -643,10 +782,8 @@ class Canvas extends React.Component {
                     <OpeningGreeting
                         justOpenedApp={this.state.justOpenedApp}
                     />}
-                    <TransformerComponent
-                        selectedCanvasObjectId={this.state.selectedCanvasObjectId}
-                    />
                     {this.state.objectArray.slice()}
+                    {this.state.transformers}
                 </Layer>
             </Stage>
         );

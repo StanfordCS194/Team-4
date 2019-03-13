@@ -6,9 +6,16 @@ class Plaintext extends React.Component {
         super(props);
         this.sticky = React.createRef();
         this.getStateObj = this.getStateObj.bind(this);
+        this.state = {
+            className: 'plaintext'
+        }
     }
 
     getStateObj() {
+        /**
+         * Returns an object representing the current state of the Plaintext component.
+         * @return {object} state An object containing the current state of the Plaintext component.
+         */
         return this.sticky.current.getStateObj();
     }
 
