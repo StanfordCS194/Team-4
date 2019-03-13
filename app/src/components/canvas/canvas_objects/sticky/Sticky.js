@@ -102,6 +102,7 @@ class Sticky extends React.Component {
                 easing: Konva.Easings.Linear,
                 duration: 0.2,
             });
+            e.target.parent.parent.moveToTop();
         }
     }
 

@@ -409,9 +409,6 @@ class App extends Component {
                         <a href='#' onClick={() => this.switchLeftSidebarView(true)}>My Boards</a>
                     </div>
                     <div className="sidebarContent">
-                        <a href='#'>Account Settings</a>
-                    </div>
-                    <div className="sidebarContent">
                         <a href='#' onClick={() => this.handleLogout()}>Log Out</a>
                     </div>
                 </Fragment>

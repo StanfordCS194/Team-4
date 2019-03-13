@@ -271,6 +271,8 @@ class Canvas extends React.Component {
          * Handles zooming by mouse point and two-finger scrolling.
          * @param {object} e An onWheel event object.
          */
+        if (this.state.justOpenedApp) return;
+
         let oldScale = this.state.scaleX;
 
         const stage = e.target.getStage();
@@ -316,6 +318,7 @@ class Canvas extends React.Component {
             objectRefs: this.state.pastObjRefs.pop(),
             pastObjArray: this.state.pastObjArray.slice(),
             pastObjRefs: this.state.pastObjRefs.slice(),
+            transformers: []
         });
         console.log('after undo: ', this.state.pastObjArray);
     }
@@ -340,7 +343,7 @@ class Canvas extends React.Component {
                 height={600}
                 fill={'#7EC0EE'}
                 scale={1}
-                fontSize={100}
+                fontSize={80}
                 textEditVisible={true}
                 isButton={false}
             />
@@ -764,7 +767,7 @@ class Canvas extends React.Component {
                 container={'container'}
                 width={window.innerWidth}
                 height={window.innerHeight}
-                draggable={true}
+                draggable={!this.state.justOpenedApp}
                 listening={true}
                 scaleX={this.state.scaleX}
                 scaleY={this.state.scaleY}
