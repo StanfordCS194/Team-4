@@ -301,7 +301,7 @@ class App extends Component {
     handleLogout() {
         this.saveBoardToBoardList(true, () => {
             this.postBoardListUpdate(this.state.boards, () => {
-                axios.post('/admin/logout').catch((error) => console.log(err));
+                axios.post('/admin/logout').catch((error) => console.log(error));
                 this.setState({username: null, user_id: null});
                 this.canvas.current.clearBoardAndLoadNewBoard();
             });
