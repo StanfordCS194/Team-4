@@ -173,8 +173,8 @@ class Sticky extends React.Component {
         });
 
         let textarea = document.getElementById(this.props.id);
-        textarea.style.top = e.evt.clientY + 'px';
-        textarea.style.left = e.evt.clientX + 'px';
+        textarea.style.top = e.target.y() + 'px';
+        textarea.style.left = e.target.x() + 'px';
     }
 
     render() {

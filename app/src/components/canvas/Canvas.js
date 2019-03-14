@@ -130,6 +130,13 @@ class Canvas extends React.Component {
                 }
             }
 
+            // Set the text area at the click position as 'poof' position at delete
+            let textarea = document.getElementById(canvasObject.props.id);
+            if (textarea) {
+                textarea.style.top = e.evt.clientY + 'px';
+                textarea.style.left = e.evt.clientX + 'px';
+            }
+
             // Draw a transformer around the newly selected canvas object
             let newTransformer = (
                 <TransformerComponent
@@ -349,11 +356,12 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.slice().concat([componentRef]),
-          objectArray: this.state.objectArray.slice().concat([newComponent]),
-          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
-          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
-          id: this.state.id + 1,
+            justOpenedApp: false,
+            objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+            objectArray: this.state.objectArray.slice().concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
+            id: this.state.id + 1,
         });
     }
 
@@ -376,6 +384,7 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
+            justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
             objectArray: this.state.objectArray.slice().concat([newComponent]),
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
@@ -403,11 +412,12 @@ class Canvas extends React.Component {
             />
         );
         this.setState({
-          objectRefs: this.state.objectRefs.slice().concat([componentRef]),
-          objectArray: this.state.objectArray.slice().concat([newComponent]),
-          pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
-          pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
-          id: this.state.id + 1,
+            justOpenedApp: false,
+            objectRefs: this.state.objectRefs.slice().concat([componentRef]),
+            objectArray: this.state.objectArray.slice().concat([newComponent]),
+            pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
+            pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
+            id: this.state.id + 1,
         });
     }
 
@@ -643,15 +653,13 @@ class Canvas extends React.Component {
             if (textarea) {
                 textarea.style.display = '';
                 let rect = textarea.getBoundingClientRect();
-                let x = rect.x;
-                let y = rect.y;
 
                 let poof = document.createElement("div");
                 poof.className = "poof";
                 poof.style.display = 'block';
                 poof.style.position = 'absolute';
-                poof.style.top = y + 'px';
-                poof.style.left = x + 'px';
+                poof.style.top = rect.y + 'px';
+                poof.style.left = rect.x + 'px';
                 document.body.appendChild(poof);
             }
 

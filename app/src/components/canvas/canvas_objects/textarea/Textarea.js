@@ -100,6 +100,8 @@ class Textarea extends React.Component {
             textareaY: absPos.y,
         });
         let textarea = document.getElementById(this.props.id.toString());
+        textarea.style.top = absPos.y + 'px';
+        textarea.style.left = absPos.x + 'px';
         textarea.focus();
     }
 
