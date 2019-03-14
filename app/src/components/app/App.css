@@ -89,6 +89,15 @@ h5 {
     transform: scale(1.05);
 }
 
+#saveToImageBtn:hover {
+    font-size: 22px;
+    /*transform: scale(1.05);*/
+}
+
+#saveToImageBtn {
+    transition: all .05s ease-in-out;
+}
+
 #accountIcon {
     margin: 0;
     width: 50px;
