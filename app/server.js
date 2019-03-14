@@ -109,9 +109,8 @@ app.post('/admin/login', function(req, res) {
 //  else:
 //    returns undefined
 app.get('/admin/check', function(req, res) {
-  console.log('logged in: ', req.session.logged_in_user);
   if (req.session.logged_in_user) {
-    console.log('with user: ', req.session.logged_in_user.username);
+    console.log('logged in with user: ', req.session.logged_in_user.username);
     res.end(JSON.stringify(req.session.logged_in_user._id));
   }
   res.end();
@@ -277,7 +276,7 @@ app.post('/user/board', function(req, res) {
  * returns: a list of the user boards, without content attached
  *  board = {
  *    name: set to name given in parameters
- *    thumnail: set to thumbnail specified
+ *    thumbnail: set to thumbnail specified
  *    date_time: set to the date and time that the board was added to the database
  *    _id: automatically generated id for the new board
  *  }
@@ -314,7 +313,7 @@ app.get('/boardsOfUser/:id', function (req, res) {
             _id: userDetails.boards[i]._id,
             name: userDetails.boards[i].name,
             date_time: userDetails.boards[i].date_time,
-            thumnail: userDetails.boards[i].thumbnail,
+            thumbnail: userDetails.boards[i].thumbnail,
           });
         }
         res.end(JSON.stringify(result));
@@ -331,7 +330,7 @@ app.get('/boardsOfUser/:id', function (req, res) {
  *  board = {
  *    name: set to name given in parameters
  *    content: set to content given in parameters
- *    thumnail: set to thumbnail specified
+ *    thumbnail: set to thumbnail specified
  *    date_time: set to the date and time that the board was added to the database
  *    _id: automatically generated id for the new board
  *  }
@@ -430,28 +429,27 @@ app.post('/saveBoard/:board_id', function (req, res) {
     res.status(401).send('must log in before accessing photos with /saveBoard/:board_id');
     return;
   }
-  User.update(
-    {_id: req.session.logged_in_user._id},
+  User.updateOne(
+    {_id: req.session.logged_in_user._id, "boards._id": board_id},
     {$set: {
       boards: {
-        _id: req.params.board_id,
-        date_time: req.body.date_time,
-        name: req.body.name,
-        content: req.body.content,
-        thumbnail: req.body.thumbnail,
+          "boards.$.date_time": req.body.date_time,
+          "boards.$.name": req.body.name,
+          "boards.$.content": req.body.content,
+          "boards.$.thumbnail": req.body.thumbnail,
       }
     }}, (err, info) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
           console.error('Doing /saveBoard/:board_id with id', board_id, ' received error:', err);
-          res.status(400).send('Invalid ID ' + JSON.stringify(board_id) + ' received error ' + JSON.stringify(err));
+          res.status(402).send('Invalid ID ' + JSON.stringify(board_id) + ' received error ' + JSON.stringify(err));
           return;
       }
       if (!info) {
           // Query didn't return an error but didn't find the SchemaInfo object - This
           // is also an internal error return.
-          res.status(400).send('Could not find photos of user with id: ' + JSON.stringify(board_id));
+          res.status(403).send('Could not find photos of user with id: ' + JSON.stringify(board_id));
           return;
       }
       res.end('board saved');
@@ -480,7 +478,7 @@ app.post('/createdBoard', function (req, res) {
     {_id: req.session.logged_in_user._id},
     {$push: {
       boards: {
-        date_time: req.body.name,
+        date_time: req.body.date_time,
         name: req.body.name,
         content: req.body.content,
         thumbnail: req.body.thumbnail

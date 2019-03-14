@@ -53,7 +53,9 @@ class App extends Component {
         this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
         this.saveBoardToBoardList = this.saveBoardToBoardList.bind(this);
         this.onSaveButtonClicked = this.onSaveButtonClicked.bind(this);
+        this.handleSaveButtonPressed = this.handleSaveButtonPressed.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        // this.updateBoardListFromServer = this.updateBoardListFromServer.bind(this);
     }
 
     saveBoardToBoardList(keepOrder, callback) {
@@ -325,13 +327,14 @@ class App extends Component {
                             name: "New Board",
                             content: JSON.stringify(content),
                             thumbnail: JSON.stringify(this.state.currentBoard.imgUri),
+                            date_time: new Date(),
                         }; //todo get rid of double uri
 
                         // post board creation to server
                         axios.post('/createdBoard', req)
                             .then((createdBoardRes) => {
                                 let currentBoard = {...this.state.currentBoard};
-                                currentBoard._id = createdBoardRes.data._id;
+                                currentBoard._id = createdBoardRes.data;
                                 currentBoard.name = "New Board";
                                 this.setState({
                                     currentBoard: currentBoard,
@@ -442,7 +445,6 @@ class App extends Component {
             currentBoard: savedBoard,
         });
         this.postBoardUpdate(savedBoard, this.updateBoardListFromServer);
-        // todo: update date last updated
 
     }
 
@@ -451,13 +453,18 @@ class App extends Component {
             boardState: newBoard.boardState,
             componentStates: newBoard.componentStates
         };
-        this.setState({currentBoard: newBoard});
+        // this.setState({currentBoard: newBoard});
+
         let req = {
             name: newBoard.name,
             content: content,
-            thumbnail: newBoard.thumbnail
+            thumbnail: newBoard.thumbnail,
+            date_time: new Date(),
         };
-        axios.post('/saveBoard/' + this.state.currentBoard._id, )
+        console.log("new board._id: " + newBoard._id);
+        axios.post('/saveBoard/' + newBoard._id, req)
+            .then(() => { if (callback) callback() })
+            .catch((error) => console.log(error));
     }
 
     updateBoardListFromServer() {
@@ -466,7 +473,7 @@ class App extends Component {
                 this.setState({boardList: res.data});
             })
             .catch((error) => console.log(error))
-    }
+    };
 
     makeSideBarContent = () => {
         if (!this.state.user_id) {
@@ -504,7 +511,7 @@ class App extends Component {
                                     <div>
                                         <img
                                             className={board._id === this.state.currentBoard._id ? "board-thumbnail-selected" : "board-thumbnail"}
-                                            src={board.thumbnail}
+                                            src={JSON.parse(board.thumbnail)}
                                             onClick={() => this.switchToBoard(i, true)}
                                         />
                                     </div>
@@ -523,7 +530,7 @@ class App extends Component {
                                         />
                                     </div>
 
-                                    <div>Last saved <TimeAgo date={board.lastUpdated}/></div>
+                                    <div>Last saved <TimeAgo date={board.date_time}/></div>
                                 </li>
                             )}
                         </ul>
@@ -716,7 +723,8 @@ class App extends Component {
                     nextColor={this.state.nextColor}
                     undo={this.onUndo}
                     delete={this.onDelete}
-                    saveBoard={this.onSaveButtonClicked}
+                    // saveBoard={this.onSaveButtonClicked}
+                    saveBoard={this.handleSaveButtonPressed}
                 />
 
                 <Sidebar
@@ -743,7 +751,8 @@ class App extends Component {
                         ref={this.canvas}
                         nextColor={this.state.nextColor}
                         nextStickyScale={this.state.nextStickyScale}
-                        saveBoardToBoardList={this.onSaveButtonClicked}
+                        // saveBoardToBoardList={this.onSaveButtonClicked}
+                        saveBoardToBoardList={this.handleSaveButtonPressed}
                     />
                 </div>
 
