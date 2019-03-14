@@ -195,8 +195,8 @@ class Canvas extends React.Component {
          * Create a new canvas object at the position of the given double click event.
          * @param: {object} e An onDblClick event object.
          */
-        // Removes greeting text when justOpenedApp
-        if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false) {
+        // Do nothing if clicked on a Shape that is not the start message or a Venn Diagram (whose component classname is Circle)
+        if (e.target.nodeType === "Shape" && this.state.justOpenedApp === false && e.target.className !== 'Circle') {
             return;
         }
 
