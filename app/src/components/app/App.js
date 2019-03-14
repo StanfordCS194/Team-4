@@ -222,10 +222,10 @@ class App extends Component {
         this.setState({rightSidebarOpen: open});
     }
 
-    switchLeftSidebarView(viewingMyBoards) {
+    switchLeftSidebarView(callback) {
         this.onSetSidebarOpen(false);
-        setTimeout(() => { // lets board close animation complete first
-            this.setState({viewingMyBoards: viewingMyBoards}, () => this.onSetSidebarOpen(true));
+        setTimeout(() => {
+            if (callback) callback()
         }, 350);
     }
 
@@ -283,14 +283,18 @@ class App extends Component {
                 if (!res.data && this.state.user_id) {
                     this.setState({user_id: null});
                 }
-                this.setState({
-                    username: res.data.username,
-                    boards: res.data.boards.length ? JSON.parse(res.data.boards) : [],
-                    user_id: res.data._id,
-                    editingBoardIndex: 0,
-                }, () => {
-                    this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
-                }); // after loading saved boards, add board currently editing to user's board list
+                this.switchLeftSidebarView(
+                    () => {
+                        this.setState({
+                            username: res.data.username,
+                            boards: res.data.boards.length ? JSON.parse(res.data.boards) : [],
+                            user_id: res.data._id,
+                            editingBoardIndex: 0,
+                        }, () => {
+                            this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
+                            this.onSetSidebarOpen(true);
+                        }); // after loading saved boards, add board currently editing to user's board list
+                    });
             })
             .catch(function (error) {
                 // handle error
@@ -302,8 +306,13 @@ class App extends Component {
         this.saveBoardToBoardList(true, () => {
             this.postBoardListUpdate(this.state.boards, () => {
                 axios.post('/admin/logout').catch((error) => console.log(error));
-                this.setState({username: null, user_id: null});
-                this.canvas.current.clearBoardAndLoadNewBoard();
+                this.switchLeftSidebarView(
+                    () => {
+                        this.setState({username: null, user_id: null});
+                        this.canvas.current.clearBoardAndLoadNewBoard();
+                        this.onSetSidebarOpen(true)
+                    }
+                )
             });
         });
     }
@@ -353,7 +362,9 @@ class App extends Component {
                         <h3>
                             <ArrowBackIcon
                                 id="arrow-back-icon"
-                                onClick={() => this.switchLeftSidebarView(false)}
+                                onClick={() => this.switchLeftSidebarView(() => {
+                                    this.setState({viewingMyBoards: false}, () => {this.onSetSidebarOpen(true)});
+                                })}
                             />
                             <span id="userName">My Boards</span>
                         </h3>
@@ -406,7 +417,10 @@ class App extends Component {
                         <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
                     </div>
                     <div className="sidebarContent">
-                        <a href='#' onClick={() => this.switchLeftSidebarView(true)}>My Boards</a>
+                        <a href='#' onClick={() => this.switchLeftSidebarView(() => {
+                            this.setState({viewingMyBoards: true}, () => this.onSetSidebarOpen(true));
+                        })}
+                        >My Boards</a>
                     </div>
                     <div className="sidebarContent">
                         <a href='#' onClick={() => this.handleLogout()}>Log Out</a>
