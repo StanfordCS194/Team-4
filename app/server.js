@@ -438,7 +438,8 @@ app.post('/saveBoard/:board_id', function (req, res) {
           "boards.$.content": req.body.content,
           "boards.$.thumbnail": req.body.thumbnail,
       }
-    }}, (err, info) => {
+    }},
+    {new: true}, (err, info) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
@@ -494,7 +495,7 @@ app.post('/createdBoard', function (req, res) {
         content: req.body.content,
         thumbnail: req.body.thumbnail
       }
-    }}, (err, document) => {
+    }}, {new: true}, (err, document) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
