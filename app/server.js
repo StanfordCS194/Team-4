@@ -282,6 +282,7 @@ app.get('/user/:id', function (req, res) {
  *  }
  */
 app.get('/boardsOfUser/:id', function (req, res) {
+  console.log('doing /boardsOfUser/' + req.params.id);
     let id = req.params.id;
     if (!req.session.logged_in_user) {
       console.error('must log in before accessing boards');
@@ -308,6 +309,8 @@ app.get('/boardsOfUser/:id', function (req, res) {
             return;
         }
         let userDetails = JSON.parse(JSON.stringify(info)), result = [];
+        console.log('found user: ', userDetails._id);
+        printBoards(userDetails.boards);
         for (let i = 0; i < userDetails.boards.length; i++) {
           result.push({
             _id: userDetails.boards[i]._id,
@@ -424,22 +427,20 @@ app.get('/delete/:board_id', function (req, res) {
  */
 app.post('/saveBoard/:board_id', function (req, res) {
   let board_id = req.params.board_id;
+  console.log('\n /saveBoard/:board_id ======== ', board_id);
   if (!req.session.logged_in_user) {
     console.error('must log in before accessing photos');
     res.status(401).send('must log in before accessing photos with /saveBoard/:board_id');
     return;
   }
-  User.findOneAndUpdate(
+  User.updateOne(
     {_id: req.session.logged_in_user._id, "boards._id": board_id},
     {$set: {
-      boards: {
-          "boards.$.date_time": req.body.date_time,
-          "boards.$.name": req.body.name,
-          "boards.$.content": req.body.content,
-          "boards.$.thumbnail": req.body.thumbnail,
-      }
-    }},
-    {new: true}, (err, info) => {
+      "boards.$.date_time": req.body.date_time,
+      "boards.$.name": req.body.name,
+      "boards.$.content": req.body.content,
+      "boards.$.thumbnail": req.body.thumbnail,
+    }}, (err, info) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
@@ -453,17 +454,22 @@ app.post('/saveBoard/:board_id', function (req, res) {
           res.status(403).send('Could not find photos of user with id: ' + JSON.stringify(board_id));
           return;
       }
-      let userDetails = JSON.parse(JSON.stringify(info));
-      console.log('updated: ', userDetails.username);
-      printBoards(userDetails.boards);
-      res.end('board saved');
+      User.findById(req.session.logged_in_user._id, (err, info) => {
+        let userDetails = JSON.parse(JSON.stringify(info));
+        console.log('saved board', board_id, ' for : ', userDetails.username, ' num boards: ', userDetails.boards.length);
+        printBoards(userDetails.boards);
+
+        res.end('board saved');
+      });
   });
 });
 
 function printBoards(boards) {
-  console.log('printing boards ===========');
-  for (let i = 0; i < boards.length; i++) {
-    console.log('board ', i, ' : ', boards[i]._id);
+  console.log('printing boards ===========', boards.length);
+  if (boards.length !== 0) {
+    for (var i = 0; i < boards.length; i++) {
+      console.log('board ', i, ' : ', boards[i]._id, boards[i].name);
+    }
   }
 }
 
@@ -480,13 +486,13 @@ function printBoards(boards) {
  *
  */
 app.post('/createdBoard', function (req, res) {
-  let user_id = req.session.logged_in_user._id;
   if (!req.session.logged_in_user) {
     console.error('must log in before saving a board');
     res.status(401).send('must log in before accessing photos with /createdBoard');
     return;
   }
-  User.findOneAndUpdate(
+  let user_id = req.session.logged_in_user._id;
+  User.updateOne(
     {_id: user_id},
     {$push: {
       boards: {
@@ -495,7 +501,9 @@ app.post('/createdBoard', function (req, res) {
         content: req.body.content,
         thumbnail: req.body.thumbnail
       }
-    }}, {new: true}, (err, document) => {
+    }},
+    function (err, info) {
+      console.log('result of update: ', info);
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
@@ -503,17 +511,19 @@ app.post('/createdBoard', function (req, res) {
           res.status(400).send('Received error ' + JSON.stringify(err));
           return;
       }
-      if (!document) {
+      if (!info) {
           // Query didn't return an error but didn't find the SchemaInfo object - This
           // is also an internal error return.
           res.status(400).send('Could not created new board');
           return;
       }
+      User.findById(user_id, (err, info) => {
+        let userDetails = JSON.parse(JSON.stringify(info));
+        console.log('created board for : ', userDetails.username, ' num boards: ', userDetails.boards.length);
+        printBoards(userDetails.boards);
 
-      let userDetails = JSON.parse(JSON.stringify(document));
-      printBoards(userDetails.boards);
-
-      res.end(JSON.stringify(userDetails.boards[userDetails.boards.length - 1]._id));
+        res.end(JSON.stringify(userDetails.boards[userDetails.boards.length - 1]._id));
+      });
   });
 });
 

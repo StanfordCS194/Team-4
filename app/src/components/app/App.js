@@ -565,12 +565,11 @@ class App extends Component {
             boardState: newBoard.boardState,
             componentStates: newBoard.componentStates
         };
-        // this.setState({currentBoard: newBoard});
 
         let req = {
             name: newBoard.name,
-            content: content,
-            thumbnail: newBoard.thumbnail,
+            content: this.stringifyRemoveCircularRefs(content),
+            thumbnail: this.stringifyRemoveCircularRefs(newBoard.thumbnail),
             date_time: new Date(),
         };
         axios.post('/saveBoard/' + newBoard._id, req)
