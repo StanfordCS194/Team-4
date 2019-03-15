@@ -539,8 +539,7 @@ class App extends Component {
         savedBoard.thumbnail = savedBoard.imgUri;
         this.setState({
             currentBoard: savedBoard,
-        }, () => this.postBoardUpdate(savedBoard, this.updateBoardListFromServer(callback)));
-        // this.postBoardUpdate(savedBoard, this.updateBoardListFromServer(callback));
+        }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback)));
         // todo: list should update to put svaed board on top of list
 
     }
