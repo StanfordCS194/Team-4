@@ -464,6 +464,7 @@ app.post('/saveBoard/:board_id', function (req, res) {
   });
 });
 
+// debugging function that prints out the name and _id of boards saved inside of a list
 function printBoards(boards) {
   console.log('printing boards ===========', boards.length);
   if (boards.length !== 0) {
