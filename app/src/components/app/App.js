@@ -142,10 +142,11 @@ class App extends Component {
         axios.get('/getBoard/' + boardListItem._id)
             .then(
                 (res) => {
-                    let responseBoard = JSON.parse(res.data);
+                    let responseBoard = res.data;
+                    let content = JSON.parse(responseBoard.content);
                     let boardToSwitchTo = {
-                        componentStates: responseBoard.content.componentStates,
-                        boardState: responseBoard.content.boardState,
+                        componentStates: content.componentStates,
+                        boardState: content.boardState,
                         _id: boardListItem._id,
                         name: boardListItem.name,
                     };
@@ -358,7 +359,15 @@ class App extends Component {
         let newBoardsList = this.state.boardList.slice();
 
         newBoardsList[boardIndex] = changedBoard;
-        this.setState({boardList: newBoardsList});
+        this.setState((state) => { return {
+            boardList: newBoardsList,
+            currentBoard: {
+                _id: state.currentBoard._id,
+                componentStates: state.currentBoard.componentStates,
+                boardState: state.currentBoard.boardState,
+                name: newName,
+            }
+        }});
 
         this.postBoardUpdate(this.state.boardList[boardIndex]);
     }
@@ -552,6 +561,8 @@ class App extends Component {
          */
         let savedBoard = this.canvas.current.saveBoard();
         savedBoard.thumbnail = savedBoard.imgUri;
+        savedBoard._id = this.state.currentBoard._id;
+        savedBoard.name = this.state.currentBoard.name;
         this.postBoardUpdate(savedBoard,
             () => {
                 this.updateBoardListFromServer(() => this.switchToBoard(boardListItem));
@@ -646,6 +657,7 @@ class App extends Component {
                                             id={"input" + i} className="board-name-input"
                                             onKeyDown={(e) => this.handleBoardNameTextAreaKeyDown(e, board, i)}
                                             onBlur={() => this.handleBoardNameInputBlur(i)}
+                                            // onBlur={() => this.handleBoardNameInputBlur(board)}
                                             maxLength="25"
                                         />
                                     </div>
