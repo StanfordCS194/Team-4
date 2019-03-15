@@ -384,6 +384,7 @@ app.get('/getBoard/:board_id', function (req, res) {
  */
 app.get('/delete/:board_id', function (req, res) {
     let board_id = req.params.board_id;
+    console.log('\n attempting to DELETE, ', board_id);
     if (!req.session.logged_in_user) {
       console.error('must log in before accessing boards');
       res.status(401).send('must log in before accessing boards with /boardsOfUser/:id');
@@ -392,11 +393,12 @@ app.get('/delete/:board_id', function (req, res) {
     User.update(
       {_id: req.session.logged_in_user._id},
       {$pull: {
-        board: {
+        boards: {
           _id: board_id
         }
       }},
        (err, info) => {
+        console.log('deleted board info: ', info);
         if (err) {
             // Query returned an error.  We pass it back to the browser with an Internal Service
             // Error (500) error code.
