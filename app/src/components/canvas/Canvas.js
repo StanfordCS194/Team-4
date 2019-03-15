@@ -705,52 +705,55 @@ class Canvas extends React.Component {
          * Handles key presses to create new shapes, save/load boards, and delete selected
          * shapes.
          */
-        // if command-z, undo previously added object
-        if (e.metaKey && e.keyCode === 90) {
-            this.undo();
-        }
+        if (!this.props.sideBarOpen) {
 
-        /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
-         (dev purposes), probably want to create with double clicks,
-         but couldn't figure out how to read for keys other than
-         cmd when double-clicking.
-         Change or get rid of this when we've found the cleaner solution
-         */
+            // if command-z, undo previously added object
+            if (e.metaKey && e.keyCode === 90) {
+                this.undo();
+            }
 
-        // Make arrow
-        if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
-            this.addArrowToBoard();
-        }
+            /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
+             (dev purposes), probably want to create with double clicks,
+             but couldn't figure out how to read for keys other than
+             cmd when double-clicking.
+             Change or get rid of this when we've found the cleaner solution
+             */
 
-        // Make cloud
-        if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
-            this.addCloudToBoard();
-        }
+            // Make arrow
+            if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
+                this.addArrowToBoard();
+            }
 
-        // Make venn diagram
-        if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
-            this.addVennDiagramToBoard();
-        }
+            // Make cloud
+            if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
+                this.addCloudToBoard();
+            }
 
-        // Save board
-        if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
-            this.props.saveBoardToBoardList();
-        }
+            // Make venn diagram
+            if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
+                this.addVennDiagramToBoard();
+            }
 
-        // Dev: test save board to state variable
-        if (e.metaKey && e.keyCode === 67) {
-            this.saveBoard();
-        }
+            // Save board
+            if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
+                this.props.saveBoardToBoardList();
+            }
 
-        // Testing: load board
-        if (e.metaKey && e.keyCode === 74) {
-            this.loadBoard(this.state.savedBoard);
-        }
+            // Dev: test save board to state variable
+            if (e.metaKey && e.keyCode === 67) {
+                this.saveBoard();
+            }
 
-        // Delete selected canvas object on press of delete key on mac
-        // if (e.keyCode === 8 && !this.isEditingText()) {
-        if (e.keyCode === 8 && !this.isEditingText() && !this.props.sideBarOpen) {
-            this.delete();
+            // Testing: load board
+            if (e.metaKey && e.keyCode === 74) {
+                this.loadBoard(this.state.savedBoard);
+            }
+
+            // Delete selected canvas object on press of delete key on mac
+            // if (e.keyCode === 8 && !this.isEditingText()) {
+            if (e.keyCode === 8 && !this.isEditingText() && !this.props.sideBarOpen) {
+                this.delete();
+            }
         }
     };
 
