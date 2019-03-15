@@ -144,14 +144,18 @@ class App extends Component {
                 (res) => {
                     let responseBoard = res.data;
                     let content = JSON.parse(responseBoard.content);
+                    console.log("in switchToBoard, content is:");
+                    console.log(content);
                     let boardToSwitchTo = {
                         componentStates: content.componentStates,
                         boardState: content.boardState,
                         _id: boardListItem._id,
                         name: boardListItem.name,
                     };
-                    this.setState({currentBoard: boardToSwitchTo});
-                    this.canvas.current.clearBoardAndLoadNewBoard(boardToSwitchTo, null);
+                    this.setState({currentBoard: boardToSwitchTo},
+                        () => this.canvas.current.clearBoardAndLoadNewBoard(boardToSwitchTo, null)
+                    );
+                    // this.canvas.current.clearBoardAndLoadNewBoard(boardToSwitchTo, null);
                 })
             .catch((error) => console.log(error));
     }

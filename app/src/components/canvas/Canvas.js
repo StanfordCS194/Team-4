@@ -505,6 +505,7 @@ class Canvas extends React.Component {
          * @param: {object} board A JSON string representing an array of object states and a board state
          */
         console.log("Loading board");
+        console.log(board);
 
         let savedComponentStates = board.componentStates;
         let savedBoardState = board.boardState;
