@@ -308,7 +308,7 @@ class App extends Component {
         let boardName = document.getElementById("boardName" + i);
         boardName.style.display = 'none';
         input.style.display = 'block';
-        input.value = this.state.boards[i].name;
+        input.value = this.state.boardList[i].name;
         input.focus();
     }
 
@@ -335,7 +335,7 @@ class App extends Component {
             name: "New Board",
             // content: JSON.stringify(content),
             content: this.stringifyRemoveCircularRefs(content),
-            thumbnail: this.stringifyRemoveCircularRefs(board.imgUri),
+            thumbnail: board.imgUri,
             // thumbnail: JSON.stringify(board.imgUri),
             // thumbnail: board.imgUri,
             date_time: new Date(),
@@ -346,18 +346,21 @@ class App extends Component {
         // post board creation to server
         axios.post('/createdBoard', req)
             .then((createdBoardRes) => {
+                // createdBoardRes data is id of newly created board
                 if (callback) callback(createdBoardRes);
             })
             .catch((error) => console.log(error));
     };
 
     onBoardNameChanged(boardIndex, newName) {
-        let changedBoard = this.state.boards[boardIndex];
+        let changedBoard = this.state.boardList[boardIndex];
         changedBoard.name = newName;
-        let newBoards = this.state.boards.slice();
+        let newBoardsList = this.state.boardList.slice();
 
-        newBoards[boardIndex] = changedBoard;
-        this.setState({boards: newBoards});
+        newBoardsList[boardIndex] = changedBoard;
+        this.setState({boardList: newBoardsList});
+
+        this.postBoardUpdate(this.state.boardList[boardIndex]);
     }
 
     handleKeyPress = (e) => {
@@ -569,15 +572,16 @@ class App extends Component {
         let req = {
             name: newBoard.name,
             content: this.stringifyRemoveCircularRefs(content),
-            thumbnail: this.stringifyRemoveCircularRefs(newBoard.thumbnail),
+            thumbnail: newBoard.thumbnail,
             date_time: new Date(),
         };
         axios.post('/saveBoard/' + newBoard._id, req)
-            .then(() => {
-                if (callback) callback()
+            .then((res) => {
+                if (callback && res) { callback(); }
             })
             .catch((error) => console.log(error));
     }
+
 
     updateBoardListFromServer(callback) {
         axios.get('/boardsOfUser/' + this.state.user_id)
@@ -591,6 +595,7 @@ class App extends Component {
             .catch((error) => console.log(error))
     };
 
+    // builds left sidebar content
     makeSideBarContent = () => {
         if (!this.state.user_id) {
             return (
@@ -627,7 +632,7 @@ class App extends Component {
                                     <div>
                                         <img
                                             className={board._id === this.state.currentBoard._id ? "board-thumbnail-selected" : "board-thumbnail"}
-                                            src={JSON.parse(board.thumbnail)}
+                                            src={board.thumbnail}
                                             onClick={() => this.handleBoardThumbnailPressed(board)}
                                         />
                                     </div>
@@ -674,6 +679,7 @@ class App extends Component {
         }
     };
 
+    // builds right sidebar content
     makeRightSideBarContent(user) {
         return (
             <Fragment>
