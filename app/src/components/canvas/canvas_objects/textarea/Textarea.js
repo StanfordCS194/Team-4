@@ -13,7 +13,7 @@ class Textarea extends React.Component {
             textareaHeight: this.props.height * this.props.scale,
             textareaX: this.props.textareaX,
             textareaY: this.props.textareaY,
-            fontSize: this.props.fontSize / this.props.scale,
+            fontSize: this.props.fontSize,
             textareaFontSize: this.props.fontSize
         };
         this.getTextValue = this.getTextValue.bind(this);
@@ -71,7 +71,6 @@ class Textarea extends React.Component {
                 finalTextValue: e.target.value,
                 textEditVisible: false,
                 draggable: true,
-                fontSize: textareaFontSize / this.props.scale,
                 textareaFontSize: textareaFontSize,
             });
         }
@@ -116,7 +115,7 @@ class Textarea extends React.Component {
                 >
                 <Text
                     text={this.state.finalTextValue}
-                    fontSize={this.state.fontSize}
+                    fontSize={this.state.textareaFontSize / this.props.scale}
                     fontFamily={'Klee'}
                     fill={'#555'}
                     width={this.props.width}

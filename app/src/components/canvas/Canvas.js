@@ -748,7 +748,8 @@ class Canvas extends React.Component {
         }
 
         // Delete selected canvas object on press of delete key on mac
-        if (e.keyCode === 8 && !this.isEditingText()) {
+        // if (e.keyCode === 8 && !this.isEditingText()) {
+        if (e.keyCode === 8 && !this.isEditingText() && !this.props.sideBarOpen) {
             this.delete();
         }
     };

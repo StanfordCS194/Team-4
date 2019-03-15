@@ -620,6 +620,7 @@ class App extends Component {
                         nextColor={this.state.nextColor}
                         nextStickyScale={this.state.nextStickyScale}
                         saveBoardToBoardList={this.onSaveButtonClicked}
+                        sideBarOpen={this.state.sidebarOpen}
                     />
                 </div>
 
