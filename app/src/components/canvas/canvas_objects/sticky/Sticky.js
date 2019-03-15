@@ -217,6 +217,7 @@ class Sticky extends React.Component {
                     textareaY={this.state.textY}
                     textX={this.state.position.x}
                     textY={this.state.position.y}
+                    scale={this.props.scale}
                 />
             </Group>
         );

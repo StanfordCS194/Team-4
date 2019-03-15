@@ -197,6 +197,7 @@ class Cloud extends React.Component {
                     textareaY={this.state.y + this.state.textY}
                     x={this.state.textX}
                     y={this.state.textY}
+                    scale={1}
                 />
             </Group>
         );
