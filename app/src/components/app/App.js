@@ -257,12 +257,14 @@ class App extends Component {
     }
 
     onBoardNameChanged(boardIndex, newName) {
-        let changedBoard = this.state.boards[boardIndex];
-        changedBoard.name = newName;
-        let newBoards = this.state.boards.slice();
+        if (newName) {
+            let changedBoard = this.state.boards[boardIndex];
+            changedBoard.name = newName;
+            let newBoards = this.state.boards.slice();
 
-        newBoards[boardIndex] = changedBoard;
-        this.setState({boards: newBoards}, () => console.log(this.state.boards[boardIndex].name));
+            newBoards[boardIndex] = changedBoard;
+            this.setState({boards: newBoards}, () => console.log(this.state.boards[boardIndex].name));
+        }
     }
 
     handleKeyPress = (e) => {
