@@ -413,16 +413,16 @@ class App extends Component {
                     <div className="sidebarContent" id="user">
                         <h3><AccountIcon id="accountIcon"/><span id="userName">{this.state.username}</span></h3>
                     </div>
-                    <div className="sidebarContent">
-                        <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
+                    <div className="sidebarContent" id="saveToImageBtn">
+                        <a href='#' onClick={this.onSaveToImageClicked}>Save Board to Image</a>
                     </div>
-                    <div className="sidebarContent">
+                    <div className="sidebarContent" id="viewMyBoardsBtn">
                         <a href='#' onClick={() => this.switchLeftSidebarView(() => {
                             this.setState({viewingMyBoards: true}, () => this.onSetSidebarOpen(true));
                         })}
                         >My Boards</a>
                     </div>
-                    <div className="sidebarContent">
+                    <div className="sidebarContent" id="logoutButton">
                         <a href='#' onClick={() => this.handleLogout()}>Log Out</a>
                     </div>
                 </Fragment>
