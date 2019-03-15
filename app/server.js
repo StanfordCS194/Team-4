@@ -420,7 +420,7 @@ app.get('/delete/:board_id', function (req, res) {
  * URL /saveBoard/:board_id - Saves the state of the board with id board_id
  * paramters:
  *  name - desired name for board
- *  content - content for the board
+ *  content - content for the board (optional, if not provied, does not update)
  *  thumbnail - thumbnail representing the board
  *  date_time - date of last edit for board
  * returns:
@@ -429,20 +429,31 @@ app.get('/delete/:board_id', function (req, res) {
  */
 app.post('/saveBoard/:board_id', function (req, res) {
   let board_id = req.params.board_id;
-  console.log('\n /saveBoard/:board_id ======== ', board_id);
+  console.log('\n /saveBoard/:board_id ======== ', board_id, req.body.name);
   if (!req.session.logged_in_user) {
     console.error('must log in before accessing photos');
     res.status(401).send('must log in before accessing photos with /saveBoard/:board_id');
     return;
   }
-  User.updateOne(
-    {_id: req.session.logged_in_user._id, "boards._id": board_id},
-    {$set: {
+  let query = null;
+  // if no content given, just update other 
+  if (req.body.content.length < 10) {
+    query = {$set: {
+      "boards.$.date_time": req.body.date_time,
+      "boards.$.name": req.body.name,
+      "boards.$.thumbnail": req.body.thumbnail,
+    }}
+  } else {
+    query = {$set: {
       "boards.$.date_time": req.body.date_time,
       "boards.$.name": req.body.name,
       "boards.$.content": req.body.content,
       "boards.$.thumbnail": req.body.thumbnail,
-    }}, (err, info) => {
+    }}
+  }
+  User.updateOne(
+    {_id: req.session.logged_in_user._id, "boards._id": board_id},
+    query, (err, info) => {
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.

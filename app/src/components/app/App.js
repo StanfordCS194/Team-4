@@ -582,6 +582,9 @@ class App extends Component {
             boardState: newBoard.boardState,
             componentStates: newBoard.componentStates
         };
+        if (content === {}) {
+          console.log('empty content', content, newBoard)
+        }
 
         let req = {
             name: newBoard.name,

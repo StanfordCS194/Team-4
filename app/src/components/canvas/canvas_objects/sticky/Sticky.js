@@ -202,6 +202,7 @@ class Sticky extends React.Component {
                     height={this.props.height}
                     fill={this.state.color}
                     shadowColor={'black'}
+                    shadowBlur={0}
                     scaleX={1.1}
                     scaleY={1.1}
                 />
