@@ -206,7 +206,7 @@ class App extends Component {
         let boardToSave = this.canvas.current.saveBoard();
         boardToSave._id = this.state.currentBoard._id;
         boardToSave.name = this.state.currentBoard.name;
-        // boardToSave.thumbnail = boardToSave.imgUri; //todo
+        boardToSave.thumbnail = boardToSave.imgUri; //todo
         this.postBoardUpdate(boardToSave,
             () => {
                 this.canvas.current.clearBoardAndLoadNewBoard(null,
@@ -539,8 +539,8 @@ class App extends Component {
         savedBoard.thumbnail = savedBoard.imgUri;
         this.setState({
             currentBoard: savedBoard,
-        });
-        this.postBoardUpdate(savedBoard, this.updateBoardListFromServer(callback));
+        }, () => this.postBoardUpdate(savedBoard, this.updateBoardListFromServer(callback)));
+        // this.postBoardUpdate(savedBoard, this.updateBoardListFromServer(callback));
         // todo: list should update to put svaed board on top of list
 
     }
