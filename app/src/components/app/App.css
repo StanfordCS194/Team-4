@@ -125,7 +125,7 @@ ul {
 }
 
 .sidebarContent img {
-    transition: all .05s ease-in-out;
+    transition: all .1s ease-in-out;
 }
 
 .board-thumbnail {
@@ -152,6 +152,11 @@ ul {
     padding-right: 10px;
     padding-left: 10px;
     cursor: pointer;
+    transition: all .1s ease-in-out;
+}
+
+#arrow-back-icon:hover {
+    transform: scale(2.2);
 }
 
 #new-board-button {
@@ -162,7 +167,7 @@ ul {
     margin: 10px;
     cursor: pointer;
     border: 5px solid #2EC4B6;
-    transition: all .05s ease-in-out;
+    transition: all .1s ease-in-out;
     display: flex;
     justify-content: center;
     align-items: center;
