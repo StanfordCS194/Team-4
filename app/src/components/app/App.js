@@ -365,11 +365,11 @@ class App extends Component {
         newBoardsList[boardIndex] = changedBoard;
         this.setState((state) => { return {
             boardList: newBoardsList,
-            currentBoard: {
+            currentBoard: { // update current board name if the name that was updated belongs to the current board
                 _id: state.currentBoard._id,
                 componentStates: state.currentBoard.componentStates,
                 boardState: state.currentBoard.boardState,
-                name: newName,
+                name: newBoardsList[boardIndex]._id === state.currentBoard._id ? newName : state.currentBoard.name,
             }
         }});
 
