@@ -41,6 +41,11 @@ input {
   background-color: white;
   font-weight: bold;
   cursor: pointer;
+  transition: all .1s ease-in-out;
+}
+
+#submit:hover, .switchLogin:hover {
+  transform: scale(1.05);
 }
 
 .login-register .titleContainer {
@@ -53,6 +58,7 @@ input {
   background-color: #2EC4B6;
   font-weight: bold;
   cursor: pointer;
+  transition: all .1s ease-in-out;
 }
 
 input:focus,

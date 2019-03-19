@@ -295,10 +295,10 @@ class App extends Component {
         this.setState({rightSidebarOpen: open});
     }
 
-    switchLeftSidebarView(viewingMyBoards) {
+    switchLeftSidebarView(callback) {
         this.onSetSidebarOpen(false);
-        setTimeout(() => { // lets board close animation complete first
-            this.setState({viewingMyBoards: viewingMyBoards}, () => this.onSetSidebarOpen(true));
+        setTimeout(() => {
+            if (callback) callback()
         }, 350);
     }
 
@@ -659,7 +659,9 @@ class App extends Component {
                         <h3>
                             <ArrowBackIcon
                                 id="arrow-back-icon"
-                                onClick={() => this.switchLeftSidebarView(false)}
+                                onClick={() => this.switchLeftSidebarView(() => {
+                                    this.setState({viewingMyBoards: false}, () => {this.onSetSidebarOpen(true)});
+                                })}
                             />
                             <span id="userName">My Boards</span>
                         </h3>
@@ -710,13 +712,16 @@ class App extends Component {
                     <div className="sidebarContent" id="user">
                         <h3><AccountIcon id="accountIcon"/><span id="userName">{this.state.username}</span></h3>
                     </div>
-                    <div className="sidebarContent">
-                        <a href='#' id="saveToImageBtn" onClick={this.onSaveToImageClicked}>Save Board to Image</a>
+                    <div className="sidebarContent" id="saveToImageBtn">
+                        <a href='#' onClick={this.onSaveToImageClicked}>Save Board to Image</a>
                     </div>
-                    <div className="sidebarContent">
-                        <a href='#' onClick={() => this.switchLeftSidebarView(true)}>My Boards</a>
+                    <div className="sidebarContent" id="viewMyBoardsBtn">
+                        <a href='#' onClick={() => this.switchLeftSidebarView(() => {
+                            this.setState({viewingMyBoards: true}, () => this.onSetSidebarOpen(true));
+                        })}
+                        >My Boards</a>
                     </div>
-                    <div className="sidebarContent">
+                    <div className="sidebarContent" id="logoutButton">
                         <a href='#' onClick={() => this.handleLogout()}>Log Out</a>
                     </div>
                 </Fragment>
@@ -915,6 +920,7 @@ class App extends Component {
                         nextStickyScale={this.state.nextStickyScale}
                         // saveBoardToBoardList={this.onSaveButtonClicked}
                         saveBoardToBoardList={this.handleSaveButtonPressed}
+                        sideBarOpen={this.state.sidebarOpen}
                     />
                 </div>
 
