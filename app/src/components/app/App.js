@@ -487,14 +487,24 @@ class App extends Component {
     //     });
 
 
+    // handleLogout() {
+    //     this.saveBoardToBoardList(true, () => {
+    //         this.postBoardListUpdate(this.state.boards, () => {
+    //             axios.post('/admin/logout').catch((error) => console.log(error));
+    //             this.setState({username: null, user_id: null});
+    //             this.canvas.current.clearBoardAndLoadNewBoard();
+    //         });
+    //     });
+    // }
+
     handleLogout() {
-        this.saveBoardToBoardList(true, () => {
-            this.postBoardListUpdate(this.state.boards, () => {
+        this.handleSaveButtonPressed(
+            () => {
                 axios.post('/admin/logout').catch((error) => console.log(error));
                 this.setState({username: null, user_id: null});
                 this.canvas.current.clearBoardAndLoadNewBoard();
-            });
-        });
+            }
+        );
     }
 
     /**
@@ -559,7 +569,6 @@ class App extends Component {
         this.setState({
             currentBoard: savedBoard,
         }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback), true));
-        // todo: list should update to put svaed board on top of list
 
     }
 
