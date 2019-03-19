@@ -219,16 +219,18 @@ class App extends Component {
                         let newBoard = this.canvas.current.saveBoard();
                         this.makeNewBoardOnServer(newBoard,
                             (createdBoardRes) => {
-                                this.setState({currentBoard: { //todo: not sure if can access newBoard from here
-                                    componentStates: newBoard.componentStates,
-                                    boardState: newBoard.boardState,
-                                    _id: createdBoardRes.data,
-                                    name: "New Board",
-                                }});
+                                this.setState({
+                                    currentBoard: { //todo: not sure if can access newBoard from here
+                                        componentStates: newBoard.componentStates,
+                                        boardState: newBoard.boardState,
+                                        _id: createdBoardRes.data,
+                                        name: "New Board",
+                                    }
+                                });
                                 this.updateBoardListFromServer();
                             });
                     });
-            });
+            }, false);
     }
 
     onColorChange(color) {
@@ -358,22 +360,26 @@ class App extends Component {
     };
 
     onBoardNameChanged(boardIndex, newName) {
-        let changedBoard = this.state.boardList[boardIndex];
-        changedBoard.name = newName;
-        let newBoardsList = this.state.boardList.slice();
+        if (newName) {
+            let changedBoard = this.state.boardList[boardIndex];
+            changedBoard.name = newName;
+            let newBoardsList = this.state.boardList.slice();
 
-        newBoardsList[boardIndex] = changedBoard;
-        this.setState((state) => { return {
-            boardList: newBoardsList,
-            currentBoard: { // update current board name if the name that was updated belongs to the current board
-                _id: state.currentBoard._id,
-                componentStates: state.currentBoard.componentStates,
-                boardState: state.currentBoard.boardState,
-                name: newBoardsList[boardIndex]._id === state.currentBoard._id ? newName : state.currentBoard.name,
-            }
-        }});
+            newBoardsList[boardIndex] = changedBoard;
+            this.setState((state) => {
+                return {
+                    boardList: newBoardsList,
+                    currentBoard: { // update current board name if the name that was updated belongs to the current board
+                        _id: state.currentBoard._id,
+                        componentStates: state.currentBoard.componentStates,
+                        boardState: state.currentBoard.boardState,
+                        name: newBoardsList[boardIndex]._id === state.currentBoard._id ? newName : state.currentBoard.name,
+                    }
+                }
+            });
 
-        this.postBoardUpdate(this.state.boardList[boardIndex]);
+            this.postBoardUpdate(this.state.boardList[boardIndex]);
+        }
     }
 
     handleKeyPress = (e) => {
@@ -515,22 +521,22 @@ class App extends Component {
     };
 
     // postBoardListUpdate(newBoards, callback) {
-        // Handle circular references
-        // let cache = [];
-        // let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
-        //     if (typeof value === 'object' && value !== null) {
-        //         if (cache.indexOf(value) !== -1) {
-        //             try {
-        //                 return JSON.parse(JSON.stringify(value));
-        //             } catch (error) {
-        //                 return;
-        //             }
-        //         }
-        //         cache.push(value);
-        //     }
-        //     return value;
-        // });
-        // cache = null;
+    // Handle circular references
+    // let cache = [];
+    // let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
+    //     if (typeof value === 'object' && value !== null) {
+    //         if (cache.indexOf(value) !== -1) {
+    //             try {
+    //                 return JSON.parse(JSON.stringify(value));
+    //             } catch (error) {
+    //                 return;
+    //             }
+    //         }
+    //         cache.push(value);
+    //     }
+    //     return value;
+    // });
+    // cache = null;
     //     // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
     //     let req = {board_representation: newBoardsJson, id: this.state.user_id};
     //     axios.post('/user/board', req)
@@ -552,7 +558,7 @@ class App extends Component {
         savedBoard.thumbnail = savedBoard.imgUri;
         this.setState({
             currentBoard: savedBoard,
-        }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback)));
+        }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback), true));
         // todo: list should update to put svaed board on top of list
 
     }
@@ -573,7 +579,7 @@ class App extends Component {
             });
     };
 
-    postBoardUpdate(newBoard, callback) {
+    postBoardUpdate(newBoard, callback, shouldUpdateDate) {
         /**
          * Given a board with fields {name, content, thumbnail, _id}, post changes to server.
          * @type {{boardState: *, componentStates: *}}
@@ -583,18 +589,25 @@ class App extends Component {
             componentStates: newBoard.componentStates
         };
         if (content === {}) {
-          console.log('empty content', content, newBoard)
+            console.log('empty content', content, newBoard)
         }
+
+        let lastUpdated = null; // get date_time of newBoard if don't want to update
+        this.state.boardList.forEach((board) => {
+            if (board._id === newBoard._id) lastUpdated = board.date_time;
+        });
 
         let req = {
             name: newBoard.name,
             content: this.stringifyRemoveCircularRefs(content),
             thumbnail: newBoard.thumbnail,
-            date_time: new Date(),
+            date_time: shouldUpdateDate ? new Date() : lastUpdated,
         };
         axios.post('/saveBoard/' + newBoard._id, req)
             .then((res) => {
-                if (callback && res) { callback(); }
+                if (callback && res) {
+                    callback();
+                }
             })
             .catch((error) => console.log(error));
     }
@@ -605,7 +618,12 @@ class App extends Component {
             .then((res) => {
                 console.log("in updateBoardListFromServer. res is below:");
                 console.log(res);
-                this.setState({boardList: res.data}, () => {
+                let newBoardList = res.data;
+                newBoardList.sort(function (a, b) { // most recently updated boards go to top
+                    return a.date_time > b.date_time ? -1 : a.date_time < b.date_time ? 1 : 0;
+                });
+                // this.setState({boardList: res.data}, () => {
+                this.setState({boardList: newBoardList}, () => {
                     if (callback) callback();
                 });
             })
