@@ -1,3 +1,4 @@
+# epiphany
 <img src="/team_photos/logo2.png" width="400"/>
 
 Organize your thoughts or find your next big idea with this clean, collaborative mind-mapping tool.
@@ -5,8 +6,8 @@ Organize your thoughts or find your next big idea with this clean, collaborative
 <img src="/team_photos/Epiphany_Poster.png" width="900"/>
 
 # Members
-| | | | |
-|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
 Marilu Bravo | Alejandro Bravo | Sean Decker
 <img src="/team_photos/malu.jpg" height="170"/> | <img src="/team_photos/IMG_9190.JPG" height="170"/> | <img src="/team_photos/sean.jpg" height="170"/> 
 
