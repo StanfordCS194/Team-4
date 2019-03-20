@@ -18,6 +18,10 @@ import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
 
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {css} from 'glamor';
+
 import axios from 'axios';
 
 class App extends Component {
@@ -90,9 +94,45 @@ class App extends Component {
         return newBoards;
     }
 
+    createNotification = (type) => {
+        switch (type) {
+            case 'saved':
+                toast('Board saved successfully', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            case 'login':
+                toast('Welcome back, ' + this.state.username + '!', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            case 'register':
+                toast('Welcome, ' + this.state.username + '!', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            default:
+                console.log("default");
+                break;
+        }
+    };
+
     onSaveButtonClicked() {
         let newBoards = this.saveBoardToBoardList(false, null);
         this.postBoardListUpdate(newBoards);
+        this.createNotification('saved');
     }
 
     deleteBoard(boardIndex) {
@@ -276,7 +316,7 @@ class App extends Component {
         }
     };
 
-    handleLogin(username, id) {
+    handleLogin(username, id, firstLogin) {
         document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
 
         axios.get('/user/' + id)
@@ -293,6 +333,7 @@ class App extends Component {
                             user_id: res.data._id,
                             editingBoardIndex: 0,
                         }, () => {
+                            this.createNotification(firstLogin ? 'register' : 'login');
                             this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
                             this.onSetSidebarOpen(true);
                         }); // after loading saved boards, add board currently editing to user's board list
@@ -350,8 +391,7 @@ class App extends Component {
         if (!this.state.user_id) {
             return (
                 <LoginRegister
-                    // logIn={(username, id) => this.setState({username: username, user_id: id})}
-                    logIn={(username, id) => this.handleLogin(username, id)}
+                    logIn={(username, id, firstLogin) => this.handleLogin(username, id, firstLogin)}
                 />
             );
         }
@@ -365,7 +405,9 @@ class App extends Component {
                             <ArrowBackIcon
                                 id="arrow-back-icon"
                                 onClick={() => this.switchLeftSidebarView(() => {
-                                    this.setState({viewingMyBoards: false}, () => {this.onSetSidebarOpen(true)});
+                                    this.setState({viewingMyBoards: false}, () => {
+                                        this.onSetSidebarOpen(true)
+                                    });
                                 })}
                             />
                             <span id="userName">My Boards</span>
@@ -571,6 +613,10 @@ class App extends Component {
         console.log(this.state.username);
         return (
             <Fragment>
+                <ToastContainer
+                    autoClose={2000}
+                    hideProgressBar={true}
+                />
                 <Sidebar
                     sidebar={this.makeSideBarContent()}
                     open={this.state.sidebarOpen}
