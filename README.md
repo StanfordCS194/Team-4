@@ -5,6 +5,7 @@ Organize your thoughts or find your next big idea with this clean, collaborative
 
 <img src="/team_photos/Epiphany_Poster.png" width="900"/>
 
+See our complete application documentation [here](https://docs.google.com/document/d/1Ulm6NkuGvmh4sC0uy9P-3hfdy45wj8N556sgwOon7RM/edit?usp=sharing)!
 # Members
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
