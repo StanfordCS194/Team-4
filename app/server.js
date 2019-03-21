@@ -76,7 +76,7 @@ app.get('/user/list', function (request, response) {
         });
       }
       // We got the object - return it in JSON format.
-      console.log('User List:', res);
+      // console.log('User List:', res);
       response.end(JSON.stringify(res));
   });
 });
@@ -164,7 +164,7 @@ app.post('/user', function(req, res) {
     password: req.body.password1,
     boards: '',
   };
-  console.log(new_user);
+  // console.log(new_user);
   User.find({username: new_user.username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
@@ -184,7 +184,7 @@ app.post('/user', function(req, res) {
       boards: '',
     },
       (err, response) => {
-        console.log('result', response);
+        // console.log('result', response);
         if (err) {
             // Query returned an error.  We pass it back to the browser with an Internal Service
             // Error (500) error code.
@@ -201,7 +201,7 @@ app.post('/user', function(req, res) {
         }
     })
     .then((data)=>{
-      console.log('created user: ', data);
+      // console.log('created user: ', data);
       let userDetails = JSON.parse(JSON.stringify(data));
       delete userDetails.__v;
       delete userDetails.password;
@@ -225,7 +225,6 @@ app.post('/user', function(req, res) {
  */
 app.get('/user/:id', function (request, response) {
     let id = request.params.id;
-    console.log(id);
     if (!request.session.loggedIn) {
       console.error('must log in before accessing user content');
       response.status(401).send('must log in before accessing user content with /user/:id');
@@ -267,7 +266,6 @@ app.get('/user/:id', function (request, response) {
 //  a short messages and a 200 status
 app.post('/user/board', function(req, res) {
   let id = req.body.id;
-  console.log('params', req.body);
   if (!req.session.loggedIn) {
     console.error('must log in before accessing user content');
     response.status(401).send('must log in before accessing user content with /user/:id');
@@ -282,7 +280,7 @@ app.post('/user/board', function(req, res) {
     {_id: id},
     {$set: { boards: req.body.board_representation}},
     (err, response) => {
-      console.log('result', response);
+      // console.log('result', response);
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
@@ -312,7 +310,7 @@ app.post('/user/board', function(req, res) {
             res.status(400).send('Login failed with login_name: ' + login_name);
             return;
         }
-        console.log('returned info: ', info);
+        // console.log('returned info: ', info);
         // res.end(JSON.stringify(info));
         res.end('saved boards');
       });
