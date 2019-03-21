@@ -17,6 +17,7 @@ import AccountIcon from '@material-ui/icons/AccountCircle';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
+import StickyButton from "../canvas/buttons/StickyButton";
 
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -228,25 +229,6 @@ class App extends Component {
 
     onSaveToImageClicked() {
         this.canvas.current.saveToImage();
-    }
-
-    onMouseOverRightSidebarElement(e) {
-        document.body.style.cursor = 'pointer';
-        e.target.to({
-            scaleX: 1.1 * e.target.attrs.scaleX,
-            scaleY: 1.1 * e.target.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-    }
-
-    onMouseOutRightSidebarElement(e) {
-        document.body.style.cursor = 'pointer';
-        console.log(e.target);
-        e.target.to({
-            scaleX: e.target.attrs.scaleX / 1.1,
-            scaleY: e.target.attrs.scaleY / 1.1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
     }
 
     onSetSidebarOpen(open) {
@@ -485,17 +467,12 @@ class App extends Component {
                         ref={this.rightSidebarStage}
                     >
                         <Layer>
-                            <Rect // Todo: dynamically place these stickies to be in center of stage
-                                id="smallStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
+                            <StickyButton
                                 x={30}
                                 y={50}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
-                                scaleX={1.0}
-                                scaleY={1.0}
+                                width={60}
+                                text={"s"}
+                                stroke={this.state.smallSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 1,
                                     smallSelected: true,
@@ -503,21 +480,13 @@ class App extends Component {
                                     largeSelected: false,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.smallSelected ? 'black' : null}
-                                strokeWidth={3}
-                            >
-                            </Rect>
-                            <Rect
-                                id="medStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
-                                scaleX={1.333}
-                                scaleY={1.333}
+                            />
+                            <StickyButton
                                 x={110}
                                 y={40}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                width={80}
+                                text={"m"}
+                                stroke={this.state.medSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 2,
                                     smallSelected: false,
@@ -525,22 +494,13 @@ class App extends Component {
                                     largeSelected: false,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.medSelected ? 'black' : null}
-                                strokeWidth={3}
-
-                            >
-                            </Rect>
-                            <Rect
-                                id="largeStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
-                                scaleX={1.7}
-                                scaleY={1.7}
+                            />
+                            <StickyButton
                                 x={210}
                                 y={30}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                width={100}
+                                text={"xl"}
+                                stroke={this.state.largeSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 3,
                                     smallSelected: false,
@@ -548,11 +508,8 @@ class App extends Component {
                                     largeSelected: true,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.largeSelected ? 'black' : null}
-                                strokeWidth={3}
+                            />
 
-                            >
-                            </Rect>
                             <Arrow
                                 id={"sidebarArrow"}
                                 draggable={false}
