@@ -1,5 +1,3 @@
-
-
 "use strict";
 /*
  *  Defined the Mongoose Schema and return a Model for a User
@@ -8,11 +6,19 @@
 
 var mongoose = require('mongoose');
 
+// board schema
+var boardSchema = new mongoose.Schema({
+    name: String, // Name of board
+    date_time: String, // Date of last interaction with board
+    thumbnail: String, // Thumbnail png to represent the board
+    content: String,  // JSON description of the board state
+});
+
 // create a schema for usr
 var userSchema = new mongoose.Schema({
     username: String, // Username of User
     password: String, // User's password
-    boards: String,  // A brief user description
+    boards: [boardSchema],  // A brief user description
 });
 
 // the schema is useless so far

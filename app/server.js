@@ -137,7 +137,6 @@ app.post('/user', function(req, res) {
     password: req.body.password1,
     boards: '',
   };
-  console.log(new_user);
   User.find({username: new_user.username}, function (err, info) {
     if (err) {
         // Query returned an error.  We pass it back to the browser with an Internal Service
@@ -157,7 +156,6 @@ app.post('/user', function(req, res) {
       boards: '',
     },
       (err, response) => {
-        console.log('result', response);
         if (err) {
             // Query returned an error.  We pass it back to the browser with an Internal Service
             // Error (500) error code.
@@ -174,7 +172,6 @@ app.post('/user', function(req, res) {
         }
     })
     .then((data)=>{
-      console.log('created user: ', data);
       let userDetails = JSON.parse(JSON.stringify(data));
       delete userDetails.__v;
       delete userDetails.password;
@@ -436,7 +433,7 @@ app.post('/saveBoard/:board_id', function (req, res) {
     return;
   }
   let query = null;
-  // if no content given, just update other 
+  // if no content given, just update other
   if (req.body.content.length < 10) {
     query = {$set: {
       "boards.$.date_time": req.body.date_time,
@@ -499,7 +496,7 @@ function printBoards(boards) {
  *  _id: automatically generated id for the new board
  *
  */
-app.post('/createdBoard', function (req, res) {
+app.post('/createBoard', function (req, res) {
   if (!req.session.logged_in_user) {
     console.error('must log in before saving a board');
     res.status(401).send('must log in before accessing photos with /createdBoard');
@@ -517,11 +514,10 @@ app.post('/createdBoard', function (req, res) {
       }
     }},
     function (err, info) {
-      console.log('result of update: ', info);
       if (err) {
           // Query returned an error.  We pass it back to the browser with an Internal Service
           // Error (500) error code.
-          console.error('Doing /createdBoard received error:', err);
+          console.error('Doing /createBoard received error:', err);
           res.status(400).send('Received error ' + JSON.stringify(err));
           return;
       }

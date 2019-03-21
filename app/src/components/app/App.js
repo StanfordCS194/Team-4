@@ -344,14 +344,13 @@ class App extends Component {
             content: this.stringifyRemoveCircularRefs(content),
             thumbnail: board.imgUri,
             // thumbnail: JSON.stringify(board.imgUri),
-            // thumbnail: board.imgUri,
             date_time: new Date(),
         }; //todo get rid of double uri
 
-        console.log("In makeNewBoardOnServer (/createdBoard). Request is:");
+        console.log("In makeNewBoardOnServer (/createBoard). Request is:");
         console.log(req);
         // post board creation to server
-        axios.post('/createdBoard', req)
+        axios.post('/createBoard', req)
             .then((createdBoardRes) => {
                 // createdBoardRes data is id of newly created board
                 if (callback) callback(createdBoardRes);
