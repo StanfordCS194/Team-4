@@ -8,10 +8,7 @@ class Sticky extends React.Component {
   constructor(props) {
     super(props);
 
-//    Todo: decide if we should keep random sticky colors using this array, maybe by default before a color is specified
-//    const colors = ['#fffdd0', '#2ec4b6', '#e71d36', '#ff9f1c', '#BD509E', '#A1C865'];
     this.state = {
-//      color: colors[Math.floor(Math.random() * colors.length)],
       color: this.props.nextColor,
       editingStickyText: false,
       transformer: true,

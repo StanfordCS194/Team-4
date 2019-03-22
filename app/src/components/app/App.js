@@ -149,19 +149,6 @@ class App extends Component {
         this.createNotification('saved');
     }
 
-    // deleteBoard(boardIndex) {
-    //     if (this.state.boards.length > 1) {
-    //         let newBoards = this.state.boards.slice();
-    //         newBoards.splice(boardIndex, 1);
-    //         this.setState({
-    //             boards: newBoards,
-    //         }, () => { // After board is deleted, switch view to most recently updated board
-    //             this.switchToBoard(0, false);
-    //             // this.postBoardListUpdate(newBoards);
-    //         });
-    //     }
-    // }
-
     deleteBoard(boardId) {
         if (this.state.boardList.length > 1) { // board list should never have length 0
             axios.get('/delete/' + boardId)
@@ -175,15 +162,6 @@ class App extends Component {
                 .catch((error) => console.log(error));
         }
     }
-
-    // switchToBoard(boardIndex, shouldSavePreviousBoard) {
-    //     if (shouldSavePreviousBoard) {
-    //         // delay loading board until after saving current board
-    //         this.saveBoardToBoardList(true, this.loadBoardAndUpdateBoardIndex(boardIndex));
-    //     } else {
-    //         this.loadBoardAndUpdateBoardIndex(boardIndex);
-    //     }
-    // }
 
     switchToBoard(boardListItem) {
         // Get board to switch to from server, then pass it to canvas to load it.
@@ -204,50 +182,9 @@ class App extends Component {
                     this.setState({currentBoard: boardToSwitchTo},
                         () => this.canvas.current.clearBoardAndLoadNewBoard(boardToSwitchTo, null)
                     );
-                    // this.canvas.current.clearBoardAndLoadNewBoard(boardToSwitchTo, null);
                 })
             .catch((error) => console.log(error));
     }
-
-    loadBoardAndUpdateBoardIndex(boardIndex) {
-        this.setState({editingBoardIndex: boardIndex});
-        this.canvas.current.clearBoardAndLoadNewBoard(this.state.boards[boardIndex]);
-    }
-
-    insertNewBoardObjectInBoardsList(callback) { //Todo: warn user to save before switching, or just automatically save current board
-        /**
-         * Puts a new board at the front of the user's board list.
-         */
-        let newBoard = {};
-        let newBoards = [newBoard];
-
-        newBoard.lastUpdated = new Date();
-        newBoard.name = "New Board";
-        this.setState((state) => {
-            return {
-                boards: newBoards.concat(state.boards),
-            };
-        }, () => {
-            if (callback) callback()
-        });
-    }
-
-    // handleNewBoardButtonClicked() {
-    //     // Create new board object in boards list
-    //     // this.insertNewBoardObjectInBoardsList(() => {
-    //     this.saveBoardToBoardList(true, () => {
-    //         // Save board currently editing
-    //         // this.saveBoardToBoardList(true, () => {
-    //         this.insertNewBoardObjectInBoardsList(() => {
-    //
-    //             // Clear canvas and save empty board to newly created object in boards list
-    //             this.canvas.current.clearBoardAndLoadNewBoard(null, () => {
-    //                 this.setState({editingBoardIndex: 0}, () => this.saveBoardToBoardList(true, null));
-    //             });
-    //         });
-    //
-    //     });
-
 
     handleNewBoardButtonClicked() {
         /**
@@ -260,7 +197,7 @@ class App extends Component {
         let boardToSave = this.canvas.current.saveBoard();
         boardToSave._id = this.state.currentBoard._id;
         boardToSave.name = this.state.currentBoard.name;
-        boardToSave.thumbnail = boardToSave.imgUri; //todo
+        boardToSave.thumbnail = boardToSave.imgUri;
         this.postBoardUpdate(boardToSave,
             () => {
                 this.canvas.current.clearBoardAndLoadNewBoard(null,
@@ -269,7 +206,7 @@ class App extends Component {
                         this.makeNewBoardOnServer(newBoard,
                             (createdBoardRes) => {
                                 this.setState({
-                                    currentBoard: { //todo: not sure if can access newBoard from here
+                                    currentBoard: {
                                         componentStates: newBoard.componentStates,
                                         boardState: newBoard.boardState,
                                         _id: createdBoardRes.data,
@@ -316,7 +253,6 @@ class App extends Component {
     onSetSidebarOpen(open) {
         if (open) {
             this.onSetRightSidebarOpen(false);
-            // this.saveBoardToBoardList(true); //todo get rid of this, makes too much lag
         }
         this.setState({sidebarOpen: open});
     }
@@ -371,12 +307,10 @@ class App extends Component {
         };
         let req = {
             name: "New Board",
-            // content: JSON.stringify(content),
             content: this.stringifyRemoveCircularRefs(content),
             thumbnail: board.imgUri,
-            // thumbnail: JSON.stringify(board.imgUri),
             date_time: new Date(),
-        }; //todo get rid of double uri
+        };
 
         console.log("In makeNewBoardOnServer (/createBoard). Request is:");
         console.log(req);
@@ -421,30 +355,6 @@ class App extends Component {
         }
     };
 
-    // handleLogin(username, id) {
-    //     document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
-    //
-    //     axios.get('/user/' + id)
-    //         .then((res) => {
-    //             console.log(res);
-    //             if (!res.data && this.state.user_id) {
-    //                 this.setState({user_id: null});
-    //             }
-    //             this.setState({
-    //                 username: res.data.username,
-    //                 boards: res.data.boards ? JSON.parse(res.data.boards) : [],
-    //                 user_id: res.data._id,
-    //                 editingBoardIndex: 0,
-    //             }, () => {
-    //                 this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
-    //             }); // after loading saved boards, add board currently editing to user's board list
-    //         })
-    //         .catch(function (error) {
-    //             // handle error
-    //             console.log(error);
-    //         });
-    // }
-
     handleLogin(username, id, firstLogin) {
         document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
 
@@ -477,56 +387,6 @@ class App extends Component {
                 );
             });
     }
-
-
-    // this.setState({currentBoard: this.canvas.current.saveBoard()}, () => {
-    //         let req = {
-    //             name: "New Board",
-    //             content: this.state.currentBoard,
-    //             thumbnail: this.state.currentBoard.imgUri,
-    //         }; // todo get rid of double image uri
-    //         axios.post('/createdBoard', req)
-    //             .then((res) => {
-    //                 axios.get('/boardsOfUser/'+)
-    //             })
-    //             .catch((error) => console.log(error));
-    //     }
-    // );
-
-    // let
-    // req = {name: "New Board", content: this.state.cu}
-
-
-    // axios.get('/user/' + id)
-    //     .then((res) => {
-    //         console.log(res);
-    //         if (!res.data && this.state.user_id) {
-    //             this.setState({user_id: null});
-    //         }
-    //         this.setState({
-    //             username: res.data.username,
-    //             boards: res.data.boards ? JSON.parse(res.data.boards) : [],
-    //             user_id: res.data._id,
-    //             editingBoardIndex: 0,
-    //         }, () => {
-    //             this.insertNewBoardObjectInBoardsList(this.saveBoardToBoardList);
-    //         }); // after loading saved boards, add board currently editing to user's board list
-    //     })
-    //     .catch(function (error) {
-    //         // handle error
-    //         console.log(error);
-    //     });
-
-
-    // handleLogout() {
-    //     this.saveBoardToBoardList(true, () => {
-    //         this.postBoardListUpdate(this.state.boards, () => {
-    //             axios.post('/admin/logout').catch((error) => console.log(error));
-    //             this.setState({username: null, user_id: null});
-    //             this.canvas.current.clearBoardAndLoadNewBoard();
-    //         });
-    //     });
-    // }
 
     handleLogout() {
         this.handleSaveButtonPressed(
@@ -561,33 +421,6 @@ class App extends Component {
         return ret;
     };
 
-    // postBoardListUpdate(newBoards, callback) {
-    // Handle circular references
-    // let cache = [];
-    // let newBoardsJson = JSON.stringify(newBoards, function (key, value) {
-    //     if (typeof value === 'object' && value !== null) {
-    //         if (cache.indexOf(value) !== -1) {
-    //             try {
-    //                 return JSON.parse(JSON.stringify(value));
-    //             } catch (error) {
-    //                 return;
-    //             }
-    //         }
-    //         cache.push(value);
-    //     }
-    //     return value;
-    // });
-    // cache = null;
-    //     // let req = {board_representation: JSON.stringify(newBoards), id: this.state.user_id};
-    //     let req = {board_representation: newBoardsJson, id: this.state.user_id};
-    //     axios.post('/user/board', req)
-    //         .then((res) => {
-    //             console.log(res);
-    //             if (callback) callback();
-    //         })
-    //         .catch((error) => console.log(error));
-    // }
-
     handleSaveButtonPressed(callback) {
         /**
          * Updates current board state var to reflect what's currently on canvas,
@@ -605,7 +438,6 @@ class App extends Component {
         } else {
             this.createNotification('logged out');
         }
-
     }
 
     handleBoardThumbnailPressed = (boardListItem) => {
@@ -667,7 +499,6 @@ class App extends Component {
                 newBoardList.sort(function (a, b) { // most recently updated boards go to top
                     return a.date_time > b.date_time ? -1 : a.date_time < b.date_time ? 1 : 0;
                 });
-                // this.setState({boardList: res.data}, () => {
                 this.setState({boardList: newBoardList}, () => {
                     if (callback) callback();
                 });
@@ -688,7 +519,7 @@ class App extends Component {
         if (this.state.viewingMyBoards) {
             console.log("this.state.boardList:");
             console.log(this.state.boardList);
-            return ( //todo: this should probably be its own react component
+            return (
                 <Fragment>
                     <div className="sidebarContent" id="my-boards-heading">
                         <h3>
@@ -730,7 +561,6 @@ class App extends Component {
                                             id={"input" + i} className="board-name-input"
                                             onKeyDown={(e) => this.handleBoardNameTextAreaKeyDown(e, board, i)}
                                             onBlur={() => this.handleBoardNameInputBlur(i)}
-                                            // onBlur={() => this.handleBoardNameInputBlur(board)}
                                             maxLength="25"
                                         />
                                     </div>
@@ -906,7 +736,6 @@ class App extends Component {
                     nextColor={this.state.nextColor}
                     undo={this.onUndo}
                     delete={this.onDelete}
-                    // saveBoard={this.onSaveButtonClicked}
                     saveBoard={this.handleSaveButtonPressed}
                 />
 
@@ -934,7 +763,6 @@ class App extends Component {
                         ref={this.canvas}
                         nextColor={this.state.nextColor}
                         nextStickyScale={this.state.nextStickyScale}
-                        // saveBoardToBoardList={this.onSaveButtonClicked}
                         saveBoardToBoardList={this.handleSaveButtonPressed}
                         sideBarOpen={this.state.sidebarOpen}
                     />

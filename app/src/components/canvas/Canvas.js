@@ -41,7 +41,6 @@ class Canvas extends React.Component {
     constructor(props) {
         super(props);
         this.stage = React.createRef();
-        // this.objectRefs = [];
         this.state = {
             justOpenedApp: true,
             creatingSticky: false,
@@ -61,7 +60,6 @@ class Canvas extends React.Component {
             pastObjRefs: [],
             pastObjArray: [],
             objectRefs: [],
-            savedBoard: {},
 
             selectedCanvasObjectIds: [],
             transformers: []
@@ -76,16 +74,16 @@ class Canvas extends React.Component {
         /**
          * Returns the URI of the image of the currently displayed board.
          */
-        return this.stage.current.getStage().toDataURL({pixelRatio: 1}); // Todo: Dynamically change this number based on stage scale for optimal image quality
+        return this.stage.current.getStage().toDataURL({pixelRatio: 1});
     }
 
     saveToImage() {
         /**
          * Saves the current board to a .png file which is downloaded locally.
          */
-        let uri = this.stage.current.getStage().toDataURL({pixelRatio: 3}); // Todo: Dynamically change this number based on stage scale for optimal image quality
+        let uri = this.stage.current.getStage().toDataURL({pixelRatio: 3});
         let link = document.createElement('a');
-        link.download = "stage.png"; // Todo: dynamically name stage
+        link.download = "stage.png";
         link.href = uri;
         document.body.appendChild(link);
         link.click();
@@ -346,8 +344,8 @@ class Canvas extends React.Component {
                 finalTextValue={''}
                 className={'cloud'}
                 draggable={true}
-                x={stageWidth / 2 - 20} // Todo: subtract half of cloud width
-                y={stageHeight / 2 - 90} // Todo: subtract half of cloud height
+                x={stageWidth / 2 - 20}
+                y={stageHeight / 2 - 90}
                 width={720}
                 height={600}
                 fill={'#7EC0EE'}
@@ -384,8 +382,8 @@ class Canvas extends React.Component {
                 ref={componentRef}
                 id={this.state.id}
                 draggable={true}
-                x={stageWidth / 2 - 150} // Todo: subtract half of arrow width
-                y={stageHeight / 2 - 40} // Todo: subtract half of arrow height
+                x={stageWidth / 2 - 150}
+                y={stageHeight / 2 - 40}
                 scale={1}
                 scaleX={1.1}
                 scaleY={1.1}
@@ -440,8 +438,8 @@ class Canvas extends React.Component {
 
     saveBoard() {
         /**
-         * Saves the currently displayed board into a single object.
-         * #TODO: more specific description
+         * Saves the currently displayed board into a single object, for use by
+         * App.js
          */
         // get state objects from component method getStateObj() and put into array
         let savedComponents = [];
@@ -462,13 +460,6 @@ class Canvas extends React.Component {
         savedBoard.componentStates = savedComponents;
         savedBoard.imgUri = this.getImageURI(); // thumbnail image
 
-        // todo get rid of set state below, shouldn't affect anything but be check to be sure
-        // for testing purposes: save state objects to canvas state to load later
-        this.setState({
-            savedBoard: savedBoard,
-        });
-        console.log("saved board:");
-        console.log(savedBoard);
         return savedBoard;
     }
 
@@ -477,10 +468,7 @@ class Canvas extends React.Component {
          * Loads a new board by first clearing the current one.
          * Loading a board occurs in the callback function of setState to
          * ensure the board is entirely cleared first.
-         * @param: {type} newBoard TODO description
-         * @param: {type} callback TODO description
          */
-        console.log("clearing board");
         this.setState({
                 justOpenedApp: true,
                 creatingSticky: false,
@@ -503,7 +491,6 @@ class Canvas extends React.Component {
                 objectRefs: [],
                 pastObjArray: [],
                 pastObjRefs: [],
-                savedBoard: {}
             }, () => { // Need to use a callback function to wait until board is cleared
                 if (newBoard) { // only loading a board if newBoard is not null
                     console.log("non-null board.");
@@ -730,14 +717,6 @@ class Canvas extends React.Component {
                 this.undo();
             }
 
-            /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
-             (dev purposes), probably want to create with double clicks,
-             but couldn't figure out how to read for keys other than
-             cmd when double-clicking.
-             Change or get rid of this when we've found the cleaner solution
-             */
-
-
             // Make arrow
             if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
                 this.addArrowToBoard();
@@ -761,11 +740,6 @@ class Canvas extends React.Component {
             // Dev: test save board to state variable
             if (e.metaKey && e.keyCode === 67) {
                 this.saveBoard();
-            }
-
-            // Testing: load board
-            if (e.metaKey && e.keyCode === 74) {
-                this.loadBoard(this.state.savedBoard);
             }
 
             // Delete selected canvas object on press of delete key on mac
