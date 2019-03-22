@@ -135,7 +135,7 @@ app.post('/user', function(req, res) {
   let new_user = {
     username: req.body.username,
     password: req.body.password1,
-    boards: '',
+    boards: [],
   };
   User.find({username: new_user.username}, function (err, info) {
     if (err) {
@@ -153,7 +153,7 @@ app.post('/user', function(req, res) {
     User.create({
       username: req.body.username,
       password: req.body.password1,
-      boards: '',
+      boards: [],
     },
       (err, response) => {
         if (err) {
