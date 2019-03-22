@@ -129,6 +129,14 @@ class App extends Component {
                     }),
                 },);
                 break;
+            case 'logged out':
+                toast("Log in or register to save boards!", {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
             default:
                 console.log("default");
                 break;
@@ -462,6 +470,7 @@ class App extends Component {
 
                                 // load board list from server
                                 this.updateBoardListFromServer();
+                                this.createNotification(firstLogin ? 'register' : 'login');
                             }
                         );
                     }
@@ -584,13 +593,18 @@ class App extends Component {
          * Updates current board state var to reflect what's currently on canvas,
          * then posts updated board to server.
          */
-        let savedBoard = this.canvas.current.saveBoard();
-        savedBoard._id = this.state.currentBoard._id;
-        savedBoard.name = this.state.currentBoard.name;
-        savedBoard.thumbnail = savedBoard.imgUri;
-        this.setState({
-            currentBoard: savedBoard,
-        }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback), true));
+        if (this.state.user_id) {
+            let savedBoard = this.canvas.current.saveBoard();
+            savedBoard._id = this.state.currentBoard._id;
+            savedBoard.name = this.state.currentBoard.name;
+            savedBoard.thumbnail = savedBoard.imgUri;
+            this.setState({
+                currentBoard: savedBoard,
+            }, () => this.postBoardUpdate(savedBoard, () => this.updateBoardListFromServer(callback), true));
+            this.createNotification('saved');
+        } else {
+            this.createNotification('logged out');
+        }
 
     }
 
