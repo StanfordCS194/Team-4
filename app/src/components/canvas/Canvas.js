@@ -407,7 +407,8 @@ class Canvas extends React.Component {
     addVennDiagramToBoard() {
         /**
          * Adds a new VennDiagram object to the center of the current board and
-         * recenters the stage.
+         * recenters the stage and zooms out of the stage if necessary for a better
+         * view of the VennDiagram shape
          */
         let componentRef = React.createRef();
         let stageWidth = this.stage.current.getStage().width();
@@ -425,6 +426,12 @@ class Canvas extends React.Component {
                 isButton={false}
             />
         );
+        let newScaleX = this.state.scaleX;
+        let newScaleY = this.state.scaleY;
+        if (newScaleX >= 1) {
+            newScaleX = .2;
+            newScaleY = .2;
+        }
 
         this.setState({
             justOpenedApp: false,
@@ -433,8 +440,10 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
-            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
-            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
+            stageX: (window.innerWidth - stageWidth * newScaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * newScaleY) / 2,
+            scaleX: newScaleX,
+            scaleY: newScaleY,
         });
     }
 
