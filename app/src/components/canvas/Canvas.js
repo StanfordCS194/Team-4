@@ -325,7 +325,6 @@ class Canvas extends React.Component {
             pastObjRefs: this.state.pastObjRefs.slice(),
             transformers: []
         });
-        console.log('after undo: ', this.state.pastObjArray);
     }
 
     addCloudToBoard() {
@@ -493,10 +492,8 @@ class Canvas extends React.Component {
                 pastObjRefs: [],
             }, () => { // Need to use a callback function to wait until board is cleared
                 if (newBoard) { // only loading a board if newBoard is not null
-                    console.log("non-null board.");
                     this.loadBoard(newBoard);
                 } else {
-                    console.log("null board");
                     if (callback) callback();
                 }
             }
@@ -508,9 +505,6 @@ class Canvas extends React.Component {
          * Recreates a board by making a new object from each state object and setting board values
          * @param: {object} board A JSON string representing an array of object states and a board state
          */
-        console.log("Loading board");
-        console.log(board);
-
         let savedComponentStates = board.componentStates;
         let savedBoardState = board.boardState;
         let newObjectRefs = [];
@@ -536,7 +530,6 @@ class Canvas extends React.Component {
         }, () => {
             // For each component state object, create a new object
             savedComponentStates.map(state => {
-                console.log(state);
                 let newComponent = null;
                 let newComponentRef = React.createRef();
                 switch (state.className) {
@@ -610,7 +603,6 @@ class Canvas extends React.Component {
                         />);
                         break;
                     case ('vennDiagram'):
-                        console.log("venn diagram");
                         newComponent = (<VennDiagram
                             ref={newComponentRef}
                             id={state.id}

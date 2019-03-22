@@ -56,7 +56,6 @@ class App extends Component {
         this.onArrowButtonClicked = this.onArrowButtonClicked.bind(this);
         this.onSaveToImageClicked = this.onSaveToImageClicked.bind(this);
         this.saveBoardToBoardList = this.saveBoardToBoardList.bind(this);
-        this.onSaveButtonClicked = this.onSaveButtonClicked.bind(this);
         this.handleSaveButtonPressed = this.handleSaveButtonPressed.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.updateBoardListFromServer = this.updateBoardListFromServer.bind(this);
@@ -100,6 +99,9 @@ class App extends Component {
     }
 
     createNotification = (type) => {
+        /**
+         * Displays a notification to the user.
+         */
         switch (type) {
             case 'saved':
                 toast('Board saved successfully', {
@@ -138,18 +140,14 @@ class App extends Component {
                 },);
                 break;
             default:
-                console.log("default");
                 break;
         }
     };
 
-    onSaveButtonClicked() {
-        let newBoards = this.saveBoardToBoardList(false, null);
-        this.postBoardListUpdate(newBoards);
-        this.createNotification('saved');
-    }
-
     deleteBoard(boardId) {
+        /**
+         * Removes a board from the board list and posts update to server.
+         */
         if (this.state.boardList.length > 1) { // board list should never have length 0
             axios.get('/delete/' + boardId)
                 .then(
@@ -164,15 +162,15 @@ class App extends Component {
     }
 
     switchToBoard(boardListItem) {
-        // Get board to switch to from server, then pass it to canvas to load it.
-        // Also update current board in state
+        /**
+         * Get board to switch to from server, then pass it to canvas to load it.
+         * Also update current board in state.
+         */
         axios.get('/getBoard/' + boardListItem._id)
             .then(
                 (res) => {
                     let responseBoard = res.data;
                     let content = JSON.parse(responseBoard.content);
-                    console.log("in switchToBoard, content is:");
-                    console.log(content);
                     let boardToSwitchTo = {
                         componentStates: content.componentStates,
                         boardState: content.boardState,
@@ -220,37 +218,61 @@ class App extends Component {
     }
 
     onColorChange(color) {
+        /**
+         * Assigns next color.
+         */
         this.setState({nextColor: color.hex})
     }
 
     onDelete() {
+        /**
+         * Calls the canvas method for deleting a board object.
+         */
         this.canvas.current.delete();
     }
 
     onUndo() {
+        /**
+         * Calls the canvas method for undoing the most recently created board.
+         */
         this.canvas.current.undo();
     }
 
     onVennDiagramButtonClicked() {
+        /**
+         * Adds Venn diagram to board.
+         */
         this.setState({rightSidebarOpen: false});
         this.canvas.current.addVennDiagramToBoard();
     }
 
     onCloudButtonClicked() {
+        /**
+         * Adds cloud to board.
+         */
         this.setState({rightSidebarOpen: false});
         this.canvas.current.addCloudToBoard();
     }
 
     onArrowButtonClicked() {
+        /**
+         * Adds arrow to board.
+         */
         this.setState({rightSidebarOpen: false});
         this.canvas.current.addArrowToBoard();
     }
 
     onSaveToImageClicked() {
+        /**
+         * Calls canvas method to save image.
+         */
         this.canvas.current.saveToImage();
     }
 
     onSetSidebarOpen(open) {
+        /**
+         * Sets sidebar open or closed.
+         */
         if (open) {
             this.onSetRightSidebarOpen(false);
         }
@@ -258,11 +280,18 @@ class App extends Component {
     }
 
     onSetRightSidebarOpen(open) {
+        /**
+         * Sets right sidebar open or closed.
+         */
         if (open) this.onSetSidebarOpen(false);
         this.setState({rightSidebarOpen: open});
     }
 
     switchLeftSidebarView(callback) {
+        /**
+         * Animates shifting of sidebar views.
+         * Provided callback must include the line 'this.onsetSidebarOpen(true);'
+         */
         this.onSetSidebarOpen(false);
         setTimeout(() => {
             if (callback) callback()
@@ -270,13 +299,19 @@ class App extends Component {
     }
 
     handleBoardNameTextAreaKeyDown(e, board, i) {
+        /**
+         * Detect return key hit when editing board name.
+         */
         if (e.keyCode === 13) { // Pressed enter
-            if (!e.target.value) return;
+            if (!e.target.value) return; // ignore null names
             this.handleBoardNameInputBlur(i);
         }
     }
 
     handleClickOnBoardName(e, i) {
+        /**
+         * Start editing board name after clicking on board name.
+         */
         this.setState({editingBoardName: true});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
@@ -287,6 +322,9 @@ class App extends Component {
     }
 
     handleBoardNameInputBlur(i) {
+        /**
+         * Update board name if board name text area loses focus.
+         */
         this.setState({editingBoardName: false});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
@@ -298,8 +336,7 @@ class App extends Component {
 
     makeNewBoardOnServer = (board, callback) => {
         /**
-         * given a board saved from canvas, adds a new board to the server's board list
-         * @type {{boardState: *, componentStates: *}}
+         * Given a board saved from canvas, adds a new board to the server's board list
          */
         let content = {
             boardState: board.boardState,
@@ -312,8 +349,6 @@ class App extends Component {
             date_time: new Date(),
         };
 
-        console.log("In makeNewBoardOnServer (/createBoard). Request is:");
-        console.log(req);
         // post board creation to server
         axios.post('/createBoard', req)
             .then((createdBoardRes) => {
@@ -324,6 +359,9 @@ class App extends Component {
     };
 
     onBoardNameChanged(boardIndex, newName) {
+        /**
+         * Post update when a board name changes.
+         */
         if (newName) {
             let changedBoard = this.state.boardList[boardIndex];
             changedBoard.name = newName;
@@ -356,9 +394,11 @@ class App extends Component {
     };
 
     handleLogin(username, id, firstLogin) {
+        /**
+         * Get user id, save currently editing board to server, and refresh board list from server
+         */
         document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
 
-        // Get user id, save currently editing board to server, and refresh board list from server
         axios.get('/user/' + id)
             .then((res) => {
                 if (!res.data && this.state.user_id) {
@@ -389,6 +429,9 @@ class App extends Component {
     }
 
     handleLogout() {
+        /**
+         * Save current board, then post logout.
+         */
         this.handleSaveButtonPressed(
             () => {
                 axios.post('/admin/logout').catch((error) => console.log(error));
@@ -400,7 +443,6 @@ class App extends Component {
 
     /**
      * Stringify object dealing with circular references.
-     * @param object
      */
     stringifyRemoveCircularRefs = (object) => {
         let cache = [];
@@ -459,15 +501,11 @@ class App extends Component {
     postBoardUpdate(newBoard, callback, shouldUpdateDate) {
         /**
          * Given a board with fields {name, content, thumbnail, _id}, post changes to server.
-         * @type {{boardState: *, componentStates: *}}
          */
         let content = {
             boardState: newBoard.boardState,
             componentStates: newBoard.componentStates
         };
-        if (content === {}) {
-            console.log('empty content', content, newBoard)
-        }
 
         let lastUpdated = null; // get date_time of newBoard if don't want to update
         this.state.boardList.forEach((board) => {
@@ -491,10 +529,11 @@ class App extends Component {
 
 
     updateBoardListFromServer(callback) {
+        /**
+         * Retrieve board list from server.
+         */
         axios.get('/boardsOfUser/' + this.state.user_id)
             .then((res) => {
-                console.log("in updateBoardListFromServer. res is below:");
-                console.log(res);
                 let newBoardList = res.data;
                 newBoardList.sort(function (a, b) { // most recently updated boards go to top
                     return a.date_time > b.date_time ? -1 : a.date_time < b.date_time ? 1 : 0;
@@ -506,8 +545,10 @@ class App extends Component {
             .catch((error) => console.log(error))
     }
 
-    // builds left sidebar content
     makeSideBarContent = () => {
+        /**
+         * Build left sidebar content.
+         */
         if (!this.state.user_id) {
             return (
                 <LoginRegister
@@ -517,8 +558,6 @@ class App extends Component {
         }
 
         if (this.state.viewingMyBoards) {
-            console.log("this.state.boardList:");
-            console.log(this.state.boardList);
             return (
                 <Fragment>
                     <div className="sidebarContent" id="my-boards-heading">
@@ -596,8 +635,10 @@ class App extends Component {
         }
     };
 
-    // builds right sidebar content
     makeRightSideBarContent() {
+        /**
+         * Build right sidebar content.
+         */
         return (
             <Fragment>
                 <div className="sidebarContent">
@@ -692,8 +733,10 @@ class App extends Component {
         );
     }
 
-    // on update, check if user is still logged in
     componentDidUpdate() {
+        /**
+         * On update, check if user is still logged in.
+         */
         axios.get('/admin/check')
             .then((res) => {
                 if (!res.data && this.state.user_id) {
