@@ -1,5 +1,5 @@
 import React from 'react';
-import { Rect, Group, RegularPolygon } from 'react-konva';
+import {Rect, Group, RegularPolygon} from 'react-konva';
 import Konva from 'konva';
 
 class Arrow extends React.Component {
@@ -135,18 +135,24 @@ class Arrow extends React.Component {
                 onDragStart={(e) => this.onDragStart(e)}
                 onDragEnd={(e) => this.onDragEnd(e)}
                 onClick={this.props.onClick}
-                >
+            >
+                <Rect
+                    width={300}
+                    height={scale*120}
+                    opacity={0}
+                    y={scale*-50}
+                />
                 <Rect
                     width={300}
                     height={20}
                     fill={'black'}
                     shadowColor={'black'}
-                    />
+                />
                 <RegularPolygon
                     width={150}
                     height={20}
                     radius={50}
-                    y={scale*10}
+                    y={scale * 10}
                     fill={'black'}
                     shadowColor={'black'}
                     sides={3}

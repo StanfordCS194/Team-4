@@ -332,11 +332,13 @@ class Canvas extends React.Component {
 
     addCloudToBoard() {
         /**
-         * Adds a new Cloud object to the current board.
+         * Adds a new Cloud object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
         this.setState({});
-
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
         let newComponent = (
             <Cloud
                 ref={componentRef}
@@ -344,8 +346,8 @@ class Canvas extends React.Component {
                 finalTextValue={''}
                 className={'cloud'}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 20} // Todo: subtract half of cloud width
-                y={this.stage.current.getStage().height() / 2 - 90} // Todo: subtract half of cloud height
+                x={stageWidth / 2 - 20} // Todo: subtract half of cloud width
+                y={stageHeight / 2 - 90} // Todo: subtract half of cloud height
                 width={720}
                 height={600}
                 fill={'#7EC0EE'}
@@ -355,6 +357,7 @@ class Canvas extends React.Component {
                 isButton={false}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -362,27 +365,33 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
     addArrowToBoard() {
         /**
-         * Adds a new Arrow object to the current board.
+         * Adds a new Arrow object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
 
         let newComponent = (
             <Arrow
                 ref={componentRef}
                 id={this.state.id}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 150} // Todo: subtract half of arrow width
-                y={this.stage.current.getStage().height() / 2 - 40} // Todo: subtract half of arrow height
+                x={stageWidth / 2 - 150} // Todo: subtract half of arrow width
+                y={stageHeight / 2 - 40} // Todo: subtract half of arrow height
                 scale={1}
                 scaleX={1.1}
                 scaleY={1.1}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -390,27 +399,33 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
     addVennDiagramToBoard() {
         /**
-         * Adds a new VennDiagram object to the current board.
+         * Adds a new VennDiagram object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
 
         let newComponent = (
             <VennDiagram
                 ref={componentRef}
                 id={this.state.id}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 20}
-                y={this.stage.current.getStage().height() / 2 - 90}
+                x={stageWidth / 2 - 20}
+                y={stageHeight / 2 - 90}
                 outlineColor={'black'}
                 scale={2.5}
                 isButton={false}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -418,6 +433,8 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
@@ -719,6 +736,7 @@ class Canvas extends React.Component {
              cmd when double-clicking.
              Change or get rid of this when we've found the cleaner solution
              */
+
 
             // Make arrow
             if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {

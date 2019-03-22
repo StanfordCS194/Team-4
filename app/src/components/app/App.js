@@ -17,6 +17,11 @@ import AccountIcon from '@material-ui/icons/AccountCircle';
 import Arrow from "../canvas/canvas_objects/arrow/Arrow";
 import Cloud from "../canvas/canvas_objects/cloud/Cloud";
 import VennDiagram from "../canvas/canvas_objects/venndiagram/VennDiagram";
+import StickyButton from "../canvas/buttons/StickyButton";
+
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {css} from 'glamor';
 
 import axios from 'axios';
 
@@ -95,9 +100,45 @@ class App extends Component {
         return newBoards;
     }
 
+    createNotification = (type) => {
+        switch (type) {
+            case 'saved':
+                toast('Board saved successfully', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            case 'login':
+                toast('Welcome back, ' + this.state.username + '!', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            case 'register':
+                toast('Welcome, ' + this.state.username + '!', {
+                    className: css({
+                        background: '#2EC4B6',
+                        color: 'white',
+                        fontFamily: 'Avenir, serif'
+                    }),
+                },);
+                break;
+            default:
+                console.log("default");
+                break;
+        }
+    };
+
     onSaveButtonClicked() {
         let newBoards = this.saveBoardToBoardList(false, null);
         this.postBoardListUpdate(newBoards);
+        this.createNotification('saved');
     }
 
     // deleteBoard(boardIndex) {
@@ -264,24 +305,6 @@ class App extends Component {
         this.canvas.current.saveToImage();
     }
 
-    onMouseOverRightSidebarElement(e) {
-        document.body.style.cursor = 'pointer';
-        e.target.to({
-            scaleX: 1.1 * e.target.attrs.scaleX,
-            scaleY: 1.1 * e.target.attrs.scaleY,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-    }
-
-    onMouseOutRightSidebarElement(e) {
-        document.body.style.cursor = 'pointer';
-        e.target.to({
-            scaleX: e.target.attrs.scaleX / 1.1,
-            scaleY: e.target.attrs.scaleY / 1.1,
-            easing: Konva.Easings.ElasticEaseOut,
-        });
-    }
-
     onSetSidebarOpen(open) {
         if (open) {
             this.onSetRightSidebarOpen(false);
@@ -414,7 +437,7 @@ class App extends Component {
     //         });
     // }
 
-    handleLogin(username, id) {
+    handleLogin(username, id, firstLogin) {
         document.addEventListener("keydown", this.handleKeyPress, false); // listener for deleting boards
 
         // Get user id, save currently editing board to server, and refresh board list from server
@@ -643,8 +666,7 @@ class App extends Component {
         if (!this.state.user_id) {
             return (
                 <LoginRegister
-                    // logIn={(username, id) => this.setState({username: username, user_id: id})}
-                    logIn={(username, id) => this.handleLogin(username, id)}
+                    logIn={(username, id, firstLogin) => this.handleLogin(username, id, firstLogin)}
                 />
             );
         }
@@ -659,7 +681,9 @@ class App extends Component {
                             <ArrowBackIcon
                                 id="arrow-back-icon"
                                 onClick={() => this.switchLeftSidebarView(() => {
-                                    this.setState({viewingMyBoards: false}, () => {this.onSetSidebarOpen(true)});
+                                    this.setState({viewingMyBoards: false}, () => {
+                                        this.onSetSidebarOpen(true)
+                                    });
                                 })}
                             />
                             <span id="userName">My Boards</span>
@@ -740,17 +764,12 @@ class App extends Component {
                         ref={this.rightSidebarStage}
                     >
                         <Layer>
-                            <Rect // Todo: dynamically place these stickies to be in center of stage
-                                id="smallStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
+                            <StickyButton
                                 x={30}
                                 y={50}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
-                                scaleX={1.0}
-                                scaleY={1.0}
+                                width={60}
+                                text={"s"}
+                                stroke={this.state.smallSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 1,
                                     smallSelected: true,
@@ -758,21 +777,13 @@ class App extends Component {
                                     largeSelected: false,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.smallSelected ? 'black' : null}
-                                strokeWidth={3}
-                            >
-                            </Rect>
-                            <Rect
-                                id="medStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
-                                scaleX={1.333}
-                                scaleY={1.333}
+                            />
+                            <StickyButton
                                 x={110}
                                 y={40}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                width={80}
+                                text={"m"}
+                                stroke={this.state.medSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 2,
                                     smallSelected: false,
@@ -780,22 +791,13 @@ class App extends Component {
                                     largeSelected: false,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.medSelected ? 'black' : null}
-                                strokeWidth={3}
-
-                            >
-                            </Rect>
-                            <Rect
-                                id="largeStickyButton"
-                                fill={'#fffdd0'}
-                                width={60}
-                                height={60}
-                                scaleX={1.7}
-                                scaleY={1.7}
+                            />
+                            <StickyButton
                                 x={210}
                                 y={30}
-                                onMouseOver={(e) => this.onMouseOverRightSidebarElement(e)}
-                                onMouseOut={(e) => this.onMouseOutRightSidebarElement(e)}
+                                width={100}
+                                text={"xl"}
+                                stroke={this.state.largeSelected ? 'black' : null}
                                 onClick={() => this.setState({
                                     nextStickyScale: 3,
                                     smallSelected: false,
@@ -803,11 +805,8 @@ class App extends Component {
                                     largeSelected: true,
                                     rightSidebarOpen: false
                                 })}
-                                stroke={this.state.largeSelected ? 'black' : null}
-                                strokeWidth={3}
+                            />
 
-                            >
-                            </Rect>
                             <Arrow
                                 id={"sidebarArrow"}
                                 draggable={false}
@@ -866,6 +865,10 @@ class App extends Component {
     render() {
         return (
             <Fragment>
+                <ToastContainer
+                    autoClose={2000}
+                    hideProgressBar={true}
+                />
                 <Sidebar
                     sidebar={this.makeSideBarContent()}
                     open={this.state.sidebarOpen}
