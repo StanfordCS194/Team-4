@@ -34,7 +34,7 @@ class LoginRegister extends React.Component {
           </div>
           :
           <div>
-            <Register logIn={(username, id) => this.props.logIn(username, id)} />
+            <Register logIn={(username, id) => this.props.logIn(username, id, true)} />
             <input
                 type="submit"
                 value="Back to Login"

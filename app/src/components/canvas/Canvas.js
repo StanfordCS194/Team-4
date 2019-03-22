@@ -267,7 +267,7 @@ class Canvas extends React.Component {
                 nextColor={this.props.nextColor}
                 height={250}
                 width={250}
-                fontSize={50}
+                fontSize={60}
                 scale={this.props.nextStickyScale}
             />
         );
@@ -332,11 +332,13 @@ class Canvas extends React.Component {
 
     addCloudToBoard() {
         /**
-         * Adds a new Cloud object to the current board.
+         * Adds a new Cloud object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
         this.setState({});
-
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
         let newComponent = (
             <Cloud
                 ref={componentRef}
@@ -344,8 +346,8 @@ class Canvas extends React.Component {
                 finalTextValue={''}
                 className={'cloud'}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 20} // Todo: subtract half of cloud width
-                y={this.stage.current.getStage().height() / 2 - 90} // Todo: subtract half of cloud height
+                x={stageWidth / 2 - 20} // Todo: subtract half of cloud width
+                y={stageHeight / 2 - 90} // Todo: subtract half of cloud height
                 width={720}
                 height={600}
                 fill={'#7EC0EE'}
@@ -355,6 +357,7 @@ class Canvas extends React.Component {
                 isButton={false}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -362,27 +365,33 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
     addArrowToBoard() {
         /**
-         * Adds a new Arrow object to the current board.
+         * Adds a new Arrow object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
 
         let newComponent = (
             <Arrow
                 ref={componentRef}
                 id={this.state.id}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 150} // Todo: subtract half of arrow width
-                y={this.stage.current.getStage().height() / 2 - 40} // Todo: subtract half of arrow height
+                x={stageWidth / 2 - 150} // Todo: subtract half of arrow width
+                y={stageHeight / 2 - 40} // Todo: subtract half of arrow height
                 scale={1}
                 scaleX={1.1}
                 scaleY={1.1}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -390,27 +399,33 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
     addVennDiagramToBoard() {
         /**
-         * Adds a new VennDiagram object to the current board.
+         * Adds a new VennDiagram object to the center of the current board and
+         * recenters the stage.
          */
         let componentRef = React.createRef();
+        let stageWidth = this.stage.current.getStage().width();
+        let stageHeight = this.stage.current.getStage().height();
 
         let newComponent = (
             <VennDiagram
                 ref={componentRef}
                 id={this.state.id}
                 draggable={true}
-                x={this.stage.current.getStage().width() / 2 - 20}
-                y={this.stage.current.getStage().height() / 2 - 90}
+                x={stageWidth / 2 - 20}
+                y={stageHeight / 2 - 90}
                 outlineColor={'black'}
                 scale={2.5}
                 isButton={false}
             />
         );
+
         this.setState({
             justOpenedApp: false,
             objectRefs: this.state.objectRefs.slice().concat([componentRef]),
@@ -418,6 +433,8 @@ class Canvas extends React.Component {
             pastObjArray: this.state.pastObjArray.concat([this.state.objectArray.slice()]),
             pastObjRefs: this.state.pastObjRefs.concat([this.state.objectRefs.slice()]),
             id: this.state.id + 1,
+            stageX: (window.innerWidth - stageWidth * this.state.scaleX) / 2,
+            stageY: (window.innerHeight - stageHeight * this.state.scaleY) / 2,
         });
     }
 
@@ -505,6 +522,7 @@ class Canvas extends React.Component {
          * @param: {object} board A JSON string representing an array of object states and a board state
          */
         console.log("Loading board");
+        console.log(board);
 
         let savedComponentStates = board.componentStates;
         let savedBoardState = board.boardState;
@@ -705,51 +723,56 @@ class Canvas extends React.Component {
          * Handles key presses to create new shapes, save/load boards, and delete selected
          * shapes.
          */
-        // if command-z, undo previously added object
-        if (e.metaKey && e.keyCode === 90) {
-            this.undo();
-        }
+        if (!this.props.sideBarOpen) {
 
-        /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
-         (dev purposes), probably want to create with double clicks,
-         but couldn't figure out how to read for keys other than
-         cmd when double-clicking.
-         Change or get rid of this when we've found the cleaner solution
-         */
+            // if command-z, undo previously added object
+            if (e.metaKey && e.keyCode === 90) {
+                this.undo();
+            }
 
-        // Make arrow
-        if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
-            this.addArrowToBoard();
-        }
+            /* Todo: Creates arrow (cmd+a) or cloud (cmd+c)
+             (dev purposes), probably want to create with double clicks,
+             but couldn't figure out how to read for keys other than
+             cmd when double-clicking.
+             Change or get rid of this when we've found the cleaner solution
+             */
 
-        // Make cloud
-        if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
-            this.addCloudToBoard();
-        }
 
-        // Make venn diagram
-        if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
-            this.addVennDiagramToBoard();
-        }
+            // Make arrow
+            if (e.shiftKey && e.keyCode === 65 && !this.isEditingText()) {
+                this.addArrowToBoard();
+            }
 
-        // Save board
-        if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
-            this.props.saveBoardToBoardList();
-        }
+            // Make cloud
+            if (e.shiftKey && e.keyCode === 67 && !this.isEditingText()) {
+                this.addCloudToBoard();
+            }
 
-        // Dev: test save board to state variable
-        if (e.metaKey && e.keyCode === 67) {
-            this.saveBoard();
-        }
+            // Make venn diagram
+            if (e.shiftKey && e.keyCode === 86 && !this.isEditingText()) {
+                this.addVennDiagramToBoard();
+            }
 
-        // Testing: load board
-        if (e.metaKey && e.keyCode === 74) {
-            this.loadBoard(this.state.savedBoard);
-        }
+            // Save board
+            if (e.shiftKey && e.keyCode === 83 && !this.isEditingText()) {
+                this.props.saveBoardToBoardList();
+            }
 
-        // Delete selected canvas object on press of delete key on mac
-        if (e.keyCode === 8 && !this.isEditingText()) {
-            this.delete();
+            // Dev: test save board to state variable
+            if (e.metaKey && e.keyCode === 67) {
+                this.saveBoard();
+            }
+
+            // Testing: load board
+            if (e.metaKey && e.keyCode === 74) {
+                this.loadBoard(this.state.savedBoard);
+            }
+
+            // Delete selected canvas object on press of delete key on mac
+            // if (e.keyCode === 8 && !this.isEditingText()) {
+            if (e.keyCode === 8 && !this.isEditingText() && !this.props.sideBarOpen) {
+                this.delete();
+            }
         }
     };
 
