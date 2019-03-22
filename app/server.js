@@ -180,7 +180,7 @@ app.post('/user', function(req, res) {
       res.end(JSON.stringify(userDetails));
     }).catch((err)=>{
       res.status(400).send('Doing /user, upload failed');
-      console.error('Doing /user, upload failed');
+      console.error('Doing /user, upload failed', err);
       return;
     });
   });

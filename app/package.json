@@ -34,7 +34,7 @@
     "build:w": "node_modules/.bin/webpack -d --watch",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "lint": "node_modules/.bin/eslint server.js src/components/*/*.js src/components/canvas/canvas_objects/*/*.js"
+    "lint": "node_modules/.bin/eslint server.js index.js src/components/*/*.js src/components/canvas/canvas_objects/*/*.js src/js/*.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

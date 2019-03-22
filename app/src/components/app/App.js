@@ -1,6 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Stage, Layer, Rect} from 'react-konva';
-import Konva from 'konva';
+import {Stage, Layer} from 'react-konva';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import './App.css';
@@ -137,6 +136,7 @@ class App extends Component {
                         fontFamily: 'Avenir, serif'
                     }),
                 },);
+                break;
             default:
                 console.log("default");
                 break;
@@ -340,7 +340,7 @@ class App extends Component {
         }
     }
 
-    handleClickOnBoardName(e, i, board) {
+    handleClickOnBoardName(e, i) {
         this.setState({editingBoardName: true});
         let input = document.getElementById("input" + i);
         let boardName = document.getElementById("boardName" + i);
@@ -673,7 +673,7 @@ class App extends Component {
                 });
             })
             .catch((error) => console.log(error))
-    };
+    }
 
     // builds left sidebar content
     makeSideBarContent = () => {
@@ -710,7 +710,7 @@ class App extends Component {
                          onClick={() => this.setState({viewingMyBoards: true})}>
                         <ul>
                             {this.state.boardList.map((board, i) =>
-                                <li className={board._id === this.state.currentBoard._id ? "saved-board-elem-selected" : "saved-board-elem"}
+                                <li key={`save-${i}`} className={board._id === this.state.currentBoard._id ? "saved-board-elem-selected" : "saved-board-elem"}
                                 >
                                     <div>
                                         <img
@@ -767,7 +767,7 @@ class App extends Component {
     };
 
     // builds right sidebar content
-    makeRightSideBarContent(user) {
+    makeRightSideBarContent() {
         return (
             <Fragment>
                 <div className="sidebarContent">
