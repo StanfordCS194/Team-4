@@ -83,7 +83,7 @@ class Canvas extends React.Component {
          */
         let uri = this.stage.current.getStage().toDataURL({pixelRatio: 3});
         let link = document.createElement('a');
-        link.download = "stage.png";
+        link.download = new Date().toUTCString();
         link.href = uri;
         document.body.appendChild(link);
         link.click();
