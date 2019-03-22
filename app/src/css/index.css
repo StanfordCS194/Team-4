@@ -8,18 +8,3 @@ body {
 #stage-parent {
     width: 100%;
 }
-
-textarea {
-  width: 250px;
-  height: 250px;
-  padding: 12px 20px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 1px;
-  background-color: transparent  ;
-  resize: none;
-  font-family: 'Klee';
-  font-size: 35px;
-  text-align: center;
-  outline: none
-}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Group, Text } from 'react-konva';
 import Portal from "../portal/Portal";
+import "./Textarea.css"
 
 class Textarea extends React.Component {
     constructor(props) {
